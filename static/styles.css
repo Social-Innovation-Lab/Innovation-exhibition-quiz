@@ -20,8 +20,9 @@ input[type="radio"]{width:24px;height:24px;transform:translateY(2px); cursor:poi
 .progress .bar > i{display:block;height:100%;width:0;background:var(--brand);transition:width .3s;}
 /* Prevent text selection bounce */
 *{-webkit-tap-highlight-color:transparent; user-select:none;}
-/* Inputs that need typing */
-input[type="text"], input[type="tel"], input[type="number"]{user-select:text; width:100%; padding:12px; border:1px solid #ddd; border-radius:8px; font-size:18px; margin:8px 0;}
+/* Inputs that need typing - MUST allow text input */
+input, textarea{user-select:text !important; -webkit-user-select:text !important;}
+input[type="text"], input[type="tel"], input[type="number"], input[type="password"]{width:100%; padding:12px; border:1px solid #ddd; border-radius:8px; font-size:18px; margin:8px 0;}
 input[type="checkbox"]{width:20px; height:20px; cursor:pointer;}
 label{display:block; margin:12px 0; font-weight:500;}
 
