@@ -6,7 +6,7 @@ A tablet-friendly Progressive Web App (PWA) quiz kiosk for BRAC exhibitions. Dis
 ## Project Status
 **Status:** ✅ Fully Functional  
 **Last Updated:** October 21, 2025  
-**Version:** 1.0
+**Version:** 1.1
 
 ## Key Features
 - **Tablet-Optimized UI:** Large tap targets (48px min), readable 18px fonts, sticky progress bar
@@ -59,6 +59,8 @@ Each programme has its own rotation queue. When a quiz starts:
 │   ├── styles.css                  # Tablet-optimized CSS (touch targets)
 │   ├── main.js                     # Quiz progress tracking & kiosk protection
 │   ├── sw.js                       # Service worker (PWA caching)
+│   ├── brac-logo.jpg               # BRAC logo for sign-in page
+│   ├── favicon.png                 # PWA favicon
 │   └── icons/
 │       ├── icon-192.png            # PWA icon (192×192)
 │       └── icon-512.png            # PWA icon (512×512)
@@ -71,7 +73,7 @@ Each programme has its own rotation queue. When a quiz starts:
 ### Tablet-Friendly Features
 1. **Viewport Meta:** `maximum-scale=1, viewport-fit=cover` prevents zoom
 2. **Touch Targets:** All interactive elements ≥48px height
-3. **Numeric Keyboards:** `inputmode="numeric"` for PIN, `inputmode="tel"` for phone
+3. **Numeric Keyboards:** `inputmode="numeric"` for 6-digit PIN, `inputmode="tel"` for phone
 4. **Kiosk Protection:** `beforeunload` event prevents accidental navigation
 5. **No Text Selection:** `user-select: none` prevents bounce/highlight issues
 
@@ -130,4 +132,5 @@ Server runs on `http://0.0.0.0:5000`
 - **Code Style:** Simple, readable Python/Flask with inline comments
 
 ## Recent Changes
-- **2025-10-21:** Initial build - Complete PWA quiz kiosk with rotation queues, admin dashboard, and CSV export
+- **2025-10-21 v1.1:** Updated sign-in page - Added BRAC logo, changed title to "BRAC Innovation Exhibition 2025", added tagline "Play the Quiz to Flex Your Reflex", changed PIN requirement to exactly 6 digits, removed consent checkbox
+- **2025-10-21 v1.0:** Initial build - Complete PWA quiz kiosk with rotation queues, admin dashboard, and CSV export
