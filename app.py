@@ -207,9 +207,9 @@ def start():
     name = request.form.get('name', '').strip()
     pin = request.form.get('pin', '').strip()
     phone = request.form.get('phone', '').strip()
-    consent = request.form.get('consent')
     
-    if not all([name, pin, phone, consent]):
+    # Validate all required fields and PIN format (exactly 6 digits)
+    if not all([name, pin, phone]) or not (pin.isdigit() and len(pin) == 6):
         return redirect('/')
     
     # Create participant record
