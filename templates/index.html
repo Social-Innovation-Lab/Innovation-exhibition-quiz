@@ -22,6 +22,18 @@
 
 {% block scripts %}
 <script>
+// Form validation feedback
+document.querySelector('form').addEventListener('submit', function(e) {
+  const pin = document.querySelector('input[name="pin"]');
+  if (pin.value.length !== 6 || !/^\d{6}$/.test(pin.value)) {
+    e.preventDefault();
+    alert('PIN must be exactly 6 digits (numbers only)');
+    pin.focus();
+    return false;
+  }
+  console.log('Form submitting with valid data');
+});
+
 if('serviceWorker' in navigator){
   navigator.serviceWorker.register('/static/sw.js').catch(()=>{});
 }
