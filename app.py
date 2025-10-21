@@ -9,6 +9,10 @@ import hashlib
 
 app = Flask(__name__)
 app.secret_key = os.environ.get('SESSION_SECRET', secrets.token_hex(32))
+# Configure session for iframe/preview environment
+app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'  # Allows cookies in iframe redirects
+app.config['SESSION_COOKIE_HTTPONLY'] = True
+app.config['PERMANENT_SESSION_LIFETIME'] = 3600  # 1 hour session
 
 DATABASE = 'quiz.db'
 ADMIN_PIN = os.environ.get('ADMIN_PIN', '2025')
@@ -210,6 +214,7 @@ def start():
     
     # Validate all required fields and PIN format (exactly 6 digits)
     if not all([name, pin, phone]) or not (pin.isdigit() and len(pin) == 6):
+        print(f"Validation failed - name:{name}, pin:{pin}, phone:{phone}")
         return redirect('/')
     
     # Create participant record
@@ -224,13 +229,18 @@ def start():
     # Store in session
     session['participant_id'] = participant_id
     session['name'] = name
+    session.modified = True  # Force session save
+    
+    print(f"Session set: participant_id={participant_id}, name={name}")
     
     return redirect('/quiz')
 
 @app.route('/quiz')
 def quiz():
     """Display 22-question quiz (one per programme)"""
+    print(f"Quiz route - session contents: {dict(session)}")
     if 'participant_id' not in session:
+        print("No participant_id in session - redirecting to home")
         return redirect('/')
     
     conn = get_db()
