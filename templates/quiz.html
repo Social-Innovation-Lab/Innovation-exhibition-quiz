@@ -7,6 +7,10 @@
 </div>
 
 <form method="POST" action="/submit" id="quizForm" class="container">
+  <!-- Hidden fields to pass participant data without cookies -->
+  <input type="hidden" name="participant_id" value="{{participant_id}}">
+  <input type="hidden" name="question_ids" value="{{question_ids|join(',')}}">
+  
   {% for q in items %}
   <section class="card q-block">
     <h2>{{loop.index}}. {{q.programme_name}}</h2>

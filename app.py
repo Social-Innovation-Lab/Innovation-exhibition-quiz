@@ -226,14 +226,31 @@ def start():
     participant_id = cursor.lastrowid
     conn.commit()
     
-    # Store in session
-    session['participant_id'] = participant_id
-    session['name'] = name
-    session.modified = True  # Force session save
+    print(f"Created participant: participant_id={participant_id}, name={name}")
     
-    print(f"Session set: participant_id={participant_id}, name={name}")
+    # Get all programmes (should be 22)
+    programmes = conn.execute(
+        'SELECT DISTINCT programme_code, programme_name FROM questions ORDER BY programme_code'
+    ).fetchall()
     
-    return redirect('/quiz')
+    # Get one question per programme using rotation queue
+    questions = []
+    for prog in programmes:
+        q = get_next_question_for_programme(prog['programme_code'])
+        if q:
+            # Format for template
+            q['options'] = [q['option_A'], q['option_B'], q['option_C'], q['option_D']]
+            questions.append(q)
+    
+    # Store the participant_id and question IDs to pass to template
+    question_ids = [q['id'] for q in questions]
+    
+    # Render quiz page directly (no redirect to avoid cookie issues)
+    return render_template('quiz.html', 
+                         items=questions, 
+                         participant_id=participant_id,
+                         question_ids=question_ids,
+                         participant_name=name)
 
 @app.route('/quiz')
 def quiz():
@@ -267,11 +284,15 @@ def quiz():
 @app.route('/submit', methods=['POST'])
 def submit():
     """Grade quiz and save results"""
-    if 'participant_id' not in session or 'question_ids' not in session:
+    # Get participant data from form instead of session (to avoid cookie issues)
+    participant_id = request.form.get('participant_id', '').strip()
+    question_ids_str = request.form.get('question_ids', '').strip()
+    
+    if not participant_id or not question_ids_str:
         return redirect('/')
     
-    participant_id = session['participant_id']
-    question_ids = session['question_ids']
+    participant_id = int(participant_id)
+    question_ids = [int(qid) for qid in question_ids_str.split(',') if qid]
     
     conn = get_db()
     
@@ -310,10 +331,14 @@ def submit():
     
     conn.commit()
     
-    # Store attempt_id for result page
-    session['attempt_id'] = attempt_id
+    # Render result page directly (no redirect to avoid cookie issues)
+    data = {
+        'score': score,
+        'percent': round(percent, 2),
+        'is_winner': is_winner
+    }
     
-    return redirect('/result')
+    return render_template('result.html', data=data)
 
 @app.route('/result')
 def result():
