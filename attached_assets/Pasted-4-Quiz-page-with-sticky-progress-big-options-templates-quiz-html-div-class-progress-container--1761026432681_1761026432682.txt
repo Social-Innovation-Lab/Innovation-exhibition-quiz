@@ -1,0 +1,110 @@
+4) Quiz page with sticky progress + big options
+templates/quiz.html
+<div class="progress container">
+  <div>Answered <b id="ansCount">0</b>/22</div>
+  <div class="bar"><i id="barFill"></i></div>
+</div>
+
+<form method="POST" action="/submit" id="quizForm" class="container">
+  {% for q in items %}
+  <section class="card q-block">
+    <h2>{{loop.index}}. {{q.programme_name}}</h2>
+    <p>{{q.question}}</p>
+    {% set letters = ['A','B','C','D'] %}
+    {% for opt in q.options %}
+      <label class="opt">
+        <input type="radio" name="{{q.id}}" value="{{letters[loop.index0]}}" required>
+        <span><b>{{letters[loop.index0]}}.</b> {{opt}}</span>
+      </label>
+    {% endfor %}
+  </section>
+  {% endfor %}
+  <button id="submitBtn" type="submit" disabled>Submit answers</button>
+</form>
+<script src="/static/main.js"></script>
+static/main.js
+(function(){
+  const form = document.getElementById('quizForm');
+  if(!form) return;
+  const qids = [...new Set([...form.querySelectorAll('input[type=radio]')].map(i => i.name))];
+  const answered = new Set();
+  const ansCount = document.getElementById('ansCount');
+  const barFill = document.getElementById('barFill');
+  const submitBtn = document.getElementById('submitBtn');
+
+  form.addEventListener('change', (e)=>{
+    if(e.target.type === 'radio'){
+      answered.add(e.target.name);
+      const count = answered.size;
+      ansCount.textContent = count;
+      barFill.style.width = ((count/qids.length)*100).toFixed(1)+'%';
+      submitBtn.disabled = count < qids.length;
+    }
+  });
+
+  // Prevent accidental back/refresh
+  let submitted = false;
+  form.addEventListener('submit', ()=>{ submitted = true; submitBtn.disabled = true; submitBtn.textContent='Submitting…'; });
+  window.addEventListener('beforeunload', (e)=>{ if(!submitted){ e.preventDefault(); e.returnValue=''; } });
+
+  // Prevent pinch zoom double-tap shenanigans
+  document.addEventListener('gesturestart', e => e.preventDefault());
+})();
+5) Results page (clear winner messaging)
+templates/result.html
+<div class="container card" style="text-align:center;">
+  <h1>Your result</h1>
+  <p>Score: <b>{{data.score}}</b> / 22 ({{"%.2f"|format(data.percent)}}%)</p>
+  {% if data.is_winner %}
+    <p style="font-size:22px;">🎉 <b>Winner!</b> Please collect your gift at the Prize Desk.</p>
+  {% else %}
+    <p>Thank you for playing—visit more stalls and try again another day.</p>
+  {% endif %}
+  <a class="btn" href="/">Play again (new participant)</a>
+</div>
+6) Make it a simple PWA (caches assets, works if Wi-Fi hiccups)
+Create static/icons/icon-192.png & icon-512.png.
+manifest.json
+{
+  "name": "BRAC Exhibition Quiz",
+  "short_name": "BRAC Quiz",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#e31837",
+  "icons": [
+    { "src": "/static/icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/static/icons/icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}
+static/sw.js
+const CACHE='brac-quiz-v1';
+const ASSETS=[
+  '/', '/static/styles.css', '/static/main.js',
+  '/manifest.json', '/static/icons/icon-192.png', '/static/icons/icon-512.png'
+];
+self.addEventListener('install', e=>{
+  e.waitUntil(caches.open(CACHE).then(c=>c.addAll(ASSETS)));
+});
+self.addEventListener('fetch', e=>{
+  e.respondWith(
+    caches.match(e.request).then(r => r || fetch(e.request))
+  );
+});
+Register the service worker (add at end of templates/index.html and quiz.html):
+<script>
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('/static/sw.js').catch(()=>{});
+}
+</script>
+Note: We only cache static assets. Submissions still go to the server so scores/winners are recorded.
+7) Concurrency & reliability (multiple tablets at once)
+Sessions: Keep server-side session (Flask) and always carry attempt_id in URL for /result.
+SQLite safety: Open a new connection per request (check_same_thread=False), enable WAL mode at init:
+conn.execute("PRAGMA journal_mode=WAL;")
+conn.execute("PRAGMA synchronous=NORMAL;")
+Rotation: Use the per-programme rotation queue as described earlier so tablets don’t collide on the same next question; store rotation state in DB, not memory.
+8) Admin essentials (for tablets on the floor)
+/admin shows: current participants, attempts, Winner queue with “Mark gift given”.
+Handy button: “Reset this device” → clears session and reloads /.
+Export: winners.csv (Name, PIN, masked phone, Score, Time, Gift Given).

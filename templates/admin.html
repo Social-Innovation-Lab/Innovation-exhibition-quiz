@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+  <h1>Admin Dashboard</h1>
+  
+  <div class="stats">
+    <div class="stat-card">
+      <h3>{{stats.total_attempts}}</h3>
+      <p>Total Attempts</p>
+    </div>
+    <div class="stat-card">
+      <h3>{{stats.total_winners}}</h3>
+      <p>Winners (≥70%)</p>
+    </div>
+    <div class="stat-card">
+      <h3>{{stats.avg_score}}</h3>
+      <p>Average Score</p>
+    </div>
+  </div>
+  
+  <div class="card">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+      <h2 style="margin:0;">All Attempts</h2>
+      <div>
+        <a href="/admin/export" class="btn">Export Winners CSV</a>
+        <a href="/" class="btn" style="background:#666;">Reset Device</a>
+      </div>
+    </div>
+    
+    <table>
+      <thead>
+        <tr>
+          <th>Date/Time</th>
+          <th>Name</th>
+          <th>PIN</th>
+          <th>Phone</th>
+          <th>Score</th>
+          <th>%</th>
+          <th>Status</th>
+          <th>Gift</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for a in attempts %}
+        <tr>
+          <td>{{a.created_at}}</td>
+          <td>{{a.name}}</td>
+          <td>{{a.pin}}</td>
+          <td>****{{a.phone[-4:]}}</td>
+          <td>{{a.score}}/22</td>
+          <td>{{"%0.1f"|format(a.percent)}}%</td>
+          <td>
+            {% if a.is_winner %}
+              <span class="winner-badge">WINNER</span>
+            {% else %}
+              -
+            {% endif %}
+          </td>
+          <td>
+            {% if a.is_winner %}
+              {% if a.gift_given %}
+                ✅ Given
+              {% else %}
+                ⏳ Pending
+              {% endif %}
+            {% else %}
+              -
+            {% endif %}
+          </td>
+          <td>
+            {% if a.is_winner and not a.gift_given %}
+              <a href="/admin/mark_gift/{{a.id}}" style="color:var(--brand);">Mark Given</a>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

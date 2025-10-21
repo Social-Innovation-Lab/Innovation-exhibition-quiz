@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container card" style="text-align:center;">
+  <h1>Your result</h1>
+  <p>Score: <b>{{data.score}}</b> / 22 ({{"%.2f"|format(data.percent)}}%)</p>
+  {% if data.is_winner %}
+    <p style="font-size:22px;">🎉 <b>Winner!</b> Please collect your gift at the Prize Desk.</p>
+  {% else %}
+    <p>Thank you for playing—visit more stalls and try again another day.</p>
+  {% endif %}
+  <a class="btn" href="/">Play again (new participant)</a>
+</div>
+{% endblock %}

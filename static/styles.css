@@ -1,0 +1,37 @@
+:root { --brand:#e31837; --ink:#111; --bg:#fff; --muted:#f6f6f6; --radius:16px; }
+html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font-family:system-ui, Segoe UI, Roboto, Arial;}
+/* Base type sized for tablets */
+body{font-size:18px; line-height:1.45;}
+h1{font-size:28px;margin:16px 0 8px;}
+h2{font-size:22px;margin:10px 0 6px;}
+.container{max-width:980px;margin:0 auto;padding:16px;}
+.card{background:#fff;border-radius:var(--radius);box-shadow:0 2px 10px rgba(0,0,0,.06);padding:16px;margin:12px 0;}
+/* Touch-friendly controls */
+button, .btn, input[type="radio"]+span, label.opt {min-height:48px; font-size:18px;}
+button, .btn {background:var(--brand); color:#fff; border:none; border-radius:14px; padding:14px 20px; cursor:pointer; text-decoration:none; display:inline-block;}
+button:disabled{opacity:.45;}
+/* Radio group as big taps */
+.q-block{padding:14px 12px;border:1px solid #eee;border-radius:14px;margin:10px 0;}
+label.opt{display:flex;align-items:flex-start;gap:10px;padding:10px;border:1px solid #eee;border-radius:12px;margin:8px 0; cursor:pointer;}
+label.opt:active{background:var(--muted);}
+input[type="radio"]{width:24px;height:24px;transform:translateY(2px); cursor:pointer;}
+.progress{position:sticky;top:0;background:#fff;border-bottom:1px solid #eee;padding:8px 12px;display:flex;justify-content:space-between;z-index:10;}
+.progress .bar{height:6px;background:var(--muted);border-radius:6px;overflow:hidden;flex:1;margin-left:12px;}
+.progress .bar > i{display:block;height:100%;width:0;background:var(--brand);transition:width .3s;}
+/* Prevent text selection bounce */
+*{-webkit-tap-highlight-color:transparent; user-select:none;}
+/* Inputs that need typing */
+input[type="text"], input[type="tel"], input[type="number"]{user-select:text; width:100%; padding:12px; border:1px solid #ddd; border-radius:8px; font-size:18px; margin:8px 0;}
+input[type="checkbox"]{width:20px; height:20px; cursor:pointer;}
+label{display:block; margin:12px 0; font-weight:500;}
+
+/* Admin styles */
+table{width:100%; border-collapse:collapse; margin:16px 0;}
+table th, table td{padding:10px; text-align:left; border-bottom:1px solid #eee;}
+table th{background:var(--muted); font-weight:600;}
+table tr:hover{background:var(--muted);}
+.winner-badge{background:var(--brand); color:#fff; padding:4px 8px; border-radius:6px; font-size:14px;}
+.stats{display:flex; gap:16px; margin:16px 0;}
+.stat-card{flex:1; background:var(--muted); padding:16px; border-radius:12px; text-align:center;}
+.stat-card h3{margin:0 0 8px 0; font-size:32px; color:var(--brand);}
+.stat-card p{margin:0; color:#666;}
