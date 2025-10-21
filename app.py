@@ -2,14 +2,40 @@ import sqlite3
 import csv
 import secrets
 from datetime import datetime
-from flask import Flask, render_template, request, redirect, session, jsonify, make_response
+from flask import Flask, render_template, request, redirect, session, jsonify, make_response, abort
 from functools import wraps
 import os
+import hashlib
 
 app = Flask(__name__)
 app.secret_key = os.environ.get('SESSION_SECRET', secrets.token_hex(32))
 
 DATABASE = 'quiz.db'
+ADMIN_PIN = os.environ.get('ADMIN_PIN', '2025')
+
+def generate_csrf_token():
+    """Generate CSRF token for session"""
+    if 'csrf_token' not in session:
+        session['csrf_token'] = secrets.token_hex(32)
+    return session['csrf_token']
+
+def verify_csrf_token(token):
+    """Verify CSRF token matches session"""
+    return token and session.get('csrf_token') == token
+
+def admin_required(f):
+    """Decorator to require admin authentication"""
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if not session.get('admin_authenticated'):
+            return redirect('/admin/login')
+        return f(*args, **kwargs)
+    return decorated_function
+
+@app.context_processor
+def inject_csrf_token():
+    """Make CSRF token available to all templates"""
+    return dict(csrf_token=generate_csrf_token)
 
 def get_db():
     """Get database connection with WAL mode"""
@@ -303,7 +329,30 @@ def result():
     
     return render_template('result.html', data=data)
 
+@app.route('/admin/login', methods=['GET', 'POST'])
+def admin_login():
+    """Admin login page"""
+    if request.method == 'POST':
+        csrf_token = request.form.get('csrf_token')
+        if not verify_csrf_token(csrf_token):
+            abort(403)
+        
+        pin = request.form.get('admin_pin', '')
+        if pin == ADMIN_PIN:
+            session['admin_authenticated'] = True
+            return redirect('/admin')
+        else:
+            return render_template('admin_login.html', error='Invalid PIN')
+    return render_template('admin_login.html')
+
+@app.route('/admin/logout')
+def admin_logout():
+    """Admin logout"""
+    session.pop('admin_authenticated', None)
+    return redirect('/')
+
 @app.route('/admin')
+@admin_required
 def admin():
     """Admin dashboard with winner list"""
     conn = get_db()
@@ -329,15 +378,21 @@ def admin():
     
     return render_template('admin.html', attempts=attempts, stats=stats)
 
-@app.route('/admin/mark_gift/<int:attempt_id>')
+@app.route('/admin/mark_gift/<int:attempt_id>', methods=['POST'])
+@admin_required
 def mark_gift(attempt_id):
     """Mark gift as given"""
+    csrf_token = request.form.get('csrf_token')
+    if not verify_csrf_token(csrf_token):
+        abort(403)
+    
     conn = get_db()
     conn.execute('UPDATE attempts SET gift_given = 1 WHERE id = ?', (attempt_id,))
     conn.commit()
     return redirect('/admin')
 
 @app.route('/admin/export')
+@admin_required
 def export_csv():
     """Export winners to CSV"""
     conn = get_db()

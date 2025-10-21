@@ -99,8 +99,18 @@ Name,PIN,Phone,Score,Percentage,Date,Gift Given
 John Doe,1234,****5678,18,81.82%,2025-10-21 10:30:15,Yes
 ```
 
-## Session Secret
-The app uses `SESSION_SECRET` environment variable for Flask sessions. Auto-generated if not set.
+## Security
+
+### Admin Authentication
+- **Admin PIN Required:** All admin routes (`/admin`, `/admin/export`, `/admin/mark_gift`) are protected by PIN authentication
+- **Default PIN:** `2025` (can be changed via `ADMIN_PIN` environment variable)
+- **Session-based:** Admin login persists in session, can be logged out
+- **POST for Actions:** Gift marking uses POST requests to prevent URL manipulation
+
+### Session Management
+- The app uses `SESSION_SECRET` environment variable for Flask sessions
+- Auto-generated if not set
+- Separate sessions for participants and admin authentication
 
 ## Running the App
 ```bash

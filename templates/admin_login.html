@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+  <form method="POST" class="card" style="max-width:400px; margin:60px auto;">
+    <h1>Admin Login</h1>
+    {% if error %}
+      <p style="color:var(--brand); font-weight:bold;">{{ error }}</p>
+    {% endif %}
+    <input type="hidden" name="csrf_token" value="{{csrf_token()}}">
+    <label>Admin PIN
+      <input name="admin_pin" type="password" inputmode="numeric" pattern="[0-9]{4,8}" placeholder="Enter admin PIN" required autofocus>
+    </label>
+    <button type="submit">Login</button>
+    <a href="/" style="display:block; margin-top:16px; text-align:center; color:#666;">Back to Quiz</a>
+  </form>
+</div>
+{% endblock %}
