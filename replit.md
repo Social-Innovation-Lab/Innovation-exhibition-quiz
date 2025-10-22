@@ -133,14 +133,15 @@ Server runs on `http://0.0.0.0:5000`
 - **Code Style:** Simple, readable Python/Flask with inline comments
 
 ## Recent Changes
-- **2025-10-22 v2.1:** Interactive UX/UI overhaul:
+- **2025-10-22 v2.1:** Interactive UX/UI overhaul with tablet kiosk optimizations:
   - **Landing page**: Animated hero with bouncing logo, "How It Works" step cards, gradient background, smooth fade-in animations
-  - **Quiz carousel**: Single-question display with swipe navigation, prev/next buttons, auto-advance after selection
+  - **Quiz carousel**: Single-question display with bidirectional swipe navigation (swipe left/right freely), prev/next buttons, auto-advance after selection
+  - **80-second timer**: Countdown timer with fire emoji at top-left, warning state at 30s (yellow), danger state at 10s (red pulsing), auto-submit when time expires
   - **Visual feedback**: Green glow on selected answers, animated checkmarks, rotating option letters, instant encouragement messages
-  - **Gamification**: Streak counter with fire emoji, animated progress dots, smooth progress bar transitions
-  - **Touch optimization**: 60px+ touch targets, hover effects, scale animations, passive touch listeners for performance
-  - **Results page**: Animated SVG score circle with progressive ring fill, counting animation from 0 to final score, confetti for winners
-  - **Micro-interactions**: Smooth slide transitions between questions, shake animation for unanswered questions, pulse effects on streak
+  - **Touch optimization**: 60px+ touch targets, hover effects, scale animations, passive touch listeners, no-scroll layout
+  - **Clean UI**: Removed difficulty level badges (Easy/Medium/Hard) from quiz display for cleaner look
+  - **Results page**: Animated SVG score circle with progressive ring fill, counting animation from 0 to final score, confetti for winners, "out of 10" format, "Missed a prize by X points" message with lightbulb emoji, "Next Player" button
+  - **Micro-interactions**: Smooth slide transitions between questions, shake animation for unanswered questions
   - **Enhanced accessibility**: Better visual hierarchy, clear labels with icons, improved contrast, responsive design
 - **2025-10-22 v2.0:** Complete quiz system overhaul:
   - Switched from 22 fixed questions to 10 randomly generated questions

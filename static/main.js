@@ -106,13 +106,9 @@
       if (timeRemaining <= 0) {
         clearInterval(timerInterval);
         timerCountEl.textContent = '0';
-        // Auto-submit the form
-        const submitBtn = document.getElementById('submitBtn');
-        if (submitBtn) {
-          submitBtn.click();
-        } else {
-          form.submit();
-        }
+        // Force submit the form (bypasses disabled button)
+        submitted = true;
+        form.submit();
       }
     }, 1000);
   }
