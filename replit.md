@@ -140,7 +140,7 @@ Server runs on `http://0.0.0.0:5000`
   - **Visual feedback**: Green glow on selected answers, animated checkmarks, rotating option letters, instant encouragement messages
   - **Touch optimization**: 60px+ touch targets, hover effects, scale animations, passive touch listeners, no-scroll layout
   - **Clean UI**: Removed difficulty level badges (Easy/Medium/Hard) from quiz display for cleaner look
-  - **Results page**: Animated SVG score circle with progressive ring fill, counting animation from 0 to final score, confetti for winners, "out of 10" format, "Missed a prize by X points" message with lightbulb emoji, "Next Player" button, playful messaging ("We see you! Stop flexing now!" for winners, "Not enough knowledge to flex" for non-winners)
+  - **Results page**: Animated SVG score circle with progressive ring fill, counting animation from 0 to final score, confetti for winners, "out of 10" format, "Missed a prize by X points" message with lightbulb emoji, "Next Player" button, playful messaging (💪 "Bravo! We see you! Stop flexing now!" for winners, ✌️ "Good Try! Not enough knowledge to flex" for non-winners)
   - **Micro-interactions**: Smooth slide transitions between questions, shake animation for unanswered questions
   - **Enhanced accessibility**: Better visual hierarchy, clear labels with icons, improved contrast, responsive design
 - **2025-10-22 v2.0:** Complete quiz system overhaul:
