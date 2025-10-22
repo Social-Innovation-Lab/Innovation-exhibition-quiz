@@ -1,12 +1,12 @@
 # BRAC Exhibition Quiz - Tablet Kiosk PWA
 
 ## Overview
-A tablet-friendly Progressive Web App (PWA) quiz kiosk for BRAC exhibitions. Displays 10 randomly generated questions with weighted difficulty distribution. Programme names are hidden (replaced with "this programme") to increase challenge. Winners (≥70% = 7/10) are tracked with automatic Excel export.
+A tablet-friendly Progressive Web App (PWA) quiz kiosk for BRAC exhibitions. Displays 10 randomly generated questions with weighted difficulty distribution showing actual BRAC programme names. Winners (≥70% = 7/10) are tracked with automatic Excel export.
 
 ## Project Status
 **Status:** ✅ Fully Functional  
 **Last Updated:** October 22, 2025  
-**Version:** 2.1
+**Version:** 2.2
 
 ## Key Features
 - **Tablet-Optimized UI:** Large tap targets (48px min), readable 18px fonts, sticky progress bar
@@ -14,7 +14,7 @@ A tablet-friendly Progressive Web App (PWA) quiz kiosk for BRAC exhibitions. Dis
 - **Kiosk Mode:** Prevention of accidental back/refresh with confirmation dialogs
 - **Weighted Random Selection:** Questions randomly selected with 40% Easy, 30% Medium, 30% Hard distribution
 - **Winner Detection:** 70% threshold (7/10 questions) triggers winner status
-- **Anonymous Questions:** Programme names replaced with "this programme" to increase difficulty
+- **Programme Names Visible:** Questions display actual BRAC programme names
 - **Admin Dashboard:** Real-time stats, winner list, gift tracking, CSV export
 - **SQLite with WAL:** Concurrent access support for multiple tablets
 
@@ -42,7 +42,7 @@ Each quiz generates a fresh set of 10 questions:
 2. **3 Medium questions** (weight 1.5) - 30% of quiz
 3. **3 Hard questions** (weight 2.0) - 30% of quiz
 4. Questions shuffled to mix difficulty levels
-5. Programme names replaced with "this programme" to hide identity
+5. Actual BRAC programme names displayed in questions
 
 ## File Structure
 ```
@@ -133,6 +133,7 @@ Server runs on `http://0.0.0.0:5000`
 - **Code Style:** Simple, readable Python/Flask with inline comments
 
 ## Recent Changes
+- **2025-10-22 v2.2:** Restored actual BRAC programme names in questions (removed "this programme" replacement), changed results page header from "Results" to "Score", compact landing page with smaller proportions
 - **2025-10-22 v2.1:** Interactive UX/UI overhaul with tablet kiosk optimizations:
   - **Landing page**: Animated hero with bouncing logo, "How It Works" step cards, gradient background, smooth fade-in animations
   - **Quiz carousel**: Single-question display with bidirectional swipe navigation (swipe left/right freely), prev/next buttons, auto-advance after selection, all questions and options properly capitalized, 4 answer options (A, B, C, D) per question

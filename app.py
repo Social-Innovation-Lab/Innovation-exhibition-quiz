@@ -131,7 +131,7 @@ def capitalize_first_letter(text):
     return text[0].upper() + text[1:] if text else text
 
 def import_questions():
-    """Import questions from CSV file and replace programme names with generic terms"""
+    """Import questions from CSV file with actual programme names"""
     import re
     conn = get_db()
     csv_path = 'attached_assets/Untitled spreadsheet - QuestionBank_1761118191656.csv'
@@ -139,15 +139,8 @@ def import_questions():
     with open(csv_path, 'r', encoding='utf-8') as f:
         reader = csv.DictReader(f)
         for row in reader:
-            # Replace programme name with generic "this programme" to hide identity
+            # Keep the actual question text with programme names
             question_text = row['question']
-            programme_name = row['programme_name']
-            
-            # Replace the full programme name with "this programme"
-            question_text = question_text.replace(programme_name, 'this programme')
-            
-            # Remove any remaining standalone programme codes in parentheses
-            question_text = re.sub(r'\([A-Z]+\)', '', question_text)
             
             # Clean up extra spaces and punctuation
             question_text = re.sub(r'\s+', ' ', question_text).strip()
