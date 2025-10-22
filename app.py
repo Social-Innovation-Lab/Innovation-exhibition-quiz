@@ -393,8 +393,14 @@ def submit():
     # Export result to Excel file
     export_to_excel(participant_id, score, percent, is_winner, total_questions)
     
+    # Get participant name for display
+    participant = conn.execute(
+        'SELECT name FROM participants WHERE id = ?', (participant_id,)
+    ).fetchone()
+    
     # Render result page directly (no redirect to avoid cookie issues)
     data = {
+        'name': participant['name'] if participant else 'Participant',
         'score': score,
         'total': total_questions,
         'percent': round(percent, 2),
