@@ -67,56 +67,58 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 20px;
+  padding: 30px 20px;
   background: linear-gradient(135deg, #fff 0%, #fff5f7 100%);
+  gap: 30px;
 }
 
 .hero-section {
   text-align: center;
-  margin-bottom: 40px;
   animation: fadeInUp 0.6s ease-out;
+  width: 100%;
+  max-width: 900px;
 }
 
 .hero-logo {
-  max-width: 120px;
+  max-width: 150px;
   height: auto;
-  margin: 0 auto 20px;
+  margin: 0 auto 25px;
   display: block;
   animation: bounceIn 0.8s ease-out;
 }
 
 .hero-title {
-  font-size: clamp(24px, 5vw, 36px);
+  font-size: clamp(28px, 5vw, 42px);
   color: #222;
-  margin: 0 0 10px;
+  margin: 0 0 15px;
   font-weight: 700;
   animation: fadeInUp 0.6s ease-out 0.1s backwards;
 }
 
 .hero-subtitle {
-  font-size: clamp(16px, 3vw, 20px);
+  font-size: clamp(18px, 3vw, 24px);
   color: #e31837;
   font-weight: 600;
-  margin: 0 0 30px;
+  margin: 0 0 35px;
   animation: fadeInUp 0.6s ease-out 0.2s backwards;
 }
 
 .how-it-works {
   display: flex;
-  gap: 15px;
+  gap: 20px;
   justify-content: center;
   align-items: center;
   flex-wrap: wrap;
-  max-width: 700px;
+  max-width: 800px;
   margin: 0 auto;
 }
 
 .step-card {
   flex: 1;
-  min-width: 120px;
+  min-width: 140px;
   background: white;
-  border-radius: 16px;
-  padding: 20px 15px;
+  border-radius: 18px;
+  padding: 25px 20px;
   box-shadow: 0 4px 12px rgba(227, 24, 55, 0.1);
   transition: all 0.3s ease;
   animation: fadeInUp 0.6s ease-out backwards;
@@ -127,7 +129,7 @@
 .step-card:nth-child(5) { animation-delay: 0.5s; }
 
 .step-arrow {
-  font-size: 32px;
+  font-size: 36px;
   color: #e31837;
   font-weight: 700;
   animation: fadeIn 0.6s ease-out 0.35s backwards, pulse 2s ease-in-out infinite;
@@ -143,50 +145,50 @@
 }
 
 .step-icon {
-  font-size: 36px;
-  margin-bottom: 8px;
+  font-size: 42px;
+  margin-bottom: 10px;
 }
 
 .step-text {
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 600;
   color: #555;
 }
 
 .quiz-form {
   width: 100%;
-  max-width: 500px;
+  max-width: 550px;
   background: white;
-  border-radius: 20px;
-  padding: 30px;
+  border-radius: 24px;
+  padding: 40px;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
   animation: fadeInUp 0.6s ease-out 0.6s backwards;
 }
 
 .form-group {
-  margin-bottom: 24px;
+  margin-bottom: 28px;
 }
 
 .form-label {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   font-weight: 600;
   color: #333;
-  margin-bottom: 8px;
-  font-size: 16px;
+  margin-bottom: 10px;
+  font-size: 17px;
 }
 
 .label-icon {
-  font-size: 20px;
+  font-size: 22px;
 }
 
 .form-input {
   width: 100%;
-  padding: 16px;
+  padding: 18px;
   font-size: 18px;
   border: 2px solid #e0e0e0;
-  border-radius: 12px;
+  border-radius: 14px;
   box-sizing: border-box;
   transition: all 0.3s ease;
   background: #fafafa;
@@ -202,21 +204,22 @@
 
 .start-button {
   width: 100%;
-  padding: 18px 24px;
-  font-size: 20px;
+  padding: 20px 28px;
+  font-size: 22px;
   font-weight: 700;
   color: white;
   background: linear-gradient(135deg, #e31837 0%, #c41430 100%);
   border: none;
-  border-radius: 12px;
+  border-radius: 14px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
+  gap: 12px;
   transition: all 0.3s ease;
   box-shadow: 0 6px 20px rgba(227, 24, 55, 0.3);
-  min-height: 60px;
+  min-height: 65px;
+  margin-top: 10px;
 }
 
 .start-button:hover {
