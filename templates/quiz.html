@@ -2,7 +2,7 @@
 
 {% block content %}
 <div class="progress container">
-  <div>Answered <b id="ansCount">0</b>/22</div>
+  <div>Answered <b id="ansCount">0</b>/10</div>
   <div class="bar"><i id="barFill"></i></div>
 </div>
 
@@ -13,7 +13,7 @@
   
   {% for q in items %}
   <section class="card q-block">
-    <h2>{{loop.index}}. {{q.programme_name}}</h2>
+    <h2>Question {{loop.index}}</h2>
     <p>{{q.question}}</p>
     {% set letters = ['A','B','C','D'] %}
     {% for opt in q.options %}

@@ -56,12 +56,22 @@ def init_db():
     """Initialize database schema and import questions"""
     conn = get_db()
     
-    # Create tables
+    # Drop old tables to start fresh with new schema
+    conn.executescript('''
+        DROP TABLE IF EXISTS responses;
+        DROP TABLE IF EXISTS attempts;
+        DROP TABLE IF EXISTS rotation_queue;
+        DROP TABLE IF EXISTS questions;
+    ''')
+    
+    # Create tables with new schema
     conn.executescript('''
         CREATE TABLE IF NOT EXISTS questions (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             programme_code TEXT NOT NULL,
             programme_name TEXT NOT NULL,
+            difficulty TEXT NOT NULL,
+            weight REAL NOT NULL,
             question TEXT NOT NULL,
             option_A TEXT NOT NULL,
             option_B TEXT NOT NULL,
@@ -69,16 +79,6 @@ def init_db():
             option_D TEXT NOT NULL,
             answer TEXT NOT NULL,
             answer_text TEXT NOT NULL
-        );
-        
-        CREATE TABLE IF NOT EXISTS rotation_queue (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            programme_code TEXT NOT NULL,
-            question_id INTEGER NOT NULL,
-            position INTEGER NOT NULL,
-            times_used INTEGER DEFAULT 0,
-            FOREIGN KEY (question_id) REFERENCES questions(id),
-            UNIQUE(programme_code, position)
         );
         
         CREATE TABLE IF NOT EXISTS participants (
@@ -94,7 +94,7 @@ def init_db():
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             participant_id INTEGER NOT NULL,
             score INTEGER NOT NULL,
-            total_questions INTEGER DEFAULT 22,
+            total_questions INTEGER DEFAULT 10,
             percent REAL NOT NULL,
             is_winner INTEGER DEFAULT 0,
             gift_given INTEGER DEFAULT 0,
@@ -112,97 +112,98 @@ def init_db():
             FOREIGN KEY (question_id) REFERENCES questions(id)
         );
         
-        CREATE INDEX IF NOT EXISTS idx_rotation_prog ON rotation_queue(programme_code);
+        CREATE INDEX IF NOT EXISTS idx_questions_difficulty ON questions(difficulty);
         CREATE INDEX IF NOT EXISTS idx_attempts_winner ON attempts(is_winner);
     ''')
     
-    # Check if questions already loaded
-    count = conn.execute('SELECT COUNT(*) FROM questions').fetchone()[0]
-    if count == 0:
-        print("Importing questions from CSV...")
-        import_questions()
+    # Import questions
+    print("Importing questions from CSV...")
+    import_questions()
     
     conn.commit()
     conn.close()
     print("Database initialized successfully!")
 
 def import_questions():
-    """Import questions from CSV file"""
+    """Import questions from CSV file and replace programme names with generic terms"""
+    import re
     conn = get_db()
-    csv_path = 'attached_assets/Exhibition Questions Demo - brac_exhibition_quiz_220_questions_1761025867146.csv'
+    csv_path = 'attached_assets/Untitled spreadsheet - QuestionBank_1761118191656.csv'
     
     with open(csv_path, 'r', encoding='utf-8') as f:
         reader = csv.DictReader(f)
         for row in reader:
+            # Replace programme name with generic "this programme" to hide identity
+            question_text = row['question']
+            programme_name = row['programme_name']
+            
+            # Replace the full programme name with "this programme"
+            question_text = question_text.replace(programme_name, 'this programme')
+            
+            # Remove any remaining standalone programme codes in parentheses
+            question_text = re.sub(r'\([A-Z]+\)', '', question_text)
+            
+            # Clean up extra spaces and punctuation
+            question_text = re.sub(r'\s+', ' ', question_text).strip()
+            question_text = re.sub(r'\s+([?.!,])', r'\1', question_text)  # Fix spacing before punctuation
+            
             conn.execute('''
-                INSERT INTO questions (programme_code, programme_name, question, 
+                INSERT INTO questions (programme_code, programme_name, difficulty, weight, question, 
                                       option_A, option_B, option_C, option_D, answer, answer_text)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-            ''', (row['programme_code'], row['programme_name'], row['question'],
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ''', (row['programme_code'], row['programme_name'], row['difficulty'], 
+                  float(row['weight']), question_text,
                   row['option_A'], row['option_B'], row['option_C'], row['option_D'],
-                  row['answer'], row['answer_text']))
+                  row['answer_letter'], row['answer_text']))
     
     conn.commit()
-    
-    # Initialize rotation queues
-    initialize_rotation_queues()
-    print(f"Imported questions and initialized rotation queues")
+    print(f"Imported questions from new question bank")
 
-def initialize_rotation_queues():
-    """Initialize rotation queues for each programme"""
+def select_weighted_random_questions(num_questions=10):
+    """Select random questions with difficulty-based weighting
+    
+    Target distribution for 10 questions:
+    - Easy (weight 1): ~4 questions (40%)
+    - Medium (weight 1.5): ~3 questions (30%)
+    - Hard (weight 2): ~3 questions (30%)
+    """
+    import random
     conn = get_db()
     
-    # Get all programmes
-    programmes = conn.execute('SELECT DISTINCT programme_code FROM questions ORDER BY programme_code').fetchall()
+    # Target distribution
+    target_easy = 4
+    target_medium = 3
+    target_hard = 3
     
-    for prog in programmes:
-        prog_code = prog['programme_code']
-        
-        # Get all question IDs for this programme
-        questions = conn.execute(
-            'SELECT id FROM questions WHERE programme_code = ? ORDER BY RANDOM()',
-            (prog_code,)
-        ).fetchall()
-        
-        # Insert into rotation queue
-        for idx, q in enumerate(questions):
-            conn.execute('''
-                INSERT OR IGNORE INTO rotation_queue (programme_code, question_id, position, times_used)
-                VALUES (?, ?, ?, 0)
-            ''', (prog_code, q['id'], idx))
+    selected_questions = []
     
-    conn.commit()
+    # Get Easy questions
+    easy_questions = conn.execute(
+        'SELECT * FROM questions WHERE difficulty = "Easy" ORDER BY RANDOM() LIMIT ?',
+        (target_easy,)
+    ).fetchall()
+    selected_questions.extend([dict(q) for q in easy_questions])
+    
+    # Get Medium questions
+    medium_questions = conn.execute(
+        'SELECT * FROM questions WHERE difficulty = "Medium" ORDER BY RANDOM() LIMIT ?',
+        (target_medium,)
+    ).fetchall()
+    selected_questions.extend([dict(q) for q in medium_questions])
+    
+    # Get Hard questions
+    hard_questions = conn.execute(
+        'SELECT * FROM questions WHERE difficulty = "Hard" ORDER BY RANDOM() LIMIT ?',
+        (target_hard,)
+    ).fetchall()
+    selected_questions.extend([dict(q) for q in hard_questions])
+    
+    # Shuffle the selected questions so difficulty levels are mixed
+    random.shuffle(selected_questions)
+    
+    return selected_questions
 
-def get_next_question_for_programme(programme_code):
-    """Get next question from rotation queue (least used)"""
-    conn = get_db()
-    
-    # Find the question with minimum times_used, prefer lower position on tie
-    result = conn.execute('''
-        SELECT question_id, times_used, position
-        FROM rotation_queue
-        WHERE programme_code = ?
-        ORDER BY times_used ASC, position ASC
-        LIMIT 1
-    ''', (programme_code,)).fetchone()
-    
-    if result:
-        question_id = result['question_id']
-        # Increment usage counter
-        conn.execute('''
-            UPDATE rotation_queue 
-            SET times_used = times_used + 1
-            WHERE programme_code = ? AND question_id = ?
-        ''', (programme_code, question_id))
-        conn.commit()
-        
-        # Return the full question
-        question = conn.execute('SELECT * FROM questions WHERE id = ?', (question_id,)).fetchone()
-        return dict(question)
-    
-    return None
-
-def export_to_excel(participant_id, score, percent, is_winner):
+def export_to_excel(participant_id, score, percent, is_winner, total_questions=10):
     """Export quiz result to Excel file"""
     try:
         conn = get_db()
@@ -244,7 +245,7 @@ def export_to_excel(participant_id, score, percent, is_winner):
             participant['name'],
             participant['pin'],
             masked_phone,
-            f"{score}/22",
+            f"{score}/{total_questions}",
             f"{percent:.2f}%",
             "Yes" if is_winner else "No",
             datetime.now().strftime('%Y-%m-%d %H:%M:%S')
@@ -300,22 +301,17 @@ def start():
     
     print(f"Created participant: participant_id={participant_id}, name={name}")
     
-    # Get all programmes (should be 22)
-    programmes = conn.execute(
-        'SELECT DISTINCT programme_code, programme_name FROM questions ORDER BY programme_code'
-    ).fetchall()
+    # Get 10 random questions with weighted distribution
+    questions = select_weighted_random_questions(10)
     
-    # Get one question per programme using rotation queue
-    questions = []
-    for prog in programmes:
-        q = get_next_question_for_programme(prog['programme_code'])
-        if q:
-            # Format for template
-            q['options'] = [q['option_A'], q['option_B'], q['option_C'], q['option_D']]
-            questions.append(q)
+    # Format for template
+    for q in questions:
+        q['options'] = [q['option_A'], q['option_B'], q['option_C'], q['option_D']]
     
     # Store the participant_id and question IDs to pass to template
     question_ids = [q['id'] for q in questions]
+    
+    print(f"Selected {len(questions)} questions for quiz")
     
     # Render quiz page directly (no redirect to avoid cookie issues)
     return render_template('quiz.html', 
@@ -323,35 +319,6 @@ def start():
                          participant_id=participant_id,
                          question_ids=question_ids,
                          participant_name=name)
-
-@app.route('/quiz')
-def quiz():
-    """Display 22-question quiz (one per programme)"""
-    print(f"Quiz route - session contents: {dict(session)}")
-    if 'participant_id' not in session:
-        print("No participant_id in session - redirecting to home")
-        return redirect('/')
-    
-    conn = get_db()
-    
-    # Get all programmes (should be 22)
-    programmes = conn.execute(
-        'SELECT DISTINCT programme_code, programme_name FROM questions ORDER BY programme_code'
-    ).fetchall()
-    
-    # Get one question per programme using rotation queue
-    questions = []
-    for prog in programmes:
-        q = get_next_question_for_programme(prog['programme_code'])
-        if q:
-            # Format for template
-            q['options'] = [q['option_A'], q['option_B'], q['option_C'], q['option_D']]
-            questions.append(q)
-    
-    # Store question IDs in session for grading
-    session['question_ids'] = [q['id'] for q in questions]
-    
-    return render_template('quiz.html', items=questions)
 
 @app.route('/submit', methods=['POST'])
 def submit():
@@ -368,10 +335,13 @@ def submit():
     
     conn = get_db()
     
+    # Total questions is now 10
+    total_questions = len(question_ids)
+    
     # Create attempt record
     cursor = conn.execute(
-        'INSERT INTO attempts (participant_id, score, total_questions, percent, is_winner) VALUES (?, 0, 22, 0, 0)',
-        (participant_id,)
+        'INSERT INTO attempts (participant_id, score, total_questions, percent, is_winner) VALUES (?, 0, ?, 0, 0)',
+        (participant_id, total_questions)
     )
     attempt_id = cursor.lastrowid
     
@@ -391,9 +361,9 @@ def submit():
             (attempt_id, qid, selected, is_correct)
         )
     
-    # Calculate percentage and winner status
-    percent = (score / 22) * 100
-    is_winner = 1 if percent >= 70 else 0
+    # Calculate percentage and winner status (70% = 7/10)
+    percent = (score / total_questions) * 100
+    is_winner = 1 if score >= 7 else 0
     
     # Update attempt
     conn.execute(
@@ -403,12 +373,15 @@ def submit():
     
     conn.commit()
     
+    print(f"Quiz graded: score={score}/{total_questions}, percent={percent:.2f}%, winner={is_winner}")
+    
     # Export result to Excel file
-    export_to_excel(participant_id, score, percent, is_winner)
+    export_to_excel(participant_id, score, percent, is_winner, total_questions)
     
     # Render result page directly (no redirect to avoid cookie issues)
     data = {
         'score': score,
+        'total': total_questions,
         'percent': round(percent, 2),
         'is_winner': is_winner
     }
