@@ -135,8 +135,8 @@ Server runs on `http://0.0.0.0:5000`
 ## Recent Changes
 - **2025-10-22 v2.1:** Interactive UX/UI overhaul with tablet kiosk optimizations:
   - **Landing page**: Animated hero with bouncing logo, "How It Works" step cards, gradient background, smooth fade-in animations
-  - **Quiz carousel**: Single-question display with bidirectional swipe navigation (swipe left/right freely), prev/next buttons, auto-advance after selection
-  - **80-second timer**: Countdown timer with fire emoji at top-left, warning state at 30s (yellow), danger state at 10s (red pulsing), auto-submit when time expires
+  - **Quiz carousel**: Single-question display with bidirectional swipe navigation (swipe left/right freely), prev/next buttons, auto-advance after selection, all questions and options properly capitalized, 4 answer options (A, B, C, D) per question
+  - **80-second timer**: Countdown timer with clock emoji (⏰) at top-left, warning state at 30s (yellow), danger state at 10s (red pulsing), auto-submit when time expires
   - **Visual feedback**: Green glow on selected answers, animated checkmarks, rotating option letters, instant encouragement messages
   - **Touch optimization**: 60px+ touch targets, hover effects, scale animations, passive touch listeners, no-scroll layout
   - **Clean UI**: Removed difficulty level badges (Easy/Medium/Hard) from quiz display for cleaner look

@@ -124,6 +124,12 @@ def init_db():
     conn.close()
     print("Database initialized successfully!")
 
+def capitalize_first_letter(text):
+    """Capitalize the first letter of a string if it's not already capitalized"""
+    if not text:
+        return text
+    return text[0].upper() + text[1:] if text else text
+
 def import_questions():
     """Import questions from CSV file and replace programme names with generic terms"""
     import re
@@ -147,13 +153,22 @@ def import_questions():
             question_text = re.sub(r'\s+', ' ', question_text).strip()
             question_text = re.sub(r'\s+([?.!,])', r'\1', question_text)  # Fix spacing before punctuation
             
+            # Capitalize first letter
+            question_text = capitalize_first_letter(question_text)
+            
+            # Capitalize options
+            option_a = capitalize_first_letter(row['option_A'].strip())
+            option_b = capitalize_first_letter(row['option_B'].strip())
+            option_c = capitalize_first_letter(row['option_C'].strip())
+            option_d = capitalize_first_letter(row['option_D'].strip())
+            
             conn.execute('''
                 INSERT INTO questions (programme_code, programme_name, difficulty, weight, question, 
                                       option_A, option_B, option_C, option_D, answer, answer_text)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             ''', (row['programme_code'], row['programme_name'], row['difficulty'], 
                   float(row['weight']), question_text,
-                  row['option_A'], row['option_B'], row['option_C'], row['option_D'],
+                  option_a, option_b, option_c, option_d,
                   row['answer_letter'], row['answer_text']))
     
     conn.commit()
