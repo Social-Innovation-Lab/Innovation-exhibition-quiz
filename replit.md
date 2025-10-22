@@ -137,7 +137,7 @@ Server runs on `http://0.0.0.0:5000`
   - **Landing page**: Animated hero with bouncing logo, "How It Works" step cards, gradient background, smooth fade-in animations
   - **Quiz carousel**: Single-question display with bidirectional swipe navigation (swipe left/right freely), prev/next buttons, auto-advance after selection, all questions and options properly capitalized, 4 answer options (A, B, C, D) per question
   - **80-second timer**: Countdown timer with clock emoji (⏰) at top-left, warning state at 30s (yellow), danger state at 10s (red pulsing), auto-submit when time expires
-  - **Visual feedback**: Green glow on selected answers, animated checkmarks, rotating option letters, instant encouragement messages
+  - **Visual feedback**: Blue glow on selected answers (#2196F3), animated checkmarks, rotating option letters, instant encouragement messages
   - **Touch optimization**: 60px+ touch targets, hover effects, scale animations, passive touch listeners, no-scroll layout
   - **Clean UI**: Removed difficulty level badges (Easy/Medium/Hard) from quiz display for cleaner look
   - **Results page**: Animated SVG score circle with progressive ring fill, counting animation from 0 to final score, confetti for winners, "out of 10" format, "Missed a prize by X points" message with lightbulb emoji, "Next Player" button, playful messaging (💪 "Bravo! We see you! Stop flexing now!" for winners, ✌️ "Good Try! Not enough knowledge to flex" for non-winners)

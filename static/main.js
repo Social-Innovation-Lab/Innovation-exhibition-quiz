@@ -68,7 +68,9 @@
     if (currentQuestion === totalQuestions - 1) {
       nextBtn.style.display = 'none';
       submitBtn.style.display = 'block';
+      // Enable submit if all 10 questions answered
       submitBtn.disabled = answeredCount < totalQuestions;
+      console.log('Submit button state:', { answeredCount, totalQuestions, disabled: submitBtn.disabled });
     } else {
       nextBtn.style.display = 'flex';
       submitBtn.style.display = 'none';
