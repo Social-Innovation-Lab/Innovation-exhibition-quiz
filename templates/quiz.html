@@ -1,31 +1,494 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="progress container">
-  <div>Answered <b id="ansCount">0</b>/10</div>
-  <div class="bar"><i id="barFill"></i></div>
+<!-- Enhanced Progress Header -->
+<div class="quiz-header">
+  <div class="progress-info">
+    <div class="question-counter">
+      <span class="current-q" id="currentQ">1</span>
+      <span class="separator">/</span>
+      <span class="total-q">10</span>
+    </div>
+    <div class="streak-badge" id="streakBadge">
+      <span class="fire-icon">🔥</span>
+      <span id="streakCount">0</span>
+    </div>
+  </div>
+  <div class="progress-bar-container">
+    <div class="progress-bar-fill" id="progressFill"></div>
+    <div class="progress-dots">
+      {% for i in range(10) %}
+      <div class="dot" id="dot{{i}}"></div>
+      {% endfor %}
+    </div>
+  </div>
 </div>
 
-<form method="POST" action="/submit" id="quizForm" class="container">
-  <!-- Hidden fields to pass participant data without cookies -->
-  <input type="hidden" name="participant_id" value="{{participant_id}}">
-  <input type="hidden" name="question_ids" value="{{question_ids|join(',')}}">
+<!-- Quiz Carousel -->
+<div class="quiz-container">
+  <form method="POST" action="/submit" id="quizForm">
+    <input type="hidden" name="participant_id" value="{{participant_id}}">
+    <input type="hidden" name="question_ids" value="{{question_ids|join(',')}}">
+    
+    <div class="carousel-wrapper">
+      {% for q in items %}
+      <div class="question-card {% if loop.index == 1 %}active{% endif %}" data-question="{{loop.index}}">
+        <div class="card-header">
+          <span class="q-number">Question {{loop.index}}</span>
+          <span class="q-difficulty">{{ ['🟢 Easy', '🟡 Medium', '🔴 Hard'][loop.index % 3] }}</span>
+        </div>
+        
+        <div class="question-text">
+          <p>{{q.question}}</p>
+        </div>
+        
+        <div class="options-grid">
+          {% set letters = ['A','B','C','D'] %}
+          {% for opt in q.options %}
+          <label class="option-card">
+            <input type="radio" name="{{q.id}}" value="{{letters[loop.index0]}}" required>
+            <div class="option-content">
+              <span class="option-letter">{{letters[loop.index0]}}</span>
+              <span class="option-text">{{opt}}</span>
+              <span class="checkmark">✓</span>
+            </div>
+          </label>
+          {% endfor %}
+        </div>
+        
+        <div class="encouragement" id="encourage{{loop.index}}"></div>
+      </div>
+      {% endfor %}
+    </div>
+    
+    <!-- Navigation Buttons -->
+    <div class="nav-controls">
+      <button type="button" class="nav-btn prev-btn" id="prevBtn" disabled>
+        <span>←</span>
+        <span>Previous</span>
+      </button>
+      <button type="button" class="nav-btn next-btn" id="nextBtn">
+        <span>Next</span>
+        <span>→</span>
+      </button>
+      <button type="submit" class="submit-btn" id="submitBtn" style="display: none;">
+        <span>🏆 Submit Quiz</span>
+      </button>
+    </div>
+  </form>
+</div>
+
+<style>
+.quiz-header {
+  position: sticky;
+  top: 0;
+  background: linear-gradient(135deg, #e31837 0%, #c41430 100%);
+  color: white;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  z-index: 100;
+  animation: slideDown 0.5s ease-out;
+}
+
+.progress-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.question-counter {
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.current-q {
+  color: #fff;
+  font-size: 32px;
+}
+
+.separator {
+  opacity: 0.7;
+  margin: 0 5px;
+}
+
+.total-q {
+  opacity: 0.9;
+}
+
+.streak-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255,255,255,0.2);
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 20px;
+  font-weight: 700;
+  transition: all 0.3s ease;
+}
+
+.streak-badge.active {
+  background: rgba(255,255,255,0.3);
+  transform: scale(1.1);
+  animation: pulse 0.5s ease;
+}
+
+.fire-icon {
+  font-size: 24px;
+  animation: flicker 2s infinite;
+}
+
+.progress-bar-container {
+  position: relative;
+  background: rgba(255,255,255,0.2);
+  height: 8px;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background: rgba(255,255,255,0.9);
+  border-radius: 10px;
+  transition: width 0.4s ease;
+  width: 10%;
+}
+
+.progress-dots {
+  position: absolute;
+  top: -6px;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 2%;
+}
+
+.dot {
+  width: 20px;
+  height: 20px;
+  background: rgba(255,255,255,0.3);
+  border: 3px solid #e31837;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+}
+
+.dot.answered {
+  background: white;
+  border-color: white;
+  transform: scale(1.2);
+  box-shadow: 0 0 10px rgba(255,255,255,0.5);
+}
+
+.quiz-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.carousel-wrapper {
+  position: relative;
+  min-height: 500px;
+}
+
+.question-card {
+  position: absolute;
+  width: 100%;
+  opacity: 0;
+  transform: translateX(100%);
+  transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  pointer-events: none;
+}
+
+.question-card.active {
+  opacity: 1;
+  transform: translateX(0);
+  pointer-events: all;
+  position: relative;
+}
+
+.question-card.prev {
+  transform: translateX(-100%);
+  opacity: 0;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding: 15px 20px;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border-radius: 12px;
+  animation: fadeIn 0.6s ease-out;
+}
+
+.q-number {
+  font-size: 20px;
+  font-weight: 700;
+  color: #e31837;
+}
+
+.q-difficulty {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.question-text {
+  background: white;
+  padding: 30px;
+  border-radius: 16px;
+  margin-bottom: 25px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+  animation: fadeIn 0.6s ease-out 0.1s backwards;
+}
+
+.question-text p {
+  font-size: 20px;
+  line-height: 1.6;
+  color: #222;
+  margin: 0;
+  font-weight: 500;
+}
+
+.options-grid {
+  display: grid;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.option-card {
+  position: relative;
+  display: block;
+  cursor: pointer;
+  animation: fadeInUp 0.5s ease-out backwards;
+  transition: all 0.3s ease;
+}
+
+.option-card:nth-child(1) { animation-delay: 0.2s; }
+.option-card:nth-child(2) { animation-delay: 0.3s; }
+.option-card:nth-child(3) { animation-delay: 0.4s; }
+.option-card:nth-child(4) { animation-delay: 0.5s; }
+
+.option-card input {
+  position: absolute;
+  opacity: 0;
+}
+
+.option-content {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 20px;
+  background: white;
+  border: 3px solid #e0e0e0;
+  border-radius: 14px;
+  transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  min-height: 70px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.option-letter {
+  flex-shrink: 0;
+  width: 45px;
+  height: 45px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border-radius: 50%;
+  font-weight: 700;
+  font-size: 18px;
+  color: #555;
+  transition: all 0.3s ease;
+}
+
+.option-text {
+  flex: 1;
+  font-size: 17px;
+  color: #333;
+  line-height: 1.5;
+}
+
+.checkmark {
+  flex-shrink: 0;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: #4CAF50;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  opacity: 0;
+  transform: scale(0);
+  transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.option-card:hover .option-content {
+  border-color: #e31837;
+  box-shadow: 0 6px 20px rgba(227, 24, 55, 0.15);
+  transform: translateY(-3px);
+}
+
+.option-card input:checked ~ .option-content {
+  border-color: #4CAF50;
+  background: linear-gradient(135deg, #f1f8f4 0%, #e8f5e9 100%);
+  box-shadow: 0 8px 25px rgba(76, 175, 80, 0.2);
+  transform: scale(1.02);
+}
+
+.option-card input:checked ~ .option-content .option-letter {
+  background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+  color: white;
+  transform: rotate(360deg);
+}
+
+.option-card input:checked ~ .option-content .checkmark {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.encouragement {
+  text-align: center;
+  font-size: 18px;
+  font-weight: 600;
+  color: #4CAF50;
+  min-height: 30px;
+  animation: fadeIn 0.5s ease-out;
+}
+
+.nav-controls {
+  display: flex;
+  gap: 15px;
+  margin-top: 30px;
+  justify-content: space-between;
+}
+
+.nav-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 18px 24px;
+  font-size: 18px;
+  font-weight: 700;
+  border: 3px solid #e31837;
+  background: white;
+  color: #e31837;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-height: 65px;
+}
+
+.nav-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+  border-color: #ccc;
+  color: #999;
+}
+
+.nav-btn:not(:disabled):hover {
+  background: #e31837;
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(227, 24, 55, 0.3);
+}
+
+.nav-btn:not(:disabled):active {
+  transform: translateY(0);
+}
+
+.submit-btn {
+  width: 100%;
+  padding: 20px;
+  font-size: 22px;
+  font-weight: 700;
+  color: white;
+  background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+  min-height: 70px;
+  animation: bounceIn 0.6s ease-out;
+}
+
+.submit-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(76, 175, 80, 0.5);
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
+@keyframes flicker {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.8; }
+}
+
+@keyframes bounceIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@media (max-width: 600px) {
+  .question-text p {
+    font-size: 18px;
+  }
   
-  {% for q in items %}
-  <section class="card q-block">
-    <h2>Question {{loop.index}}</h2>
-    <p>{{q.question}}</p>
-    {% set letters = ['A','B','C','D'] %}
-    {% for opt in q.options %}
-      <label class="opt">
-        <input type="radio" name="{{q.id}}" value="{{letters[loop.index0]}}" required>
-        <span><b>{{letters[loop.index0]}}.</b> {{opt}}</span>
-      </label>
-    {% endfor %}
-  </section>
-  {% endfor %}
-  <button id="submitBtn" type="submit" disabled>Submit answers</button>
-</form>
+  .option-text {
+    font-size: 16px;
+  }
+  
+  .nav-controls {
+    flex-direction: column;
+  }
+}
+</style>
 {% endblock %}
 
 {% block scripts %}

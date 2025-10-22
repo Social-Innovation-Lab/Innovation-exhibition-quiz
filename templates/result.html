@@ -1,49 +1,317 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="container" style="text-align:center; padding-top: 40px;">
-  <div class="card result-card">
-    <h1 style="font-size: 32px; margin-bottom: 24px; color: var(--brand);">Score</h1>
+<div class="result-container">
+  <div class="result-card">
+    <!-- Animated Header -->
+    <div class="result-header">
+      <h1 class="congrats-text">{{ "🏆 Congratulations!" if data.is_winner else "📊 Results" }}</h1>
+      <p class="participant-name">{{data.name}}</p>
+    </div>
     
-    <div class="score-display">
-      <div style="font-size: 72px; font-weight: bold; color: var(--brand); margin: 20px 0;">
-        {{data.score}}<span style="font-size: 48px; color: #666;">/{{data.total}}</span>
+    <!-- Animated Score Circle -->
+    <div class="score-circle">
+      <svg class="circle-svg" width="250" height="250">
+        <circle class="circle-bg" cx="125" cy="125" r="110" />
+        <circle class="circle-progress" id="progressCircle" cx="125" cy="125" r="110" 
+                data-final-offset="{{691 - (691 * data.percent / 100)}}" />
+      </svg>
+      <div class="score-content">
+        <div class="score-number" id="animatedScore">0</div>
+        <div class="score-total">/{{data.total}}</div>
+        <div class="score-percent">{{data.percent}}%</div>
       </div>
     </div>
     
-    <div class="percentage-bar">
-      <div class="percentage-fill" style="width: {{data.percent}}%;"></div>
-    </div>
-    <p style="font-size: 24px; font-weight: 600; margin: 16px 0; color: #333;">
-      {{data.percent}}%
-    </p>
-    
+    <!-- Status Message -->
     {% if data.is_winner %}
-      <div style="margin: 24px 0;">
-        <p style="font-size: 28px; font-weight: bold; color: var(--brand); margin: 12px 0;">
-          🎉 Winner! 🎉
-        </p>
-        <p style="font-size: 20px; color: #333;">
-          Please collect your gift at the Prize Desk.
-        </p>
+      <div class="winner-message">
+        <div class="trophy-icon">🎉</div>
+        <h2 class="status-title">You're a Winner!</h2>
+        <p class="status-text">Congratulations on scoring {{data.percent}}%!</p>
+        <div class="prize-banner">
+          <span class="prize-icon">🎁</span>
+          <span>Collect your gift at the Prize Desk</span>
+        </div>
       </div>
     {% else %}
-      <div style="margin: 24px 0;">
-        <p style="font-size: 20px; color: #666;">
-          Keep exploring and try again!
-        </p>
+      <div class="try-again-message">
+        <div class="emoji-icon">💪</div>
+        <h2 class="status-title">Good Try!</h2>
+        <p class="status-text">You scored {{data.percent}}%. Keep learning about BRAC's innovations!</p>
+        <p class="hint-text">💡 Need {{7 - data.score}} more correct to win a prize</p>
       </div>
     {% endif %}
     
-    <p style="font-size: 22px; margin: 24px 0; color: #333; font-weight: 500;">
-      Thank you for playing!
-    </p>
-    
-    <a class="btn" href="/" style="margin-top: 16px; font-size: 20px; padding: 16px 32px;">
-      Play Again
-    </a>
+    <!-- Call to Action -->
+    <div class="cta-section">
+      <p class="thank-you">Thank you for exploring BRAC Innovation!</p>
+      <a class="play-again-btn" href="/">
+        <span class="btn-icon">🔄</span>
+        <span>Play Again</span>
+      </a>
+    </div>
   </div>
 </div>
+
+<style>
+.result-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: linear-gradient(135deg, #fff 0%, #fff5f7 100%);
+}
+
+.result-card {
+  max-width: 600px;
+  width: 100%;
+  background: white;
+  border-radius: 24px;
+  padding: 40px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+  animation: slideUp 0.6s ease-out;
+}
+
+.result-header {
+  text-align: center;
+  margin-bottom: 40px;
+  animation: fadeIn 0.6s ease-out;
+}
+
+.congrats-text {
+  font-size: clamp(28px, 6vw, 36px);
+  font-weight: 700;
+  color: #e31837;
+  margin: 0 0 12px;
+  animation: bounceIn 0.8s ease-out;
+}
+
+.participant-name {
+  font-size: 20px;
+  color: #666;
+  margin: 0;
+  font-weight: 500;
+}
+
+.score-circle {
+  position: relative;
+  width: 250px;
+  height: 250px;
+  margin: 0 auto 40px;
+  animation: zoomIn 0.8s ease-out 0.2s backwards;
+}
+
+.circle-svg {
+  transform: rotate(-90deg);
+}
+
+.circle-bg {
+  fill: none;
+  stroke: #f0f0f0;
+  stroke-width: 20;
+}
+
+.circle-progress {
+  fill: none;
+  stroke: #e31837;
+  stroke-width: 20;
+  stroke-linecap: round;
+  stroke-dasharray: 691;
+  stroke-dashoffset: 691;
+  transition: stroke-dashoffset 2s ease-out;
+}
+
+.score-content {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+
+.score-number {
+  font-size: 64px;
+  font-weight: 700;
+  color: #e31837;
+  line-height: 1;
+}
+
+.score-total {
+  font-size: 32px;
+  color: #999;
+  margin-top: -10px;
+}
+
+.score-percent {
+  font-size: 24px;
+  font-weight: 600;
+  color: #333;
+  margin-top: 8px;
+}
+
+.winner-message, .try-again-message {
+  text-align: center;
+  animation: fadeIn 0.6s ease-out 0.4s backwards;
+}
+
+.trophy-icon, .emoji-icon {
+  font-size: 64px;
+  margin-bottom: 16px;
+  animation: bounce 1s ease-in-out infinite;
+}
+
+.status-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: #222;
+  margin: 0 0 12px;
+}
+
+.status-text {
+  font-size: 18px;
+  color: #666;
+  margin: 0 0 20px;
+}
+
+.prize-banner {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+  color: white;
+  padding: 16px 32px;
+  border-radius: 50px;
+  font-size: 20px;
+  font-weight: 700;
+  box-shadow: 0 8px 20px rgba(76, 175, 80, 0.3);
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.prize-icon {
+  font-size: 28px;
+}
+
+.hint-text {
+  font-size: 16px;
+  color: #999;
+  margin-top: 12px;
+  font-style: italic;
+}
+
+.cta-section {
+  text-align: center;
+  margin-top: 40px;
+  padding-top: 30px;
+  border-top: 2px solid #f0f0f0;
+  animation: fadeIn 0.6s ease-out 0.6s backwards;
+}
+
+.thank-you {
+  font-size: 18px;
+  color: #666;
+  margin: 0 0 24px;
+  font-weight: 500;
+}
+
+.play-again-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  padding: 18px 40px;
+  background: linear-gradient(135deg, #e31837 0%, #c41430 100%);
+  color: white;
+  text-decoration: none;
+  border-radius: 50px;
+  font-size: 20px;
+  font-weight: 700;
+  box-shadow: 0 8px 20px rgba(227, 24, 55, 0.3);
+  transition: all 0.3s ease;
+  min-height: 60px;
+}
+
+.play-again-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 30px rgba(227, 24, 55, 0.4);
+}
+
+.btn-icon {
+  font-size: 24px;
+  animation: spin 2s linear infinite;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes bounceIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes zoomIn {
+  from {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@media (max-width: 600px) {
+  .result-card {
+    padding: 30px 20px;
+  }
+  
+  .score-circle {
+    width: 200px;
+    height: 200px;
+  }
+  
+  .score-number {
+    font-size: 52px;
+  }
+}
+</style>
 
 <canvas id="confetti-canvas" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9999;"></canvas>
 {% endblock %}
@@ -51,34 +319,69 @@
 {% block scripts %}
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 <script>
-// Trigger confetti animation on page load
+// Animated score counter and circle
 window.addEventListener('load', function() {
-  var duration = 3 * 1000;
-  var animationEnd = Date.now() + duration;
-  var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 10000 };
-
-  function randomInRange(min, max) {
-    return Math.random() * (max - min) + min;
+  const finalScore = {{data.score}};
+  const scoreElement = document.getElementById('animatedScore');
+  const progressCircle = document.getElementById('progressCircle');
+  const finalOffset = progressCircle.getAttribute('data-final-offset');
+  const duration = 1500;
+  const startTime = Date.now();
+  
+  // Animate the SVG circle
+  setTimeout(() => {
+    progressCircle.style.strokeDashoffset = finalOffset;
+  }, 100);
+  
+  // Animate the score number
+  function animateScore() {
+    const elapsed = Date.now() - startTime;
+    const progress = Math.min(elapsed / duration, 1);
+    const easeOutQuart = 1 - Math.pow(1 - progress, 4);
+    const currentScore = Math.floor(easeOutQuart * finalScore);
+    
+    scoreElement.textContent = currentScore;
+    
+    if (progress < 1) {
+      requestAnimationFrame(animateScore);
+    } else {
+      scoreElement.textContent = finalScore;
+    }
   }
+  
+  animateScore();
+  
+  // Trigger confetti animation for winners
+  {% if data.is_winner %}
+  setTimeout(function() {
+    var duration = 3 * 1000;
+    var animationEnd = Date.now() + duration;
+    var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 10000 };
 
-  var interval = setInterval(function() {
-    var timeLeft = animationEnd - Date.now();
-
-    if (timeLeft <= 0) {
-      return clearInterval(interval);
+    function randomInRange(min, max) {
+      return Math.random() * (max - min) + min;
     }
 
-    var particleCount = 50 * (timeLeft / duration);
-    
-    confetti(Object.assign({}, defaults, { 
-      particleCount, 
-      origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } 
-    }));
-    confetti(Object.assign({}, defaults, { 
-      particleCount, 
-      origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } 
-    }));
-  }, 250);
+    var interval = setInterval(function() {
+      var timeLeft = animationEnd - Date.now();
+
+      if (timeLeft <= 0) {
+        return clearInterval(interval);
+      }
+
+      var particleCount = 50 * (timeLeft / duration);
+      
+      confetti(Object.assign({}, defaults, { 
+        particleCount, 
+        origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } 
+      }));
+      confetti(Object.assign({}, defaults, { 
+        particleCount, 
+        origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } 
+      }));
+    }, 250);
+  }, 800);
+  {% endif %}
 });
 </script>
 {% endblock %}

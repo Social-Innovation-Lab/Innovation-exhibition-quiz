@@ -1,23 +1,254 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div style="min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px;">
-  <form method="POST" action="/start" class="card" style="width: 100%; max-width: 500px; box-sizing: border-box;">
-    <img src="/static/brac-logo.jpg" alt="BRAC Logo" style="max-width: 120px; height: auto; margin: 0 auto 20px; display: block;">
-    <h1 style="text-align: center;">BRAC Innovation Exhibition 2025</h1>
-    <p style="text-align: center; font-size: 16px; color: #666; margin: -10px 0 30px;">Play the Quiz to Flex Your Reflex</p>
-    <label>Full name
-      <input name="name" type="text" required autocomplete="name" style="box-sizing: border-box;">
-    </label>
-    <label>PIN
-      <input name="pin" type="text" inputmode="numeric" pattern="[0-9]{6}" required style="box-sizing: border-box;">
-    </label>
-    <label>Phone
-      <input name="phone" type="tel" inputmode="tel" autocomplete="tel" required style="box-sizing: border-box;">
-    </label>
-    <button type="submit" style="width: 100%; box-sizing: border-box;">Start Quiz</button>
+<div class="welcome-container">
+  <!-- Hero Section with Animation -->
+  <div class="hero-section">
+    <img src="/static/brac-logo.jpg" alt="BRAC Logo" class="hero-logo">
+    <h1 class="hero-title">BRAC Innovation Exhibition 2025</h1>
+    <p class="hero-subtitle">Play the Quiz to Flex Your Reflex</p>
+    
+    <!-- How It Works Section -->
+    <div class="how-it-works">
+      <div class="step-card">
+        <div class="step-icon">📝</div>
+        <div class="step-text">Sign In</div>
+      </div>
+      <div class="step-card">
+        <div class="step-icon">🎯</div>
+        <div class="step-text">Answer 10 Questions</div>
+      </div>
+      <div class="step-card">
+        <div class="step-icon">🏆</div>
+        <div class="step-text">Win Prizes!</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sign-in Form -->
+  <form method="POST" action="/start" class="quiz-form">
+    <div class="form-group">
+      <label class="form-label">
+        <span class="label-icon">👤</span>
+        <span>Full name</span>
+      </label>
+      <input name="name" type="text" required autocomplete="name" class="form-input">
+    </div>
+    
+    <div class="form-group">
+      <label class="form-label">
+        <span class="label-icon">🔢</span>
+        <span>PIN (6 digits)</span>
+      </label>
+      <input name="pin" type="text" inputmode="numeric" pattern="[0-9]{6}" required class="form-input">
+    </div>
+    
+    <div class="form-group">
+      <label class="form-label">
+        <span class="label-icon">📱</span>
+        <span>Phone</span>
+      </label>
+      <input name="phone" type="tel" inputmode="tel" autocomplete="tel" required class="form-input">
+    </div>
+    
+    <button type="submit" class="start-button">
+      <span>Start Quiz</span>
+      <span class="button-arrow">→</span>
+    </button>
   </form>
 </div>
+
+<style>
+.welcome-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: linear-gradient(135deg, #fff 0%, #fff5f7 100%);
+}
+
+.hero-section {
+  text-align: center;
+  margin-bottom: 40px;
+  animation: fadeInUp 0.6s ease-out;
+}
+
+.hero-logo {
+  max-width: 120px;
+  height: auto;
+  margin: 0 auto 20px;
+  display: block;
+  animation: bounceIn 0.8s ease-out;
+}
+
+.hero-title {
+  font-size: clamp(24px, 5vw, 36px);
+  color: #222;
+  margin: 0 0 10px;
+  font-weight: 700;
+  animation: fadeInUp 0.6s ease-out 0.1s backwards;
+}
+
+.hero-subtitle {
+  font-size: clamp(16px, 3vw, 20px);
+  color: #e31837;
+  font-weight: 600;
+  margin: 0 0 30px;
+  animation: fadeInUp 0.6s ease-out 0.2s backwards;
+}
+
+.how-it-works {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+  flex-wrap: wrap;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.step-card {
+  flex: 1;
+  min-width: 120px;
+  background: white;
+  border-radius: 16px;
+  padding: 20px 15px;
+  box-shadow: 0 4px 12px rgba(227, 24, 55, 0.1);
+  transition: all 0.3s ease;
+  animation: fadeInUp 0.6s ease-out backwards;
+}
+
+.step-card:nth-child(1) { animation-delay: 0.3s; }
+.step-card:nth-child(2) { animation-delay: 0.4s; }
+.step-card:nth-child(3) { animation-delay: 0.5s; }
+
+.step-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(227, 24, 55, 0.15);
+}
+
+.step-icon {
+  font-size: 36px;
+  margin-bottom: 8px;
+}
+
+.step-text {
+  font-size: 14px;
+  font-weight: 600;
+  color: #555;
+}
+
+.quiz-form {
+  width: 100%;
+  max-width: 500px;
+  background: white;
+  border-radius: 20px;
+  padding: 30px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+  animation: fadeInUp 0.6s ease-out 0.6s backwards;
+}
+
+.form-group {
+  margin-bottom: 24px;
+}
+
+.form-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 8px;
+  font-size: 16px;
+}
+
+.label-icon {
+  font-size: 20px;
+}
+
+.form-input {
+  width: 100%;
+  padding: 16px;
+  font-size: 18px;
+  border: 2px solid #e0e0e0;
+  border-radius: 12px;
+  box-sizing: border-box;
+  transition: all 0.3s ease;
+  background: #fafafa;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: #e31837;
+  background: white;
+  box-shadow: 0 0 0 4px rgba(227, 24, 55, 0.1);
+  transform: scale(1.01);
+}
+
+.start-button {
+  width: 100%;
+  padding: 18px 24px;
+  font-size: 20px;
+  font-weight: 700;
+  color: white;
+  background: linear-gradient(135deg, #e31837 0%, #c41430 100%);
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  transition: all 0.3s ease;
+  box-shadow: 0 6px 20px rgba(227, 24, 55, 0.3);
+  min-height: 60px;
+}
+
+.start-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(227, 24, 55, 0.4);
+}
+
+.start-button:active {
+  transform: translateY(0);
+  box-shadow: 0 4px 15px rgba(227, 24, 55, 0.3);
+}
+
+.button-arrow {
+  font-size: 24px;
+  transition: transform 0.3s ease;
+}
+
+.start-button:hover .button-arrow {
+  transform: translateX(5px);
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes bounceIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+</style>
 {% endblock %}
 
 {% block scripts %}
