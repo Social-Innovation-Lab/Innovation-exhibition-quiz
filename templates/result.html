@@ -28,7 +28,7 @@
       <div class="winner-message">
         <div class="trophy-icon">🎉</div>
         <h2 class="status-title">You're a Winner!</h2>
-        <p class="status-text">Congratulations on scoring {{data.percent}}%!</p>
+        <p class="status-text">We see you! Stop flexing now!</p>
         <div class="prize-banner">
           <span class="prize-icon">🎁</span>
           <span>Collect your gift at the Prize Desk</span>
@@ -37,8 +37,8 @@
     {% else %}
       <div class="try-again-message">
         <div class="emoji-icon">💪</div>
-        <h2 class="status-title">Good Try!</h2>
-        <p class="status-text">You scored {{data.percent}}%. Keep learning about BRAC's innovations!</p>
+        <h2 class="status-title">Bravo!</h2>
+        <p class="status-text">You scored {{data.percent}}%. Not enough knowledge to flex</p>
         <p class="hint-text">💡 Missed a prize by {{7 - data.score}} point{{ 's' if (7 - data.score) != 1 else '' }}</p>
       </div>
     {% endif %}
