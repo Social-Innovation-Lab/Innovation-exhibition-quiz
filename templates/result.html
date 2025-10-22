@@ -11,10 +11,10 @@
     
     <!-- Animated Score Circle -->
     <div class="score-circle">
-      <svg class="circle-svg" width="250" height="250">
-        <circle class="circle-bg" cx="125" cy="125" r="110" />
-        <circle class="circle-progress" id="progressCircle" cx="125" cy="125" r="110" 
-                data-final-offset="{{691 - (691 * data.percent / 100)}}" />
+      <svg class="circle-svg" width="200" height="200">
+        <circle class="circle-bg" cx="100" cy="100" r="90" />
+        <circle class="circle-progress" id="progressCircle" cx="100" cy="100" r="90" 
+                data-final-offset="{{565 - (565 * data.percent / 100)}}" />
       </svg>
       <div class="score-content">
         <div class="score-number" id="animatedScore">0</div>
@@ -60,36 +60,36 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 20px;
+  padding: 15px;
   background: linear-gradient(135deg, #fff 0%, #fff5f7 100%);
 }
 
 .result-card {
-  max-width: 600px;
+  max-width: 550px;
   width: 100%;
   background: white;
-  border-radius: 24px;
-  padding: 40px;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+  border-radius: 20px;
+  padding: 25px;
+  box-shadow: 0 15px 50px rgba(0,0,0,0.12);
   animation: slideUp 0.6s ease-out;
 }
 
 .result-header {
   text-align: center;
-  margin-bottom: 40px;
+  margin-bottom: 25px;
   animation: fadeIn 0.6s ease-out;
 }
 
 .congrats-text {
-  font-size: clamp(28px, 6vw, 36px);
+  font-size: clamp(24px, 5vw, 32px);
   font-weight: 700;
   color: #e31837;
-  margin: 0 0 12px;
+  margin: 0 0 8px;
   animation: bounceIn 0.8s ease-out;
 }
 
 .participant-name {
-  font-size: 20px;
+  font-size: 18px;
   color: #666;
   margin: 0;
   font-weight: 500;
@@ -97,9 +97,9 @@
 
 .score-circle {
   position: relative;
-  width: 250px;
-  height: 250px;
-  margin: 0 auto 40px;
+  width: 200px;
+  height: 200px;
+  margin: 0 auto 25px;
   animation: zoomIn 0.8s ease-out 0.2s backwards;
 }
 
@@ -110,16 +110,16 @@
 .circle-bg {
   fill: none;
   stroke: #f0f0f0;
-  stroke-width: 20;
+  stroke-width: 16;
 }
 
 .circle-progress {
   fill: none;
   stroke: #e31837;
-  stroke-width: 20;
+  stroke-width: 16;
   stroke-linecap: round;
-  stroke-dasharray: 691;
-  stroke-dashoffset: 691;
+  stroke-dasharray: 565;
+  stroke-dashoffset: 565;
   transition: stroke-dashoffset 2s ease-out;
 }
 
@@ -132,23 +132,23 @@
 }
 
 .score-number {
-  font-size: 64px;
+  font-size: 52px;
   font-weight: 700;
   color: #e31837;
   line-height: 1;
 }
 
 .score-total {
-  font-size: 24px;
+  font-size: 20px;
   color: #999;
-  margin-top: 5px;
+  margin-top: 4px;
 }
 
 .score-percent {
-  font-size: 24px;
+  font-size: 20px;
   font-weight: 600;
   color: #333;
-  margin-top: 8px;
+  margin-top: 6px;
 }
 
 .winner-message, .try-again-message {
@@ -157,78 +157,78 @@
 }
 
 .trophy-icon, .emoji-icon {
-  font-size: 64px;
-  margin-bottom: 16px;
+  font-size: 48px;
+  margin-bottom: 10px;
   animation: bounce 1s ease-in-out infinite;
 }
 
 .status-title {
-  font-size: 28px;
+  font-size: 24px;
   font-weight: 700;
   color: #222;
-  margin: 0 0 12px;
+  margin: 0 0 8px;
 }
 
 .status-text {
-  font-size: 18px;
+  font-size: 16px;
   color: #666;
-  margin: 0 0 20px;
+  margin: 0 0 12px;
 }
 
 .prize-banner {
   display: inline-flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
   color: white;
-  padding: 16px 32px;
+  padding: 12px 24px;
   border-radius: 50px;
-  font-size: 20px;
+  font-size: 17px;
   font-weight: 700;
-  box-shadow: 0 8px 20px rgba(76, 175, 80, 0.3);
+  box-shadow: 0 6px 16px rgba(76, 175, 80, 0.3);
   animation: pulse 2s ease-in-out infinite;
 }
 
 .prize-icon {
-  font-size: 28px;
+  font-size: 22px;
 }
 
 .hint-text {
-  font-size: 16px;
+  font-size: 14px;
   color: #999;
-  margin-top: 12px;
+  margin-top: 8px;
   font-style: italic;
 }
 
 .cta-section {
   text-align: center;
-  margin-top: 40px;
-  padding-top: 30px;
+  margin-top: 25px;
+  padding-top: 20px;
   border-top: 2px solid #f0f0f0;
   animation: fadeIn 0.6s ease-out 0.6s backwards;
 }
 
 .thank-you {
-  font-size: 18px;
+  font-size: 16px;
   color: #666;
-  margin: 0 0 24px;
+  margin: 0 0 18px;
   font-weight: 500;
 }
 
 .play-again-btn {
   display: inline-flex;
   align-items: center;
-  gap: 12px;
-  padding: 18px 40px;
+  gap: 10px;
+  padding: 14px 32px;
   background: linear-gradient(135deg, #e31837 0%, #c41430 100%);
   color: white;
   text-decoration: none;
   border-radius: 50px;
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 700;
-  box-shadow: 0 8px 20px rgba(227, 24, 55, 0.3);
+  box-shadow: 0 6px 16px rgba(227, 24, 55, 0.3);
   transition: all 0.3s ease;
-  min-height: 60px;
+  min-height: 50px;
 }
 
 .play-again-btn:hover {
@@ -298,16 +298,16 @@
 
 @media (max-width: 600px) {
   .result-card {
-    padding: 30px 20px;
+    padding: 20px 15px;
   }
   
   .score-circle {
-    width: 200px;
-    height: 200px;
+    width: 180px;
+    height: 180px;
   }
   
   .score-number {
-    font-size: 52px;
+    font-size: 44px;
   }
 }
 </style>
