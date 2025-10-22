@@ -5,8 +5,8 @@ A tablet-friendly Progressive Web App (PWA) quiz kiosk for BRAC exhibitions. Dis
 
 ## Project Status
 **Status:** ✅ Fully Functional  
-**Last Updated:** October 21, 2025  
-**Version:** 1.1
+**Last Updated:** October 22, 2025  
+**Version:** 1.2
 
 ## Key Features
 - **Tablet-Optimized UI:** Large tap targets (48px min), readable 18px fonts, sticky progress bar
@@ -132,5 +132,12 @@ Server runs on `http://0.0.0.0:5000`
 - **Code Style:** Simple, readable Python/Flask with inline comments
 
 ## Recent Changes
+- **2025-10-22 v1.2:** Enhanced result page and Excel export:
+  - Redesigned score page with centered layout, larger bold score display
+  - Added visual progress bar showing percentage with green gradient
+  - Added confetti animation (canvas-confetti) that plays when results are shown
+  - Added "Thank you for playing!" message
+  - Implemented automatic Excel export (quiz_results.xlsx) - saves each quiz result with BRAC branding
+  - Fixed session cookie issues in iframe by removing redirects and passing data via form fields
 - **2025-10-21 v1.1:** Updated sign-in page - Added BRAC logo, changed title to "BRAC Innovation Exhibition 2025", added tagline "Play the Quiz to Flex Your Reflex", changed PIN requirement to exactly 6 digits, removed consent checkbox
 - **2025-10-21 v1.0:** Initial build - Complete PWA quiz kiosk with rotation queues, admin dashboard, and CSV export

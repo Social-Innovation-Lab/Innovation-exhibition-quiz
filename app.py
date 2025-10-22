@@ -6,6 +6,8 @@ from flask import Flask, render_template, request, redirect, session, jsonify, m
 from functools import wraps
 import os
 import hashlib
+from openpyxl import Workbook, load_workbook
+from openpyxl.styles import Font, PatternFill, Alignment
 
 app = Flask(__name__)
 app.secret_key = os.environ.get('SESSION_SECRET', secrets.token_hex(32))
@@ -16,6 +18,7 @@ app.config['PERMANENT_SESSION_LIFETIME'] = 3600  # 1 hour session
 
 DATABASE = 'quiz.db'
 ADMIN_PIN = os.environ.get('ADMIN_PIN', '2025')
+EXCEL_FILE = 'quiz_results.xlsx'
 
 def generate_csrf_token():
     """Generate CSRF token for session"""
@@ -199,6 +202,75 @@ def get_next_question_for_programme(programme_code):
     
     return None
 
+def export_to_excel(participant_id, score, percent, is_winner):
+    """Export quiz result to Excel file"""
+    try:
+        conn = get_db()
+        participant = conn.execute(
+            'SELECT name, pin, phone FROM participants WHERE id = ?',
+            (participant_id,)
+        ).fetchone()
+        
+        if not participant:
+            return
+        
+        # Create or load workbook
+        if os.path.exists(EXCEL_FILE):
+            wb = load_workbook(EXCEL_FILE)
+            ws = wb.active
+        else:
+            wb = Workbook()
+            ws = wb.active
+            ws.title = "Quiz Results"
+            
+            # Create header row
+            headers = ['Name', 'PIN', 'Phone', 'Score', 'Percentage', 'Winner', 'Date & Time']
+            ws.append(headers)
+            
+            # Style headers
+            header_fill = PatternFill(start_color="E31837", end_color="E31837", fill_type="solid")
+            header_font = Font(bold=True, color="FFFFFF")
+            for cell in ws[1]:
+                cell.fill = header_fill
+                cell.font = header_font
+                cell.alignment = Alignment(horizontal="center", vertical="center")
+        
+        # Mask phone number (show last 4 digits only)
+        phone = participant['phone']
+        masked_phone = f"****{phone[-4:]}" if len(phone) >= 4 else phone
+        
+        # Add data row
+        row_data = [
+            participant['name'],
+            participant['pin'],
+            masked_phone,
+            f"{score}/22",
+            f"{percent:.2f}%",
+            "Yes" if is_winner else "No",
+            datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        ]
+        ws.append(row_data)
+        
+        # Auto-adjust column widths
+        for column in ws.columns:
+            max_length = 0
+            column_letter = column[0].column_letter
+            for cell in column:
+                try:
+                    if len(str(cell.value)) > max_length:
+                        max_length = len(str(cell.value))
+                except:
+                    pass
+            adjusted_width = min(max_length + 2, 50)
+            ws.column_dimensions[column_letter].width = adjusted_width
+        
+        # Save workbook
+        wb.save(EXCEL_FILE)
+        print(f"Exported result to {EXCEL_FILE}")
+        
+    except Exception as e:
+        print(f"Error exporting to Excel: {e}")
+
 @app.route('/')
 def index():
     """Landing page with sign-in form"""
@@ -330,6 +402,9 @@ def submit():
     )
     
     conn.commit()
+    
+    # Export result to Excel file
+    export_to_excel(participant_id, score, percent, is_winner)
     
     # Render result page directly (no redirect to avoid cookie issues)
     data = {
