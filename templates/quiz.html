@@ -9,9 +9,9 @@
       <span class="separator">/</span>
       <span class="total-q">10</span>
     </div>
-    <div class="streak-badge" id="streakBadge">
+    <div class="timer-badge" id="timerBadge">
       <span class="fire-icon">🔥</span>
-      <span id="streakCount">0</span>
+      <span id="timerCount">80</span>
     </div>
   </div>
   <div class="progress-bar-container">
@@ -35,7 +35,6 @@
       <div class="question-card {% if loop.index == 1 %}active{% endif %}" data-question="{{loop.index}}">
         <div class="card-header">
           <span class="q-number">Question {{loop.index}}</span>
-          <span class="q-difficulty">{{ ['🟢 Easy', '🟡 Medium', '🔴 Hard'][loop.index % 3] }}</span>
         </div>
         
         <div class="question-text">
@@ -116,7 +115,7 @@
   opacity: 0.9;
 }
 
-.streak-badge {
+.timer-badge {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -128,10 +127,14 @@
   transition: all 0.3s ease;
 }
 
-.streak-badge.active {
-  background: rgba(255,255,255,0.3);
-  transform: scale(1.1);
-  animation: pulse 0.5s ease;
+.timer-badge.warning {
+  background: rgba(255,200,0,0.3);
+  animation: pulse 0.5s ease infinite;
+}
+
+.timer-badge.danger {
+  background: rgba(255,100,100,0.4);
+  animation: pulse 0.3s ease infinite;
 }
 
 .fire-icon {
@@ -189,7 +192,9 @@
 
 .carousel-wrapper {
   position: relative;
-  min-height: 500px;
+  min-height: 450px;
+  max-height: calc(100vh - 300px);
+  overflow: hidden;
 }
 
 .question-card {
@@ -214,25 +219,18 @@
 }
 
 .card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
   margin-bottom: 20px;
   padding: 15px 20px;
   background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
   border-radius: 12px;
   animation: fadeIn 0.6s ease-out;
+  text-align: center;
 }
 
 .q-number {
   font-size: 20px;
   font-weight: 700;
   color: #e31837;
-}
-
-.q-difficulty {
-  font-size: 14px;
-  font-weight: 600;
 }
 
 .question-text {

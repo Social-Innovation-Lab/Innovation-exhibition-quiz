@@ -6,8 +6,11 @@
   let currentQuestion = 0;
   const totalQuestions = 10;
   let answeredCount = 0;
-  let streak = 0;
   const answers = new Set();
+  
+  // 80-second timer
+  let timeRemaining = 80;
+  let timerInterval = null;
 
   const encouragements = [
     "Great choice! 🎯",
@@ -77,18 +80,41 @@
     if (encourageEl) {
       const randomMsg = encouragements[Math.floor(Math.random() * encouragements.length)];
       encourageEl.textContent = randomMsg;
-      
-      // Increment streak
-      streak++;
-      const streakBadge = document.getElementById('streakBadge');
-      const streakCount = document.getElementById('streakCount');
-      streakCount.textContent = streak;
-      
-      if (streak >= 3) {
-        streakBadge.classList.add('active');
-        setTimeout(() => streakBadge.classList.remove('active'), 500);
-      }
     }
+  }
+  
+  function startTimer() {
+    const timerCountEl = document.getElementById('timerCount');
+    const timerBadge = document.getElementById('timerBadge');
+    
+    timerInterval = setInterval(() => {
+      timeRemaining--;
+      timerCountEl.textContent = timeRemaining;
+      
+      // Add warning state when 30 seconds left
+      if (timeRemaining === 30) {
+        timerBadge.classList.add('warning');
+      }
+      
+      // Add danger state when 10 seconds left
+      if (timeRemaining === 10) {
+        timerBadge.classList.remove('warning');
+        timerBadge.classList.add('danger');
+      }
+      
+      // Auto-submit when time runs out
+      if (timeRemaining <= 0) {
+        clearInterval(timerInterval);
+        timerCountEl.textContent = '0';
+        // Auto-submit the form
+        const submitBtn = document.getElementById('submitBtn');
+        if (submitBtn) {
+          submitBtn.click();
+        } else {
+          form.submit();
+        }
+      }
+    }, 1000);
   }
 
   // Navigation buttons
@@ -183,13 +209,8 @@
     
     if (Math.abs(diff) > swipeThreshold) {
       if (diff > 0 && currentQuestion < totalQuestions - 1) {
-        // Swipe left - next question
-        const currentCard = document.querySelector('.question-card.active');
-        const currentInput = currentCard ? currentCard.querySelector('input[type="radio"]:checked') : null;
-        
-        if (currentInput) {
-          showQuestion(currentQuestion + 1);
-        }
+        // Swipe left - next question (allow even without answer)
+        showQuestion(currentQuestion + 1);
       } else if (diff < 0 && currentQuestion > 0) {
         // Swipe right - previous question
         showQuestion(currentQuestion - 1);
@@ -200,11 +221,13 @@
   // Initialize
   updateProgress();
   updateNavButtons();
+  startTimer();
 
   // Kiosk mode: prevent accidental back/refresh
   let submitted = false;
   form.addEventListener('submit', () => { 
-    submitted = true; 
+    submitted = true;
+    clearInterval(timerInterval); // Stop timer on submit
     const submitBtn = document.getElementById('submitBtn');
     if (submitBtn) {
       submitBtn.disabled = true; 

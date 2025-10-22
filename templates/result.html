@@ -18,7 +18,7 @@
       </svg>
       <div class="score-content">
         <div class="score-number" id="animatedScore">0</div>
-        <div class="score-total">/{{data.total}}</div>
+        <div class="score-total">out of {{data.total}}</div>
         <div class="score-percent">{{data.percent}}%</div>
       </div>
     </div>
@@ -39,7 +39,7 @@
         <div class="emoji-icon">💪</div>
         <h2 class="status-title">Good Try!</h2>
         <p class="status-text">You scored {{data.percent}}%. Keep learning about BRAC's innovations!</p>
-        <p class="hint-text">💡 Need {{7 - data.score}} more correct to win a prize</p>
+        <p class="hint-text">💡 Missed a prize by {{7 - data.score}} point{{ 's' if (7 - data.score) != 1 else '' }}</p>
       </div>
     {% endif %}
     
@@ -47,8 +47,8 @@
     <div class="cta-section">
       <p class="thank-you">Thank you for exploring BRAC Innovation!</p>
       <a class="play-again-btn" href="/">
-        <span class="btn-icon">🔄</span>
-        <span>Play Again</span>
+        <span class="btn-icon">👤</span>
+        <span>Next Player</span>
       </a>
     </div>
   </div>
@@ -139,9 +139,9 @@
 }
 
 .score-total {
-  font-size: 32px;
+  font-size: 24px;
   color: #999;
-  margin-top: -10px;
+  margin-top: 5px;
 }
 
 .score-percent {
@@ -238,7 +238,6 @@
 
 .btn-icon {
   font-size: 24px;
-  animation: spin 2s linear infinite;
 }
 
 @keyframes slideUp {
