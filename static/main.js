@@ -8,8 +8,8 @@
   let answeredCount = 0;
   const answers = new Set();
   
-  // 80-second timer
-  let timeRemaining = 80;
+  // 100-second timer
+  let timeRemaining = 100;
   let timerInterval = null;
 
   const encouragements = [
