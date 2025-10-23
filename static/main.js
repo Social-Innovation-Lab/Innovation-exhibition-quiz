@@ -185,31 +185,38 @@
   `;
   document.head.appendChild(style);
 
-  // Touch swipe navigation
+  // Touch swipe navigation (horizontal only, not vertical scroll)
   let touchStartX = 0;
   let touchEndX = 0;
+  let touchStartY = 0;
+  let touchEndY = 0;
   const carouselWrapper = document.querySelector('.carousel-wrapper');
   
   if (carouselWrapper) {
     carouselWrapper.addEventListener('touchstart', (e) => {
       touchStartX = e.changedTouches[0].screenX;
+      touchStartY = e.changedTouches[0].screenY;
     }, { passive: true });
 
     carouselWrapper.addEventListener('touchend', (e) => {
       touchEndX = e.changedTouches[0].screenX;
+      touchEndY = e.changedTouches[0].screenY;
       handleSwipe();
     }, { passive: true });
   }
 
   function handleSwipe() {
     const swipeThreshold = 50;
-    const diff = touchStartX - touchEndX;
+    const diffX = touchStartX - touchEndX;
+    const diffY = touchStartY - touchEndY;
     
-    if (Math.abs(diff) > swipeThreshold) {
-      if (diff > 0 && currentQuestion < totalQuestions - 1) {
+    // Only trigger horizontal swipe if horizontal movement is significantly larger than vertical
+    // This prevents vertical scrolling from triggering swipe navigation
+    if (Math.abs(diffX) > swipeThreshold && Math.abs(diffX) > Math.abs(diffY) * 2) {
+      if (diffX > 0 && currentQuestion < totalQuestions - 1) {
         // Swipe left - next question (allow even without answer)
         showQuestion(currentQuestion + 1);
-      } else if (diff < 0 && currentQuestion > 0) {
+      } else if (diffX < 0 && currentQuestion > 0) {
         // Swipe right - previous question
         showQuestion(currentQuestion - 1);
       }

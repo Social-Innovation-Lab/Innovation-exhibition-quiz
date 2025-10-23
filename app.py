@@ -519,7 +519,7 @@ def export_csv():
 def manifest():
     """PWA manifest"""
     return jsonify({
-        "name": "BRAC Exhibition Quiz",
+        "name": "BRAC Innovation Exhibition Quiz",
         "short_name": "BRAC Quiz",
         "start_url": "/",
         "display": "standalone",
