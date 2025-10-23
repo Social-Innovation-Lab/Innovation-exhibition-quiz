@@ -515,6 +515,20 @@ def export_csv():
     response.headers['Content-Disposition'] = 'attachment; filename=winners.csv'
     return response
 
+@app.route('/download-results')
+def download_results():
+    """Download Excel file with quiz results"""
+    if not os.path.exists(EXCEL_FILE):
+        return "No quiz results yet. Complete a quiz first.", 404
+    
+    from flask import send_file
+    return send_file(
+        EXCEL_FILE,
+        mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        as_attachment=True,
+        download_name=f'brac_quiz_results_{datetime.now().strftime("%Y%m%d_%H%M%S")}.xlsx'
+    )
+
 @app.route('/manifest.json')
 def manifest():
     """PWA manifest"""
