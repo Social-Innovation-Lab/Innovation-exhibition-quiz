@@ -12,7 +12,7 @@ A tablet-friendly Progressive Web App (PWA) quiz kiosk for BRAC exhibitions. Dis
 - **Tablet-Optimized UI:** Large tap targets (48px min), readable 18px fonts, sticky progress bar
 - **PWA Enabled:** Service worker caching, installable to home screen, offline asset support
 - **Kiosk Mode:** Prevention of accidental back/refresh with confirmation dialogs
-- **Weighted Random Selection:** Questions randomly selected with 40% Easy, 30% Medium, 30% Hard distribution
+- **Weighted Random Selection:** Questions randomly selected with 3 Easy, 3 Medium, 4 Hard distribution
 - **Winner Detection:** 70% threshold (7/10 questions) triggers winner status
 - **Programme Names Visible:** Questions display actual BRAC programme names
 - **Admin Dashboard:** Real-time stats, winner list, gift tracking, CSV export
@@ -38,9 +38,9 @@ A tablet-friendly Progressive Web App (PWA) quiz kiosk for BRAC exhibitions. Dis
 
 ### Weighted Random Selection Logic
 Each quiz generates a fresh set of 10 questions:
-1. **4 Easy questions** (weight 1.0) - 40% of quiz
+1. **3 Easy questions** (weight 1.0) - 30% of quiz
 2. **3 Medium questions** (weight 1.5) - 30% of quiz
-3. **3 Hard questions** (weight 2.0) - 30% of quiz
+3. **4 Hard questions** (weight 2.0) - 40% of quiz
 4. Questions shuffled to mix difficulty levels
 5. Actual BRAC programme names displayed in questions
 

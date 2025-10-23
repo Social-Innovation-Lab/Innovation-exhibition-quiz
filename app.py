@@ -171,17 +171,17 @@ def select_weighted_random_questions(num_questions=10):
     """Select random questions with difficulty-based weighting
     
     Target distribution for 10 questions:
-    - Easy (weight 1): ~4 questions (40%)
-    - Medium (weight 1.5): ~3 questions (30%)
-    - Hard (weight 2): ~3 questions (30%)
+    - Easy (weight 1): 3 questions (30%)
+    - Medium (weight 1.5): 3 questions (30%)
+    - Hard (weight 2): 4 questions (40%)
     """
     import random
     conn = get_db()
     
     # Target distribution
-    target_easy = 4
+    target_easy = 3
     target_medium = 3
-    target_hard = 3
+    target_hard = 4
     
     selected_questions = []
     
