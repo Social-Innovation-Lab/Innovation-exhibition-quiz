@@ -69,7 +69,19 @@
       nextBtn.style.display = 'none';
       submitBtn.style.display = 'block';
       // Enable submit if all 10 questions answered
-      submitBtn.disabled = answeredCount < totalQuestions;
+      const shouldDisable = answeredCount < totalQuestions;
+      submitBtn.disabled = shouldDisable;
+      
+      // Force enable on mobile/tablet after 2 seconds on last question
+      if (shouldDisable) {
+        setTimeout(() => {
+          const currentAnswered = document.querySelectorAll('input[type="radio"]:checked').length;
+          if (currentAnswered >= totalQuestions) {
+            submitBtn.disabled = false;
+          }
+        }, 2000);
+      }
+      
       console.log('Submit button state:', { answeredCount, totalQuestions, disabled: submitBtn.disabled });
     } else {
       nextBtn.style.display = 'flex';
