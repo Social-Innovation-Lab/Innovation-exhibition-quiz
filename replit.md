@@ -123,7 +123,7 @@ Server runs on `http://0.0.0.0:5000`
 ## Question Bank
 - **Total Questions:** 220
 - **Difficulty Levels:** Easy (66), Medium (66), Hard (88)
-- **Weight Distribution:** Easy=1.0, Medium=1.5, Hard=2.5
+- **Weight Distribution:** Easy=1.0, Medium=1.5, Hard=2.0
 - **Format:** Multiple choice (A, B, C, D)
 - **Programme Names:** Visible in questions
 
@@ -134,9 +134,9 @@ Server runs on `http://0.0.0.0:5000`
 
 ## Recent Changes
 - **2025-10-29 v2.4:** Weighted scoring and tiered prize messages:
-  - **Weighted marks display**: Results now show weighted marks (out of 17.5) instead of cumulative score count (out of 10)
-  - **Weighted calculation**: Easy questions = 1.0 mark, Medium = 1.5 marks, Hard = 2.5 marks
-  - **Total possible marks**: 3 Easy (3.0) + 3 Medium (4.5) + 4 Hard (10.0) = 17.5
+  - **Dual score display**: Results now show BOTH number of questions correct (out of 10) in the circle AND weighted marks (out of 15.5) in separate box
+  - **Weighted calculation**: Easy questions = 1.0 mark, Medium = 1.5 marks, Hard = 2.0 marks
+  - **Total possible weighted marks**: 3 Easy (3.0) + 3 Medium (4.5) + 4 Hard (8.0) = 15.5
   - **Tiered prize messages**: 90%+ wins one-on-one meeting with leader, 80-90% wins gift, 70-80% wins lunch token
   - **Removed "Missed prize by" message**: Cleaner results page without showing how close non-winners were
   - **Fixed progress bar**: Progress ribbon now reaches stamps precisely using formula ((answered-1)/(total-1))*100

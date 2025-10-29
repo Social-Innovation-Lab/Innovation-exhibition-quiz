@@ -18,9 +18,15 @@
       </svg>
       <div class="score-content">
         <div class="score-number" id="animatedScore">0</div>
-        <div class="score-total">out of {{data.total_weighted}}</div>
+        <div class="score-total">out of {{data.total}}</div>
         <div class="score-percent">{{data.percent}}%</div>
       </div>
+    </div>
+    
+    <!-- Weighted Score Display -->
+    <div class="weighted-score-display">
+      <span class="weighted-label">Weighted Score:</span>
+      <span class="weighted-value">{{data.weighted_score}} / {{data.total_weighted}}</span>
     </div>
     
     <!-- Status Message -->
@@ -154,6 +160,29 @@
   font-weight: 600;
   color: #333;
   margin-top: 6px;
+}
+
+.weighted-score-display {
+  text-align: center;
+  margin: 20px 0;
+  padding: 15px 20px;
+  background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%);
+  border-radius: 12px;
+  border: 2px solid #e31837;
+  animation: fadeIn 0.6s ease-out 0.3s backwards;
+}
+
+.weighted-label {
+  font-size: 16px;
+  color: #666;
+  font-weight: 600;
+  margin-right: 10px;
+}
+
+.weighted-value {
+  font-size: 20px;
+  color: #e31837;
+  font-weight: 700;
 }
 
 .winner-message, .try-again-message {
@@ -325,7 +354,7 @@
 <script>
 // Animated score counter and circle
 window.addEventListener('load', function() {
-  const finalScore = {{data.weighted_score}};
+  const finalScore = {{data.score}};
   const scoreElement = document.getElementById('animatedScore');
   const progressCircle = document.getElementById('progressCircle');
   const finalOffset = progressCircle.getAttribute('data-final-offset');
@@ -342,14 +371,14 @@ window.addEventListener('load', function() {
     const elapsed = Date.now() - startTime;
     const progress = Math.min(elapsed / duration, 1);
     const easeOutQuart = 1 - Math.pow(1 - progress, 4);
-    const currentScore = easeOutQuart * finalScore;
+    const currentScore = Math.floor(easeOutQuart * finalScore);
     
-    scoreElement.textContent = currentScore.toFixed(1);
+    scoreElement.textContent = currentScore;
     
     if (progress < 1) {
       requestAnimationFrame(animateScore);
     } else {
-      scoreElement.textContent = finalScore.toFixed(1);
+      scoreElement.textContent = finalScore;
     }
   }
   

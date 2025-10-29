@@ -173,7 +173,7 @@ def select_weighted_random_questions(num_questions=10):
     Target distribution for 10 questions:
     - Easy (weight 1.0): 3 questions (30%)
     - Medium (weight 1.5): 3 questions (30%)
-    - Hard (weight 2.5): 4 questions (40%)
+    - Hard (weight 2.0): 4 questions (40%)
     """
     import random
     conn = get_db()
@@ -421,8 +421,8 @@ def submit():
     ).fetchone()
     
     # Calculate total possible weighted marks (3 Easy + 3 Medium + 4 Hard)
-    # Easy (1.0) × 3 = 3.0, Medium (1.5) × 3 = 4.5, Hard (2.5) × 4 = 10.0
-    total_weighted_marks = 17.5
+    # Easy (1.0) × 3 = 3.0, Medium (1.5) × 3 = 4.5, Hard (2.0) × 4 = 8.0
+    total_weighted_marks = 15.5
     
     # Render result page directly (no redirect to avoid cookie issues)
     data = {
