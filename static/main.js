@@ -42,8 +42,8 @@
       }
     }
     
-    // Progress bar reaches each stamp based on answered questions
-    // Each question is 10% of the bar (100% / 10 questions)
+    // Progress bar reaches each stamp: 10 questions = 10 stamps
+    // Each answer adds 10% to reach the next stamp
     const progress = (totalAnswered / totalQuestions) * 100;
     document.getElementById('progressFill').style.width = progress + '%';
   }
