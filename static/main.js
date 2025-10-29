@@ -42,9 +42,10 @@
       }
     }
     
-    // Progress bar reaches each stamp: 10 questions = 10 stamps
-    // Each answer adds 10% to reach the next stamp
-    const progress = (totalAnswered / totalQuestions) * 100;
+    // Progress bar calculation to reach stamps correctly
+    // With space-between layout, stamps are at: 0%, 11.11%, 22.22%, ..., 100%
+    // Answer 1 → 0%, Answer 2 → 11.11%, ..., Answer 10 → 100%
+    const progress = totalAnswered > 0 ? ((totalAnswered - 1) / (totalQuestions - 1)) * 100 : 0;
     document.getElementById('progressFill').style.width = progress + '%';
   }
 
