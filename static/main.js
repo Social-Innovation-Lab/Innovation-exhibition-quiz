@@ -191,37 +191,56 @@
   let touchEndX = 0;
   let touchStartY = 0;
   let touchEndY = 0;
+  let isSwiping = false;
   const carouselWrapper = document.querySelector('.carousel-wrapper');
   
   if (carouselWrapper) {
     carouselWrapper.addEventListener('touchstart', (e) => {
-      touchStartX = e.changedTouches[0].screenX;
-      touchStartY = e.changedTouches[0].screenY;
+      touchStartX = e.changedTouches[0].clientX;
+      touchStartY = e.changedTouches[0].clientY;
+      isSwiping = false;
+    }, { passive: true });
+
+    carouselWrapper.addEventListener('touchmove', (e) => {
+      if (!isSwiping) {
+        const touchX = e.changedTouches[0].clientX;
+        const touchY = e.changedTouches[0].clientY;
+        const diffX = Math.abs(touchStartX - touchX);
+        const diffY = Math.abs(touchStartY - touchY);
+        
+        // Determine if this is a horizontal swipe early
+        if (diffX > 10 || diffY > 10) {
+          isSwiping = diffX > diffY;
+        }
+      }
     }, { passive: true });
 
     carouselWrapper.addEventListener('touchend', (e) => {
-      touchEndX = e.changedTouches[0].screenX;
-      touchEndY = e.changedTouches[0].screenY;
+      touchEndX = e.changedTouches[0].clientX;
+      touchEndY = e.changedTouches[0].clientY;
       handleSwipe();
     }, { passive: true });
   }
 
   function handleSwipe() {
-    const swipeThreshold = 50;
+    const swipeThreshold = 30; // Reduced threshold for easier swiping
     const diffX = touchStartX - touchEndX;
-    const diffY = touchStartY - touchEndY;
+    const diffY = Math.abs(touchStartY - touchEndY);
     
-    // Only trigger horizontal swipe if horizontal movement is significantly larger than vertical
-    // This prevents vertical scrolling from triggering swipe navigation
-    if (Math.abs(diffX) > swipeThreshold && Math.abs(diffX) > Math.abs(diffY) * 2) {
+    // Only trigger horizontal swipe if:
+    // 1. Horizontal movement exceeds threshold
+    // 2. Horizontal movement is dominant (at least 1.5x vertical movement)
+    if (Math.abs(diffX) > swipeThreshold && Math.abs(diffX) > diffY * 1.5) {
       if (diffX > 0 && currentQuestion < totalQuestions - 1) {
-        // Swipe left - next question (allow even without answer)
+        // Swipe left - next question
         showQuestion(currentQuestion + 1);
       } else if (diffX < 0 && currentQuestion > 0) {
         // Swipe right - previous question
         showQuestion(currentQuestion - 1);
       }
     }
+    
+    isSwiping = false;
   }
 
   // Initialize
