@@ -15,6 +15,14 @@ app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'  # Allows cookies in iframe redire
 app.config['SESSION_COOKIE_HTTPONLY'] = True
 app.config['PERMANENT_SESSION_LIFETIME'] = 3600  # 1 hour session
 
+# Disable caching to ensure CSS/JS updates are loaded immediately
+@app.after_request
+def add_no_cache_headers(response):
+    response.headers['Cache-Control'] = 'no-store, no-cache, must-revalidate, post-check=0, pre-check=0, max-age=0'
+    response.headers['Pragma'] = 'no-cache'
+    response.headers['Expires'] = '-1'
+    return response
+
 DATABASE_URL = os.environ.get('DATABASE_URL')
 ADMIN_PIN = os.environ.get('ADMIN_PIN', '2025')
 
