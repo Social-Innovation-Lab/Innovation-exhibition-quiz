@@ -47,8 +47,8 @@ A tablet-friendly Progressive Web App (PWA) quiz kiosk for BRAC exhibitions. Dis
 
 ### Weighted Random Selection Logic
 Each quiz generates a fresh set of 10 questions:
-1. **3 Easy questions** (weight 1.0) - 30% of quiz
-2. **3 Medium questions** (weight 1.5) - 30% of quiz
+1. **2 Easy questions** (weight 1.0) - 20% of quiz
+2. **4 Medium questions** (weight 1.5) - 40% of quiz
 3. **4 Hard questions** (weight 2.0) - 40% of quiz
 4. Questions shuffled to mix difficulty levels
 5. Actual BRAC programme names displayed in questions
@@ -174,9 +174,9 @@ Server runs on `http://0.0.0.0:5000`
   - **Updated dependencies**: Removed openpyxl, added psycopg2-binary for PostgreSQL support
   - **Database queries**: Updated all queries to use PostgreSQL syntax (%s placeholders instead of ?)
 - **2025-10-29 v2.4:** Weighted scoring and tiered prize messages:
-  - **Dual score display**: Results now show BOTH number of questions correct (out of 10) in the circle AND weighted marks (out of 15.5) in separate box
+  - **Dual score display**: Results now show BOTH number of questions correct (out of 10) in the circle AND weighted marks (out of 16.0) in separate box
   - **Weighted calculation**: Easy questions = 1.0 mark, Medium = 1.5 marks, Hard = 2.0 marks
-  - **Total possible weighted marks**: 3 Easy (3.0) + 3 Medium (4.5) + 4 Hard (8.0) = 15.5
+  - **Total possible weighted marks**: 2 Easy (2.0) + 4 Medium (6.0) + 4 Hard (8.0) = 16.0
   - **Tiered prize messages**: 90%+ wins one-on-one meeting with leader, 80-90% wins gift, 70-80% wins lunch token
   - **Removed "Missed prize by" message**: Cleaner results page without showing how close non-winners were
   - **Fixed progress bar**: Progress ribbon now reaches stamps precisely using formula ((answered-1)/(total-1))*100

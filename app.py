@@ -137,8 +137,8 @@ def select_weighted_random_questions(num_questions=10):
     """Select random questions with difficulty-based weighting
     
     Target distribution for 10 questions:
-    - Easy (weight 1.0): 3 questions (30%)
-    - Medium (weight 1.5): 3 questions (30%)
+    - Easy (weight 1.0): 2 questions (20%)
+    - Medium (weight 1.5): 4 questions (40%)
     - Hard (weight 2.0): 4 questions (40%)
     """
     import random
@@ -147,8 +147,8 @@ def select_weighted_random_questions(num_questions=10):
     all_questions = load_questions_from_csv()
     
     # Target distribution
-    target_easy = 3
-    target_medium = 3
+    target_easy = 2
+    target_medium = 4
     target_hard = 4
     
     # Separate questions by difficulty
@@ -168,6 +168,12 @@ def select_weighted_random_questions(num_questions=10):
     # Add an index to each question for tracking
     for idx, q in enumerate(selected_questions):
         q['idx'] = idx
+    
+    # Debug: Print distribution summary
+    easy_count = len([q for q in selected_questions if q['difficulty'] == 'Easy'])
+    medium_count = len([q for q in selected_questions if q['difficulty'] == 'Medium'])
+    hard_count = len([q for q in selected_questions if q['difficulty'] == 'Hard'])
+    print(f"Question distribution: Easy={easy_count}, Medium={medium_count}, Hard={hard_count}")
     
     return selected_questions
 
@@ -278,9 +284,9 @@ def submit():
     
     print(f"Quiz saved: name={name}, score={score}/{total_questions}, percent={percent:.2f}%, winner={is_winner}")
     
-    # Calculate total possible weighted marks (3 Easy + 3 Medium + 4 Hard)
-    # Easy (1.0) × 3 = 3.0, Medium (1.5) × 3 = 4.5, Hard (2.0) × 4 = 8.0
-    total_weighted_marks = 15.5
+    # Calculate total possible weighted marks (2 Easy + 4 Medium + 4 Hard)
+    # Easy (1.0) × 2 = 2.0, Medium (1.5) × 4 = 6.0, Hard (2.0) × 4 = 8.0
+    total_weighted_marks = 16.0
     
     # Render result page directly
     # Display name for results page (use PIN if name not provided)
