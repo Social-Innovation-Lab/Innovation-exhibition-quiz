@@ -33,9 +33,6 @@
 <!-- Quiz Carousel -->
 <div class="quiz-container">
   <form method="POST" action="/submit" id="quizForm">
-    <input type="hidden" name="participant_id" value="{{participant_id}}">
-    <input type="hidden" name="question_ids" value="{{question_ids|join(',')}}">
-    
     <div class="carousel-wrapper">
       {% for q in items %}
       <div class="question-card {% if loop.index == 1 %}active{% endif %}" data-question="{{loop.index}}">
@@ -47,11 +44,14 @@
           <p>{{q.question}}</p>
         </div>
         
+        <!-- Hidden field to store question text for grading -->
+        <input type="hidden" name="question_{{loop.index0}}" value="{{q.question}}">
+        
         <div class="options-grid">
           {% set letters = ['A','B','C','D'] %}
           {% for opt in q.options %}
           <label class="option-card">
-            <input type="radio" name="{{q.id}}" value="{{letters[loop.index0]}}" required>
+            <input type="radio" name="answer_{{loop.parent.loop.index0}}" value="{{letters[loop.index0]}}" required>
             <div class="option-content">
               <span class="option-letter">{{letters[loop.index0]}}</span>
               <span class="option-text">{{opt}}</span>

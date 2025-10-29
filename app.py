@@ -49,84 +49,39 @@ def get_db():
     return conn
 
 def init_db():
-    """Initialize database schema and import questions"""
+    """Initialize database with single quiz_records table"""
     conn = get_db()
     cursor = conn.cursor()
     
-    # Drop old tables to start fresh with new schema
+    # Drop old tables if they exist
     cursor.execute('''
         DROP TABLE IF EXISTS responses CASCADE;
         DROP TABLE IF EXISTS attempts CASCADE;
         DROP TABLE IF EXISTS participants CASCADE;
         DROP TABLE IF EXISTS questions CASCADE;
+        DROP TABLE IF EXISTS quiz_records CASCADE;
     ''')
     
-    # Create tables with PostgreSQL syntax
+    # Create single table with all quiz data
     cursor.execute('''
-        CREATE TABLE IF NOT EXISTS questions (
-            id SERIAL PRIMARY KEY,
-            programme_code TEXT NOT NULL,
-            programme_name TEXT NOT NULL,
-            difficulty TEXT NOT NULL,
-            weight REAL NOT NULL,
-            question TEXT NOT NULL,
-            option_A TEXT NOT NULL,
-            option_B TEXT NOT NULL,
-            option_C TEXT NOT NULL,
-            option_D TEXT NOT NULL,
-            answer TEXT NOT NULL,
-            answer_text TEXT NOT NULL
-        );
-    ''')
-    
-    cursor.execute('''
-        CREATE TABLE IF NOT EXISTS participants (
+        CREATE TABLE quiz_records (
             id SERIAL PRIMARY KEY,
             name TEXT NOT NULL,
             pin TEXT NOT NULL,
             phone TEXT NOT NULL,
-            consent INTEGER DEFAULT 1,
+            score INTEGER NOT NULL,
+            percent REAL NOT NULL,
+            is_winner INTEGER DEFAULT 0,
+            gift_given INTEGER DEFAULT 0,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         );
     ''')
     
-    cursor.execute('''
-        CREATE TABLE IF NOT EXISTS attempts (
-            id SERIAL PRIMARY KEY,
-            participant_id INTEGER NOT NULL,
-            score INTEGER NOT NULL,
-            total_questions INTEGER DEFAULT 10,
-            percent REAL NOT NULL,
-            is_winner INTEGER DEFAULT 0,
-            gift_given INTEGER DEFAULT 0,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY (participant_id) REFERENCES participants(id)
-        );
-    ''')
+    cursor.execute('CREATE INDEX idx_winner ON quiz_records(is_winner);')
     
-    cursor.execute('''
-        CREATE TABLE IF NOT EXISTS responses (
-            id SERIAL PRIMARY KEY,
-            attempt_id INTEGER NOT NULL,
-            question_id INTEGER NOT NULL,
-            selected_answer TEXT NOT NULL,
-            is_correct INTEGER NOT NULL,
-            FOREIGN KEY (attempt_id) REFERENCES attempts(id),
-            FOREIGN KEY (question_id) REFERENCES questions(id)
-        );
-    ''')
-    
-    cursor.execute('CREATE INDEX IF NOT EXISTS idx_questions_difficulty ON questions(difficulty);')
-    cursor.execute('CREATE INDEX IF NOT EXISTS idx_attempts_winner ON attempts(is_winner);')
-    
-    # Commit table creation before importing questions
     conn.commit()
     cursor.close()
     conn.close()
-    
-    # Import questions
-    print("Importing questions from CSV...")
-    import_questions()
     
     print("Database initialized successfully!")
 
@@ -136,12 +91,11 @@ def capitalize_first_letter(text):
         return text
     return text[0].upper() + text[1:] if text else text
 
-def import_questions():
-    """Import questions from CSV file with actual programme names"""
+def load_questions_from_csv():
+    """Load questions from CSV file (not stored in database)"""
     import re
-    conn = get_db()
-    cursor = conn.cursor()
     csv_path = 'attached_assets/Untitled spreadsheet - QuestionBank_1761118191656.csv'
+    questions = []
     
     with open(csv_path, 'r', encoding='utf-8') as f:
         reader = csv.DictReader(f)
@@ -151,7 +105,7 @@ def import_questions():
             
             # Clean up extra spaces and punctuation
             question_text = re.sub(r'\s+', ' ', question_text).strip()
-            question_text = re.sub(r'\s+([?.!,])', r'\1', question_text)  # Fix spacing before punctuation
+            question_text = re.sub(r'\s+([?.!,])', r'\1', question_text)
             
             # Capitalize first letter
             question_text = capitalize_first_letter(question_text)
@@ -162,18 +116,21 @@ def import_questions():
             option_c = capitalize_first_letter(row['option_C'].strip())
             option_d = capitalize_first_letter(row['option_D'].strip())
             
-            cursor.execute('''
-                INSERT INTO questions (programme_code, programme_name, difficulty, weight, question, 
-                                      option_A, option_B, option_C, option_D, answer, answer_text)
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-            ''', (row['programme_code'], row['programme_name'], row['difficulty'], 
-                  float(row['weight']), question_text,
-                  option_a, option_b, option_c, option_d,
-                  row['answer_letter'], row['answer_text']))
+            questions.append({
+                'programme_code': row['programme_code'],
+                'programme_name': row['programme_name'],
+                'difficulty': row['difficulty'],
+                'weight': float(row['weight']),
+                'question': question_text,
+                'option_A': option_a,
+                'option_B': option_b,
+                'option_C': option_c,
+                'option_D': option_d,
+                'answer': row['answer_letter'],
+                'answer_text': row['answer_text']
+            })
     
-    conn.commit()
-    cursor.close()
-    print(f"Imported questions from new question bank")
+    return questions
 
 def select_weighted_random_questions(num_questions=10):
     """Select random questions with difficulty-based weighting
@@ -184,41 +141,32 @@ def select_weighted_random_questions(num_questions=10):
     - Hard (weight 2.0): 4 questions (40%)
     """
     import random
-    conn = get_db()
-    cursor = conn.cursor()
+    
+    # Load all questions from CSV
+    all_questions = load_questions_from_csv()
     
     # Target distribution
     target_easy = 3
     target_medium = 3
     target_hard = 4
     
+    # Separate questions by difficulty
+    easy_questions = [q for q in all_questions if q['difficulty'] == 'Easy']
+    medium_questions = [q for q in all_questions if q['difficulty'] == 'Medium']
+    hard_questions = [q for q in all_questions if q['difficulty'] == 'Hard']
+    
+    # Select random questions from each difficulty
     selected_questions = []
-    
-    # Get Easy questions
-    cursor.execute(
-        'SELECT * FROM questions WHERE difficulty = %s ORDER BY RANDOM() LIMIT %s',
-        ('Easy', target_easy)
-    )
-    selected_questions.extend(cursor.fetchall())
-    
-    # Get Medium questions
-    cursor.execute(
-        'SELECT * FROM questions WHERE difficulty = %s ORDER BY RANDOM() LIMIT %s',
-        ('Medium', target_medium)
-    )
-    selected_questions.extend(cursor.fetchall())
-    
-    # Get Hard questions
-    cursor.execute(
-        'SELECT * FROM questions WHERE difficulty = %s ORDER BY RANDOM() LIMIT %s',
-        ('Hard', target_hard)
-    )
-    selected_questions.extend(cursor.fetchall())
-    
-    cursor.close()
+    selected_questions.extend(random.sample(easy_questions, min(target_easy, len(easy_questions))))
+    selected_questions.extend(random.sample(medium_questions, min(target_medium, len(medium_questions))))
+    selected_questions.extend(random.sample(hard_questions, min(target_hard, len(hard_questions))))
     
     # Shuffle the selected questions so difficulty levels are mixed
     random.shuffle(selected_questions)
+    
+    # Add an index to each question for tracking
+    for idx, q in enumerate(selected_questions):
+        q['idx'] = idx
     
     return selected_questions
 
@@ -264,18 +212,7 @@ def start():
         # Invalid form type
         return redirect('/')
     
-    # Create participant record
-    conn = get_db()
-    cursor = conn.cursor()
-    cursor.execute(
-        'INSERT INTO participants (name, pin, phone, consent) VALUES (%s, %s, %s, %s) RETURNING id',
-        (name, pin, phone, 1)
-    )
-    participant_id = cursor.fetchone()['id']
-    conn.commit()
-    cursor.close()
-    
-    print(f"Created participant: participant_id={participant_id}, name={name}, form_type={form_type}")
+    print(f"Starting quiz for: name={name}, pin={pin}, form_type={form_type}")
     
     # Get 10 random questions with weighted distribution
     questions = select_weighted_random_questions(10)
@@ -284,94 +221,72 @@ def start():
     for q in questions:
         q['options'] = [q['option_A'], q['option_B'], q['option_C'], q['option_D']]
     
-    # Store the participant_id and question IDs to pass to template
-    question_ids = [q['id'] for q in questions]
-    
     print(f"Selected {len(questions)} questions for quiz")
+    
+    # Store participant data in session for grading
+    session['participant_name'] = name
+    session['participant_pin'] = pin
+    session['participant_phone'] = phone
     
     # Render quiz page directly (no redirect to avoid cookie issues)
     return render_template('quiz.html', 
                          items=questions, 
-                         participant_id=participant_id,
-                         question_ids=question_ids,
                          participant_name=name)
 
 @app.route('/submit', methods=['POST'])
 def submit():
-    """Grade quiz and save results"""
-    # Get participant data from form instead of session (to avoid cookie issues)
-    participant_id = request.form.get('participant_id', '').strip()
-    question_ids_str = request.form.get('question_ids', '').strip()
+    """Grade quiz and save results to single database table"""
+    # Get participant data from session
+    name = session.get('participant_name', 'Unknown')
+    pin = session.get('participant_pin', '000000')
+    phone = session.get('participant_phone', 'N/A')
     
-    if not participant_id or not question_ids_str:
-        return redirect('/')
-    
-    participant_id = int(participant_id)
-    question_ids = [int(qid) for qid in question_ids_str.split(',') if qid]
-    
-    conn = get_db()
-    cursor = conn.cursor()
-    
-    # Total questions is now 10
-    total_questions = len(question_ids)
-    
-    # Create attempt record
-    cursor.execute(
-        'INSERT INTO attempts (participant_id, score, total_questions, percent, is_winner) VALUES (%s, 0, %s, 0, 0) RETURNING id',
-        (participant_id, total_questions)
-    )
-    attempt_id = cursor.fetchone()['id']
+    # Load all questions to match against submissions
+    all_questions = load_questions_from_csv()
     
     # Grade responses with weighted scoring
     score = 0
     weighted_score = 0.0
-    for qid in question_ids:
-        selected = request.form.get(str(qid), '').strip()
+    total_questions = 10
+    
+    # Check each submitted answer against the CSV questions
+    for i in range(total_questions):
+        question_text = request.form.get(f'question_{i}', '').strip()
+        selected = request.form.get(f'answer_{i}', '').strip()
         
-        # Get correct answer and weight
-        cursor.execute('SELECT answer, weight FROM questions WHERE id = %s', (qid,))
-        question = cursor.fetchone()
-        is_correct = 1 if (question and selected == question['answer']) else 0
-        score += is_correct
-        
-        # Add weighted score for correct answers
-        if is_correct and question:
-            weighted_score += question['weight']
-        
-        # Save response
-        cursor.execute(
-            'INSERT INTO responses (attempt_id, question_id, selected_answer, is_correct) VALUES (%s, %s, %s, %s)',
-            (attempt_id, qid, selected, is_correct)
-        )
+        # Find matching question in CSV
+        for q in all_questions:
+            if q['question'] == question_text:
+                is_correct = (selected == q['answer'])
+                if is_correct:
+                    score += 1
+                    weighted_score += q['weight']
+                break
     
     # Calculate percentage and winner status (70% = 7/10)
     percent = (score / total_questions) * 100
     is_winner = 1 if score >= 7 else 0
     
-    # Update attempt
+    # Save single record to database
+    conn = get_db()
+    cursor = conn.cursor()
     cursor.execute(
-        'UPDATE attempts SET score = %s, percent = %s, is_winner = %s WHERE id = %s',
-        (score, percent, is_winner, attempt_id)
+        'INSERT INTO quiz_records (name, pin, phone, score, percent, is_winner) VALUES (%s, %s, %s, %s, %s, %s)',
+        (name, pin, phone, score, percent, is_winner)
     )
-    
     conn.commit()
-    
-    print(f"Quiz graded: score={score}/{total_questions}, percent={percent:.2f}%, winner={is_winner}")
-    
-    # Get participant name for display
-    cursor.execute('SELECT name FROM participants WHERE id = %s', (participant_id,))
-    participant = cursor.fetchone()
-    
     cursor.close()
     conn.close()
+    
+    print(f"Quiz saved: name={name}, score={score}/{total_questions}, percent={percent:.2f}%, winner={is_winner}")
     
     # Calculate total possible weighted marks (3 Easy + 3 Medium + 4 Hard)
     # Easy (1.0) × 3 = 3.0, Medium (1.5) × 3 = 4.5, Hard (2.0) × 4 = 8.0
     total_weighted_marks = 15.5
     
-    # Render result page directly (no redirect to avoid cookie issues)
+    # Render result page directly
     data = {
-        'name': participant['name'] if participant else 'Participant',
+        'name': name,
         'score': score,
         'total': total_questions,
         'weighted_score': round(weighted_score, 1),
@@ -382,32 +297,6 @@ def submit():
     
     return render_template('result.html', data=data)
 
-@app.route('/result')
-def result():
-    """Display quiz results"""
-    if 'attempt_id' not in session:
-        return redirect('/')
-    
-    attempt_id = session['attempt_id']
-    conn = get_db()
-    cursor = conn.cursor()
-    
-    cursor.execute('SELECT * FROM attempts WHERE id = %s', (attempt_id,))
-    attempt = cursor.fetchone()
-    
-    cursor.close()
-    conn.close()
-    
-    if not attempt:
-        return redirect('/')
-    
-    data = {
-        'score': attempt['score'],
-        'percent': attempt['percent'],
-        'is_winner': attempt['is_winner']
-    }
-    
-    return render_template('result.html', data=data)
 
 @app.route('/admin/login', methods=['GET', 'POST'])
 def admin_login():
@@ -434,24 +323,19 @@ def admin_logout():
 @app.route('/admin')
 @admin_required
 def admin():
-    """Admin dashboard with winner list"""
+    """Admin dashboard with quiz records"""
     conn = get_db()
     cursor = conn.cursor()
     
-    # Get all attempts with participant info
-    cursor.execute('''
-        SELECT a.*, p.name, p.pin, p.phone
-        FROM attempts a
-        JOIN participants p ON a.participant_id = p.id
-        ORDER BY a.created_at DESC
-    ''')
-    attempts = cursor.fetchall()
+    # Get all quiz records
+    cursor.execute('SELECT * FROM quiz_records ORDER BY created_at DESC')
+    records = cursor.fetchall()
     
     # Get statistics
-    total_attempts = len(attempts)
-    cursor.execute('SELECT COUNT(*) FROM attempts WHERE is_winner = 1')
+    total_attempts = len(records)
+    cursor.execute('SELECT COUNT(*) FROM quiz_records WHERE is_winner = 1')
     total_winners = cursor.fetchone()['count']
-    cursor.execute('SELECT AVG(score) FROM attempts')
+    cursor.execute('SELECT AVG(score) FROM quiz_records')
     avg_score_row = cursor.fetchone()
     avg_score = avg_score_row['avg'] if avg_score_row and avg_score_row['avg'] else 0
     
@@ -464,11 +348,11 @@ def admin():
         'avg_score': round(float(avg_score), 1)
     }
     
-    return render_template('admin.html', attempts=attempts, stats=stats)
+    return render_template('admin.html', attempts=records, stats=stats)
 
-@app.route('/admin/mark_gift/<int:attempt_id>', methods=['POST'])
+@app.route('/admin/mark_gift/<int:record_id>', methods=['POST'])
 @admin_required
-def mark_gift(attempt_id):
+def mark_gift(record_id):
     """Mark gift as given"""
     csrf_token = request.form.get('csrf_token')
     if not verify_csrf_token(csrf_token):
@@ -476,7 +360,7 @@ def mark_gift(attempt_id):
     
     conn = get_db()
     cursor = conn.cursor()
-    cursor.execute('UPDATE attempts SET gift_given = 1 WHERE id = %s', (attempt_id,))
+    cursor.execute('UPDATE quiz_records SET gift_given = 1 WHERE id = %s', (record_id,))
     conn.commit()
     cursor.close()
     conn.close()
@@ -490,11 +374,10 @@ def export_csv():
     cursor = conn.cursor()
     
     cursor.execute('''
-        SELECT p.name, p.pin, p.phone, a.score, a.percent, a.created_at, a.gift_given
-        FROM attempts a
-        JOIN participants p ON a.participant_id = p.id
-        WHERE a.is_winner = 1
-        ORDER BY a.created_at DESC
+        SELECT name, pin, phone, score, percent, created_at, gift_given
+        FROM quiz_records
+        WHERE is_winner = 1
+        ORDER BY created_at DESC
     ''')
     winners = cursor.fetchall()
     
@@ -536,7 +419,7 @@ def check_database():
     try:
         conn = get_db()
         cursor = conn.cursor()
-        cursor.execute("SELECT EXISTS (SELECT FROM information_schema.tables WHERE table_name = 'questions')")
+        cursor.execute("SELECT EXISTS (SELECT FROM information_schema.tables WHERE table_name = 'quiz_records')")
         exists = cursor.fetchone()['exists']
         cursor.close()
         conn.close()

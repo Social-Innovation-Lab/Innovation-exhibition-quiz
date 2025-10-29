@@ -6,7 +6,7 @@ A tablet-friendly Progressive Web App (PWA) quiz kiosk for BRAC exhibitions. Dis
 ## Project Status
 **Status:** ✅ Fully Functional  
 **Last Updated:** October 29, 2025  
-**Version:** 2.4
+**Version:** 2.6
 
 ## Key Features
 - **Tablet-Optimized UI:** Large tap targets (48px min), readable 18px fonts, sticky progress bar
@@ -21,10 +21,12 @@ A tablet-friendly Progressive Web App (PWA) quiz kiosk for BRAC exhibitions. Dis
 ## Architecture
 
 ### Database Schema (PostgreSQL)
-- **questions:** 220 questions across all programmes with difficulty (Easy/Medium/Hard) and weight (1/1.5/2)
-- **participants:** Name, PIN, phone, consent timestamp
-- **attempts:** Quiz scores (out of 10), winner status, gift given flag
-- **responses:** Individual question answers and correctness
+- **Single Table:** `quiz_records` - Stores all quiz data in one simplified table
+  - **Login credentials:** name, pin, phone
+  - **Quiz results:** score (out of 10), percent
+  - **Prize tracking:** is_winner (70% threshold), gift_given (admin tracking)
+  - **Timestamp:** created_at (auto-generated)
+- **Questions:** Loaded directly from CSV file (not stored in database)
 - **Storage:** Uses Replit's built-in PostgreSQL database (accessible via DATABASE_URL)
 
 ### Application Routes
@@ -83,6 +85,21 @@ Each quiz generates a fresh set of 10 questions:
 - **Offline Support:** Quiz submissions require network, assets cached locally
 - **Install Prompt:** Works on iOS Safari and Android Chrome
 
+### Database Structure
+```sql
+CREATE TABLE quiz_records (
+    id SERIAL PRIMARY KEY,
+    name TEXT NOT NULL,
+    pin TEXT NOT NULL,
+    phone TEXT NOT NULL,
+    score INTEGER NOT NULL,
+    percent REAL NOT NULL,
+    is_winner INTEGER DEFAULT 0,
+    gift_given INTEGER DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+```
+
 ### Database Connection
 ```python
 # PostgreSQL connection using psycopg2
@@ -139,6 +156,11 @@ Server runs on `http://0.0.0.0:5000`
 - **Code Style:** Simple, readable Python/Flask with inline comments
 
 ## Recent Changes
+- **2025-10-29 v2.6:** Simplified database to single table:
+  - **Single table design**: Replaced 4-table schema with one `quiz_records` table storing login credentials, scores, and prize data
+  - **CSV-based questions**: Questions loaded directly from CSV file instead of database storage (220 questions remain available)
+  - **Simplified data flow**: Each quiz submission creates one database record with name, PIN, phone, score, percent, and winner status
+  - **Reduced complexity**: Eliminated participant/attempt/response relationships for streamlined kiosk operation
 - **2025-10-29 v2.5:** Migrated to PostgreSQL database:
   - **Database migration**: Migrated from SQLite to Replit's built-in PostgreSQL database
   - **Removed Excel export**: All data is now stored permanently in PostgreSQL instead of temporary Excel files
