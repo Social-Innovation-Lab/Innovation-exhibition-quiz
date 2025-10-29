@@ -138,7 +138,7 @@
   width: 100%;
   background: linear-gradient(135deg, #e31837 0%, #c41430 100%);
   color: white;
-  padding: 15px 20px;
+  padding: clamp(10px, 2vh, 15px) clamp(12px, 3vw, 20px);
   box-shadow: 0 4px 12px rgba(0,0,0,0.15);
   z-index: 1000;
   animation: slideDown 0.5s ease-out;
@@ -151,22 +151,22 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 12px;
+  margin-bottom: 1.5vh;
 }
 
 .question-counter {
-  font-size: 20px;
+  font-size: clamp(16px, 2.5vw, 20px);
   font-weight: 700;
 }
 
 .current-q {
   color: #fff;
-  font-size: 28px;
+  font-size: clamp(22px, 3.5vw, 28px);
 }
 
 .separator {
   opacity: 0.7;
-  margin: 0 5px;
+  margin: 0 0.5vw;
 }
 
 .total-q {
@@ -176,11 +176,11 @@
 .timer-badge {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 0.8vw;
   background: rgba(255,255,255,0.2);
-  padding: 6px 14px;
+  padding: 0.8vh 1.8vw;
   border-radius: 20px;
-  font-size: 18px;
+  font-size: clamp(16px, 2.2vw, 18px);
   font-weight: 700;
   transition: all 0.3s ease;
 }
@@ -196,13 +196,13 @@
 }
 
 .clock-icon {
-  font-size: 20px;
+  font-size: clamp(18px, 2.5vw, 20px);
 }
 
 .progress-bar-container {
   position: relative;
   background: rgba(255,255,255,0.2);
-  height: 8px;
+  height: clamp(6px, 1vh, 8px);
   border-radius: 10px;
   overflow: visible;
 }
@@ -221,7 +221,7 @@
 
 .progress-dots {
   position: absolute;
-  top: -6px;
+  top: -0.8vh;
   left: 0;
   right: 0;
   display: flex;
@@ -231,10 +231,10 @@
 }
 
 .dot {
-  width: 20px;
-  height: 20px;
+  width: clamp(16px, 2.5vw, 20px);
+  height: clamp(16px, 2.5vw, 20px);
   background: rgba(255,255,255,0.3);
-  border: 3px solid #e31837;
+  border: clamp(2px, 0.4vw, 3px) solid #e31837;
   border-radius: 50%;
   transition: all 0.3s ease;
 }
@@ -248,9 +248,9 @@
 
 .quiz-container {
   max-width: 800px;
-  margin: 130px auto 0;
-  padding: 20px;
-  min-height: calc(100vh - 130px);
+  margin: clamp(95px, 15vh, 130px) auto 0;
+  padding: clamp(12px, 2.5vw, 20px);
+  min-height: calc(100vh - clamp(95px, 15vh, 130px));
 }
 
 /* Ensure body doesn't scroll under fixed header */
