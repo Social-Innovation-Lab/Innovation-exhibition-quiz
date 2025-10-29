@@ -32,12 +32,10 @@
     <h2 class="selection-title">Choose an option to continue</h2>
     <div class="option-buttons">
       <button type="button" class="option-btn" onclick="showForm('havePin')">
-        <span class="btn-icon">🔑</span>
         <span class="btn-text">Have PIN?</span>
         <span class="btn-desc">Enter your 6-digit PIN</span>
       </button>
       <button type="button" class="option-btn" onclick="showForm('noPin')">
-        <span class="btn-icon">👤</span>
         <span class="btn-text">Don't Have PIN?</span>
         <span class="btn-desc">Register with Name & Phone</span>
       </button>
@@ -214,41 +212,36 @@
   width: 100%;
   background: white;
   border: 3px solid #e0e0e0;
-  border-radius: 16px;
-  padding: 20px;
+  border-radius: 12px;
+  padding: 15px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
+  gap: 5px;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-  min-height: 120px;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
+  min-height: 75px;
 }
 
 .option-btn:hover {
   border-color: #e31837;
-  transform: translateY(-3px);
-  box-shadow: 0 8px 25px rgba(227, 24, 55, 0.2);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(227, 24, 55, 0.2);
 }
 
 .option-btn:active {
   transform: translateY(0);
 }
 
-.btn-icon {
-  font-size: 40px;
-  margin-bottom: 5px;
-}
-
 .btn-text {
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 700;
   color: #222;
 }
 
 .btn-desc {
-  font-size: 14px;
+  font-size: 13px;
   color: #666;
   text-align: center;
 }
