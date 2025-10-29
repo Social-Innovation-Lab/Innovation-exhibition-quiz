@@ -16,7 +16,7 @@ A tablet-friendly Progressive Web App (PWA) quiz kiosk for BRAC exhibitions. Dis
 - **Winner Detection:** 70% threshold (7/10 questions) triggers winner status
 - **Programme Names Visible:** Questions display actual BRAC programme names
 - **Admin Dashboard:** Real-time stats, winner list, gift tracking, CSV export
-- **SQLite with WAL:** Concurrent access support for multiple tablets
+- **PostgreSQL Database:** Production-grade database with concurrent access support for multiple tablets
 
 ## Architecture
 
@@ -49,7 +49,6 @@ Each quiz generates a fresh set of 10 questions:
 ```
 .
 ├── app.py                          # Flask application (all routes & logic)
-├── quiz.db                         # SQLite database (auto-created)
 ├── templates/
 │   ├── base.html                   # Base template with PWA meta tags
 │   ├── index.html                  # Sign-in form with numeric keyboards
@@ -101,11 +100,12 @@ def get_db():
 - **Prize Desk:** Winners instructed to collect gift
 - **Admin Tracking:** Mark gifts as given, export to CSV
 
-## CSV Export Format
+## CSV Export Format (Admin Dashboard Only)
 ```
 Name,PIN,Phone,Score,Percentage,Date,Gift Given
-John Doe,1234,****5678,18,81.82%,2025-10-21 10:30:15,Yes
+John Doe,1234,****5678,9,90.00%,2025-10-29 10:30:15,Yes
 ```
+Note: CSV export is now only available through the admin dashboard at `/admin/export`. All data is permanently stored in PostgreSQL.
 
 ## Security
 
