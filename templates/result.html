@@ -11,7 +11,7 @@
     
     <!-- Animated Score Circle -->
     <div class="score-circle">
-      <svg class="circle-svg" width="200" height="200">
+      <svg class="circle-svg" viewBox="0 0 200 200" preserveAspectRatio="xMidYMid meet">
         <circle class="circle-bg" cx="100" cy="100" r="90" />
         <circle class="circle-progress" id="progressCircle" cx="100" cy="100" r="90" 
                 data-final-offset="{{565 - (565 * data.percent / 100)}}" />
@@ -118,6 +118,7 @@
 }
 
 .circle-svg {
+  display: block;
   transform: rotate(-90deg);
   width: 100%;
   height: 100%;
