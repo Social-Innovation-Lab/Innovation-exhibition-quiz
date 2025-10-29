@@ -289,13 +289,37 @@ def index():
 @app.route('/start', methods=['POST'])
 def start():
     """Handle participant sign-in and start quiz"""
-    name = request.form.get('name', '').strip()
-    pin = request.form.get('pin', '').strip()
-    phone = request.form.get('phone', '').strip()
+    form_type = request.form.get('form_type', '').strip()
     
-    # Validate all required fields and PIN format (exactly 6 digits)
-    if not all([name, pin, phone]) or not (pin.isdigit() and len(pin) == 6):
-        print(f"Validation failed - name:{name}, pin:{pin}, phone:{phone}")
+    if form_type == 'have_pin':
+        # Have PIN: only PIN field required
+        pin = request.form.get('pin', '').strip()
+        
+        # Validate PIN format (exactly 6 digits)
+        if not (pin.isdigit() and len(pin) == 6):
+            print(f"Validation failed - invalid PIN: {pin}")
+            return redirect('/')
+        
+        # Generate placeholder name and phone for PIN users
+        name = f"Player-{pin}"
+        phone = f"PIN{pin}"
+        
+    elif form_type == 'no_pin':
+        # Don't Have PIN: name and phone required
+        name = request.form.get('name', '').strip()
+        phone = request.form.get('phone', '').strip()
+        
+        # Validate required fields
+        if not all([name, phone]):
+            print(f"Validation failed - name:{name}, phone:{phone}")
+            return redirect('/')
+        
+        # Generate random 6-digit PIN for users without PIN
+        import random
+        pin = ''.join([str(random.randint(0, 9)) for _ in range(6)])
+        
+    else:
+        # Invalid form type
         return redirect('/')
     
     # Create participant record
@@ -307,7 +331,7 @@ def start():
     participant_id = cursor.lastrowid
     conn.commit()
     
-    print(f"Created participant: participant_id={participant_id}, name={name}")
+    print(f"Created participant: participant_id={participant_id}, name={name}, form_type={form_type}")
     
     # Get 10 random questions with weighted distribution
     questions = select_weighted_random_questions(10)

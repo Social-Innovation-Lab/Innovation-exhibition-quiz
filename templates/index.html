@@ -27,30 +27,67 @@
     </div>
   </div>
 
-  <!-- Sign-in Form -->
-  <form method="POST" action="/start" class="quiz-form">
-    <div class="form-group">
-      <label class="form-label">
-        <span class="label-icon">👤</span>
-        <span>Full name</span>
-      </label>
-      <input name="name" type="text" required autocomplete="name" class="form-input">
+  <!-- Option Selection -->
+  <div id="optionSelection" class="option-selection">
+    <h2 class="selection-title">Choose an option to continue</h2>
+    <div class="option-buttons">
+      <button type="button" class="option-btn" onclick="showForm('havePin')">
+        <span class="btn-icon">🔑</span>
+        <span class="btn-text">Have PIN?</span>
+        <span class="btn-desc">Enter your 6-digit PIN</span>
+      </button>
+      <button type="button" class="option-btn" onclick="showForm('noPin')">
+        <span class="btn-icon">👤</span>
+        <span class="btn-text">Don't Have PIN?</span>
+        <span class="btn-desc">Register with Name & Phone</span>
+      </button>
     </div>
+  </div>
+
+  <!-- Have PIN Form -->
+  <form method="POST" action="/start" class="quiz-form" id="havePinForm" style="display: none;">
+    <input type="hidden" name="form_type" value="have_pin">
+    
+    <button type="button" class="back-btn" onclick="showOptions()">← Back</button>
+    
+    <h3 class="form-title">Enter Your PIN</h3>
     
     <div class="form-group">
       <label class="form-label">
         <span class="label-icon">🔢</span>
         <span>PIN (6 digits)</span>
       </label>
-      <input name="pin" type="text" inputmode="numeric" pattern="[0-9]{6}" required class="form-input">
+      <input name="pin" type="text" inputmode="numeric" pattern="[0-9]{6}" required class="form-input" placeholder="Enter 6-digit PIN">
+    </div>
+    
+    <button type="submit" class="start-button">
+      <span>Start Quiz</span>
+      <span class="button-arrow">→</span>
+    </button>
+  </form>
+
+  <!-- Don't Have PIN Form -->
+  <form method="POST" action="/start" class="quiz-form" id="noPinForm" style="display: none;">
+    <input type="hidden" name="form_type" value="no_pin">
+    
+    <button type="button" class="back-btn" onclick="showOptions()">← Back</button>
+    
+    <h3 class="form-title">Register to Play</h3>
+    
+    <div class="form-group">
+      <label class="form-label">
+        <span class="label-icon">👤</span>
+        <span>Full Name</span>
+      </label>
+      <input name="name" type="text" required autocomplete="name" class="form-input" placeholder="Enter your name">
     </div>
     
     <div class="form-group">
       <label class="form-label">
         <span class="label-icon">📱</span>
-        <span>Phone</span>
+        <span>Phone Number</span>
       </label>
-      <input name="phone" type="tel" inputmode="tel" autocomplete="tel" required class="form-input">
+      <input name="phone" type="tel" inputmode="tel" autocomplete="tel" required class="form-input" placeholder="Enter phone number">
     </div>
     
     <button type="submit" class="start-button">
@@ -153,6 +190,69 @@
   color: #555;
 }
 
+.option-selection {
+  width: 100%;
+  max-width: 500px;
+  animation: fadeInUp 0.6s ease-out 0.6s backwards;
+}
+
+.selection-title {
+  text-align: center;
+  font-size: 20px;
+  color: #333;
+  margin-bottom: 20px;
+  font-weight: 700;
+}
+
+.option-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.option-btn {
+  width: 100%;
+  background: white;
+  border: 3px solid #e0e0e0;
+  border-radius: 16px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  min-height: 120px;
+}
+
+.option-btn:hover {
+  border-color: #e31837;
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(227, 24, 55, 0.2);
+}
+
+.option-btn:active {
+  transform: translateY(0);
+}
+
+.btn-icon {
+  font-size: 40px;
+  margin-bottom: 5px;
+}
+
+.btn-text {
+  font-size: 20px;
+  font-weight: 700;
+  color: #222;
+}
+
+.btn-desc {
+  font-size: 14px;
+  color: #666;
+  text-align: center;
+}
+
 .quiz-form {
   width: 100%;
   max-width: 420px;
@@ -160,7 +260,34 @@
   border-radius: 16px;
   padding: 25px;
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
-  animation: fadeInUp 0.6s ease-out 0.6s backwards;
+  animation: fadeInUp 0.3s ease-out;
+  position: relative;
+}
+
+.back-btn {
+  background: #f0f0f0;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #666;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-bottom: 15px;
+}
+
+.back-btn:hover {
+  background: #e0e0e0;
+  color: #333;
+}
+
+.form-title {
+  text-align: center;
+  font-size: 22px;
+  color: #e31837;
+  margin: 0 0 20px;
+  font-weight: 700;
 }
 
 .form-group {
@@ -263,21 +390,71 @@
     transform: scale(1);
   }
 }
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
 </style>
 {% endblock %}
 
 {% block scripts %}
 <script>
-// Form validation feedback
-document.querySelector('form').addEventListener('submit', function(e) {
-  const pin = document.querySelector('input[name="pin"]');
+function showForm(type) {
+  document.getElementById('optionSelection').style.display = 'none';
+  
+  if (type === 'havePin') {
+    document.getElementById('havePinForm').style.display = 'block';
+    document.getElementById('noPinForm').style.display = 'none';
+  } else {
+    document.getElementById('noPinForm').style.display = 'block';
+    document.getElementById('havePinForm').style.display = 'none';
+  }
+}
+
+function showOptions() {
+  document.getElementById('optionSelection').style.display = 'block';
+  document.getElementById('havePinForm').style.display = 'none';
+  document.getElementById('noPinForm').style.display = 'none';
+}
+
+// Form validation for Have PIN form
+document.getElementById('havePinForm').addEventListener('submit', function(e) {
+  const pin = this.querySelector('input[name="pin"]');
   if (pin.value.length !== 6 || !/^\d{6}$/.test(pin.value)) {
     e.preventDefault();
     alert('PIN must be exactly 6 digits (numbers only)');
     pin.focus();
     return false;
   }
-  console.log('Form submitting with valid data');
+  console.log('Have PIN form submitting');
+});
+
+// Form validation for No PIN form
+document.getElementById('noPinForm').addEventListener('submit', function(e) {
+  const name = this.querySelector('input[name="name"]');
+  const phone = this.querySelector('input[name="phone"]');
+  
+  if (!name.value.trim()) {
+    e.preventDefault();
+    alert('Please enter your name');
+    name.focus();
+    return false;
+  }
+  
+  if (!phone.value.trim()) {
+    e.preventDefault();
+    alert('Please enter your phone number');
+    phone.focus();
+    return false;
+  }
+  
+  console.log('No PIN form submitting');
 });
 
 if('serviceWorker' in navigator){
