@@ -33,6 +33,11 @@
 <!-- Quiz Carousel -->
 <div class="quiz-container">
   <form method="POST" action="/submit" id="quizForm">
+    <!-- Hidden fields for participant data -->
+    <input type="hidden" name="participant_name" value="{{participant_name}}">
+    <input type="hidden" name="participant_pin" value="{{participant_pin}}">
+    <input type="hidden" name="participant_phone" value="{{participant_phone}}">
+    
     <div class="carousel-wrapper">
       {% for q in items %}
       <div class="question-card {% if loop.index == 1 %}active{% endif %}" data-question="{{loop.index}}">

@@ -223,23 +223,20 @@ def start():
     
     print(f"Selected {len(questions)} questions for quiz")
     
-    # Store participant data in session for grading
-    session['participant_name'] = name
-    session['participant_pin'] = pin
-    session['participant_phone'] = phone
-    
-    # Render quiz page directly (no redirect to avoid cookie issues)
+    # Render quiz page directly (pass participant data through form)
     return render_template('quiz.html', 
                          items=questions, 
-                         participant_name=name)
+                         participant_name=name,
+                         participant_pin=pin,
+                         participant_phone=phone)
 
 @app.route('/submit', methods=['POST'])
 def submit():
     """Grade quiz and save results to single database table"""
-    # Get participant data from session
-    name = session.get('participant_name', 'Unknown')
-    pin = session.get('participant_pin', '000000')
-    phone = session.get('participant_phone', 'N/A')
+    # Get participant data from form (not session to avoid cookie issues)
+    name = request.form.get('participant_name', 'Unknown').strip()
+    pin = request.form.get('participant_pin', '000000').strip()
+    phone = request.form.get('participant_phone', 'N/A').strip()
     
     # Load all questions to match against submissions
     all_questions = load_questions_from_csv()
