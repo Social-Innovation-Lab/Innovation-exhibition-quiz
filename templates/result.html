@@ -17,8 +17,10 @@
                 data-final-offset="{{565 - (565 * data.percent / 100)}}" />
       </svg>
       <div class="score-content">
-        <div class="score-number" id="animatedScore">0</div>
-        <div class="score-total">out of {{data.total}}</div>
+        <div class="score-display">
+          <span class="score-number" id="animatedScore">0</span><span class="score-separator">/</span><span class="score-total-number">{{data.total}}</span>
+        </div>
+        <div class="score-label">Right Answers!</div>
         <div class="score-percent">{{data.percent}}%</div>
       </div>
     </div>
@@ -141,17 +143,37 @@
   text-align: center;
 }
 
+.score-display {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
 .score-number {
   font-size: 52px;
   font-weight: 700;
   color: #e31837;
-  line-height: 1;
 }
 
-.score-total {
-  font-size: 20px;
-  color: #999;
-  margin-top: 4px;
+.score-separator {
+  font-size: 52px;
+  font-weight: 700;
+  color: #e31837;
+  margin: 0 4px;
+}
+
+.score-total-number {
+  font-size: 52px;
+  font-weight: 700;
+  color: #e31837;
+}
+
+.score-label {
+  font-size: 18px;
+  color: #666;
+  margin-top: 6px;
+  font-weight: 600;
 }
 
 .score-percent {
