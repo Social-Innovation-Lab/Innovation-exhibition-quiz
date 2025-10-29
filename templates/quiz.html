@@ -49,9 +49,10 @@
         
         <div class="options-grid">
           {% set letters = ['A','B','C','D'] %}
+          {% set question_idx = loop.index0 %}
           {% for opt in q.options %}
           <label class="option-card">
-            <input type="radio" name="answer_{{loop.parent.loop.index0}}" value="{{letters[loop.index0]}}" required>
+            <input type="radio" name="answer_{{question_idx}}" value="{{letters[loop.index0]}}" required>
             <div class="option-content">
               <span class="option-letter">{{letters[loop.index0]}}</span>
               <span class="option-text">{{opt}}</span>
