@@ -21,9 +21,11 @@
           <span class="score-number" id="animatedScore">0</span><span class="score-separator">/</span><span class="score-total-number">{{data.total}}</span>
         </div>
         <div class="score-label">Right Answers!</div>
-        <div class="score-percent">{{data.percent}}%</div>
       </div>
     </div>
+    
+    <!-- Percentage Display -->
+    <div class="percentage-display">{{data.percent}}%</div>
     
     <!-- Weighted Score Display -->
     <div class="weighted-score-display">
@@ -151,36 +153,37 @@
 }
 
 .score-number {
-  font-size: 52px;
+  font-size: 38px;
   font-weight: 700;
   color: #e31837;
 }
 
 .score-separator {
-  font-size: 52px;
+  font-size: 38px;
   font-weight: 700;
   color: #e31837;
-  margin: 0 4px;
+  margin: 0 3px;
 }
 
 .score-total-number {
-  font-size: 52px;
+  font-size: 38px;
   font-weight: 700;
   color: #e31837;
 }
 
 .score-label {
-  font-size: 18px;
+  font-size: 16px;
   color: #666;
-  margin-top: 6px;
+  margin-top: 8px;
   font-weight: 600;
 }
 
-.score-percent {
-  font-size: 20px;
-  font-weight: 600;
-  color: #333;
-  margin-top: 6px;
+.percentage-display {
+  text-align: center;
+  font-size: 22px;
+  font-weight: 700;
+  color: #e31837;
+  margin: 15px 0 10px;
 }
 
 .weighted-score-display {
