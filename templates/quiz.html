@@ -102,17 +102,17 @@
 }
 
 .countdown-number {
-  font-size: 120px;
+  font-size: 15vw;
   font-weight: 900;
   color: white;
   animation: countPulse 1s ease-in-out;
 }
 
 .countdown-text {
-  font-size: 28px;
+  font-size: 4vw;
   font-weight: 600;
   color: white;
-  margin-top: 20px;
+  margin-top: 2vh;
   opacity: 0.9;
 }
 
@@ -143,6 +143,8 @@
   z-index: 1000;
   animation: slideDown 0.5s ease-out;
   box-sizing: border-box;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
 }
 
 .progress-info {
@@ -248,6 +250,13 @@
   max-width: 800px;
   margin: 130px auto 0;
   padding: 20px;
+  min-height: calc(100vh - 130px);
+}
+
+/* Ensure body doesn't scroll under fixed header */
+body {
+  padding-top: 0;
+  overflow-x: hidden;
 }
 
 .carousel-wrapper {
@@ -532,13 +541,187 @@
   }
 }
 
-@media (max-width: 600px) {
+/* Responsive Design for Mobile & Tablet */
+
+/* Large Tablets (max-width: 1024px) */
+@media (max-width: 1024px) {
+  .quiz-container {
+    margin-top: 120px;
+    padding: 15px;
+  }
+  
+  .quiz-header {
+    padding: 12px 15px;
+  }
+}
+
+/* Tablets (max-width: 768px) */
+@media (max-width: 768px) {
+  .countdown-number {
+    font-size: 18vw;
+  }
+  
+  .countdown-text {
+    font-size: 5vw;
+  }
+  
+  .quiz-header {
+    padding: 10px 12px;
+  }
+  
+  .progress-info {
+    margin-bottom: 10px;
+  }
+  
+  .current-q {
+    font-size: 24px;
+  }
+  
+  .timer-badge {
+    font-size: 16px;
+    padding: 5px 12px;
+  }
+  
+  .clock-icon {
+    font-size: 18px;
+  }
+  
+  .dot {
+    width: 18px;
+    height: 18px;
+  }
+  
+  .quiz-container {
+    margin-top: 110px;
+    padding: 12px;
+  }
+  
+  .question-text {
+    padding: 20px;
+  }
+  
   .question-text p {
     font-size: 18px;
   }
   
   .option-text {
     font-size: 16px;
+  }
+  
+  .option-letter {
+    width: 35px;
+    height: 35px;
+    font-size: 16px;
+  }
+  
+  .submit-btn {
+    font-size: 18px;
+    padding: 14px 28px;
+  }
+}
+
+/* Mobile Phones (max-width: 480px) */
+@media (max-width: 480px) {
+  .countdown-number {
+    font-size: 20vw;
+  }
+  
+  .countdown-text {
+    font-size: 6vw;
+    margin-top: 1.5vh;
+  }
+  
+  .quiz-header {
+    padding: 8px 10px;
+  }
+  
+  .progress-info {
+    margin-bottom: 8px;
+  }
+  
+  .question-counter {
+    font-size: 16px;
+  }
+  
+  .current-q {
+    font-size: 20px;
+  }
+  
+  .timer-badge {
+    font-size: 14px;
+    padding: 4px 10px;
+    gap: 4px;
+  }
+  
+  .clock-icon {
+    font-size: 16px;
+  }
+  
+  .dot {
+    width: 14px;
+    height: 14px;
+    border-width: 2px;
+  }
+  
+  .progress-bar-container {
+    height: 6px;
+  }
+  
+  .progress-dots {
+    top: -5px;
+  }
+  
+  .quiz-container {
+    margin-top: 95px;
+    padding: 10px;
+  }
+  
+  .card-header {
+    padding: 12px 15px;
+    margin-bottom: 15px;
+  }
+  
+  .q-number {
+    font-size: 16px;
+  }
+  
+  .question-text {
+    padding: 18px;
+    margin-bottom: 20px;
+  }
+  
+  .question-text p {
+    font-size: 16px;
+    line-height: 1.5;
+  }
+  
+  .options-grid {
+    gap: 12px;
+  }
+  
+  .option-card {
+    padding: 12px;
+  }
+  
+  .option-letter {
+    width: 32px;
+    height: 32px;
+    font-size: 14px;
+  }
+  
+  .option-text {
+    font-size: 15px;
+    line-height: 1.4;
+  }
+  
+  .checkmark {
+    font-size: 18px;
+  }
+  
+  .submit-btn {
+    font-size: 16px;
+    padding: 12px 24px;
+    width: 100%;
   }
   
   .nav-controls {

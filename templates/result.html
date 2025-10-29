@@ -353,9 +353,16 @@
   to { transform: rotate(360deg); }
 }
 
-@media (max-width: 600px) {
+/* Responsive Design for Mobile & Tablet */
+
+/* Tablets (max-width: 768px) */
+@media (max-width: 768px) {
+  .result-container {
+    padding: 12px;
+  }
+  
   .result-card {
-    padding: 20px 15px;
+    padding: 20px;
   }
   
   .score-circle {
@@ -363,8 +370,137 @@
     height: 180px;
   }
   
-  .score-number {
-    font-size: 44px;
+  .circle-svg {
+    width: 180px;
+    height: 180px;
+  }
+  
+  .score-number, .score-separator, .score-total-number {
+    font-size: 34px;
+  }
+  
+  .score-label {
+    font-size: 14px;
+  }
+  
+  .percentage-display {
+    font-size: 30px;
+  }
+  
+  .weighted-score-display {
+    font-size: 16px;
+    padding: 14px 20px;
+  }
+  
+  .status-title {
+    font-size: 26px;
+  }
+  
+  .status-text {
+    font-size: 16px;
+  }
+  
+  .prize-banner {
+    font-size: 17px;
+    padding: 16px;
+  }
+  
+  .play-again-btn {
+    font-size: 19px;
+    padding: 15px 35px;
+  }
+}
+
+/* Mobile Phones (max-width: 480px) */
+@media (max-width: 480px) {
+  .result-container {
+    padding: 10px;
+  }
+  
+  .result-card {
+    padding: 18px;
+    border-radius: 16px;
+  }
+  
+  .congrats-text {
+    font-size: 24px;
+  }
+  
+  .participant-name {
+    font-size: 16px;
+  }
+  
+  .score-circle {
+    width: 160px;
+    height: 160px;
+    margin-bottom: 20px;
+  }
+  
+  .circle-svg {
+    width: 160px;
+    height: 160px;
+  }
+  
+  .score-number, .score-separator, .score-total-number {
+    font-size: 30px;
+  }
+  
+  .score-label {
+    font-size: 13px;
+  }
+  
+  .percentage-display {
+    font-size: 26px;
+    margin-bottom: 16px;
+  }
+  
+  .weighted-score-display {
+    font-size: 15px;
+    padding: 12px 18px;
+    margin-bottom: 18px;
+  }
+  
+  .weighted-label {
+    font-size: 14px;
+  }
+  
+  .weighted-value {
+    font-size: 15px;
+  }
+  
+  .trophy-icon, .emoji-icon {
+    font-size: 50px;
+    margin-bottom: 12px;
+  }
+  
+  .status-title {
+    font-size: 24px;
+    margin-bottom: 10px;
+  }
+  
+  .status-text {
+    font-size: 15px;
+  }
+  
+  .prize-banner {
+    font-size: 16px;
+    padding: 14px;
+    margin-top: 14px;
+  }
+  
+  .thank-you {
+    font-size: 17px;
+    margin-bottom: 16px;
+  }
+  
+  .play-again-btn {
+    font-size: 17px;
+    padding: 13px 30px;
+    width: 100%;
+  }
+  
+  .btn-icon {
+    font-size: 22px;
   }
 }
 </style>
