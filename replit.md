@@ -6,7 +6,7 @@ A tablet-friendly Progressive Web App (PWA) quiz kiosk for BRAC exhibitions. Dis
 ## Project Status
 **Status:** ✅ Fully Functional  
 **Last Updated:** October 29, 2025  
-**Version:** 2.3
+**Version:** 2.4
 
 ## Key Features
 - **Tablet-Optimized UI:** Large tap targets (48px min), readable 18px fonts, sticky progress bar
@@ -133,6 +133,13 @@ Server runs on `http://0.0.0.0:5000`
 - **Code Style:** Simple, readable Python/Flask with inline comments
 
 ## Recent Changes
+- **2025-10-29 v2.4:** Weighted scoring and tiered prize messages:
+  - **Weighted marks display**: Results now show weighted marks (out of 15.5) instead of cumulative score count (out of 10)
+  - **Weighted calculation**: Easy questions = 1.0 mark, Medium = 1.5 marks, Hard = 2.0 marks
+  - **Tiered prize messages**: 90%+ wins one-on-one meeting with leader, 80-90% wins gift, 70-80% wins lunch token
+  - **Removed "Missed prize by" message**: Cleaner results page without showing how close non-winners were
+  - **Fixed progress bar**: Progress ribbon now reaches stamps precisely using formula ((answered-1)/(total-1))*100
+  - **Less bright stamps**: Reduced stamp brightness with 90% opacity and softer glow effect
 - **2025-10-29 v2.3:** Two-path login system and timer enhancements:
   - **Two-path sign-in**: Landing page now has two options - "Have PIN?" (PIN-only entry) and "Don't Have PIN?" (Name+Phone registration)
   - **Auto-generated data**: "Have PIN" users auto-generate name as "Player-{PIN}" and phone as "PIN{PIN}"; "Don't Have PIN" users auto-generate random 6-digit PIN

@@ -377,15 +377,20 @@ def submit():
     )
     attempt_id = cursor.lastrowid
     
-    # Grade responses
+    # Grade responses with weighted scoring
     score = 0
+    weighted_score = 0.0
     for qid in question_ids:
         selected = request.form.get(str(qid), '').strip()
         
-        # Get correct answer
-        question = conn.execute('SELECT answer FROM questions WHERE id = ?', (qid,)).fetchone()
+        # Get correct answer and weight
+        question = conn.execute('SELECT answer, weight FROM questions WHERE id = ?', (qid,)).fetchone()
         is_correct = 1 if (question and selected == question['answer']) else 0
         score += is_correct
+        
+        # Add weighted score for correct answers
+        if is_correct and question:
+            weighted_score += question['weight']
         
         # Save response
         conn.execute(
@@ -415,11 +420,17 @@ def submit():
         'SELECT name FROM participants WHERE id = ?', (participant_id,)
     ).fetchone()
     
+    # Calculate total possible weighted marks (3 Easy + 3 Medium + 4 Hard)
+    # Easy (1.0) × 3 = 3.0, Medium (1.5) × 3 = 4.5, Hard (2.0) × 4 = 8.0
+    total_weighted_marks = 15.5
+    
     # Render result page directly (no redirect to avoid cookie issues)
     data = {
         'name': participant['name'] if participant else 'Participant',
         'score': score,
         'total': total_questions,
+        'weighted_score': round(weighted_score, 1),
+        'total_weighted': total_weighted_marks,
         'percent': round(percent, 2),
         'is_winner': is_winner
     }
