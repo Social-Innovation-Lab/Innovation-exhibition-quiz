@@ -59,14 +59,9 @@
   }
 
   function updateNavButtons() {
-    const prevBtn = document.getElementById('prevBtn');
-    const nextBtn = document.getElementById('nextBtn');
     const submitBtn = document.getElementById('submitBtn');
     
-    prevBtn.disabled = currentQuestion === 0;
-    
     if (currentQuestion === totalQuestions - 1) {
-      nextBtn.style.display = 'none';
       submitBtn.style.display = 'block';
       // Enable submit if all 10 questions answered
       const shouldDisable = answeredCount < totalQuestions;
@@ -84,16 +79,7 @@
       
       console.log('Submit button state:', { answeredCount, totalQuestions, disabled: submitBtn.disabled });
     } else {
-      nextBtn.style.display = 'flex';
       submitBtn.style.display = 'none';
-    }
-  }
-
-  function showEncouragement(questionIndex) {
-    const encourageEl = document.getElementById('encourage' + (questionIndex + 1));
-    if (encourageEl) {
-      const randomMsg = encouragements[Math.floor(Math.random() * encouragements.length)];
-      encourageEl.textContent = randomMsg;
     }
   }
   
@@ -153,37 +139,7 @@
     }, 1000);
   }
 
-  // Navigation buttons
-  const prevBtn = document.getElementById('prevBtn');
-  const nextBtn = document.getElementById('nextBtn');
-  
-  if (prevBtn) {
-    prevBtn.addEventListener('click', () => {
-      if (currentQuestion > 0) {
-        showQuestion(currentQuestion - 1);
-      }
-    });
-  }
-
-  if (nextBtn) {
-    nextBtn.addEventListener('click', () => {
-      const currentCard = document.querySelector('.question-card.active');
-      const currentInput = currentCard ? currentCard.querySelector('input[type="radio"]:checked') : null;
-      
-      if (!currentInput) {
-        // Highlight question to show it needs an answer
-        if (currentCard) {
-          currentCard.style.animation = 'shake 0.5s';
-          setTimeout(() => currentCard.style.animation = '', 500);
-        }
-        return;
-      }
-      
-      if (currentQuestion < totalQuestions - 1) {
-        showQuestion(currentQuestion + 1);
-      }
-    });
-  }
+  // Navigation is now handled only by swipe gestures and auto-advance
 
   // Monitor radio selections with instant feedback
   document.querySelectorAll('input[type="radio"]').forEach(input => {
@@ -197,7 +153,6 @@
       if (!answers.has(questionIndex)) {
         answers.add(questionIndex);
         answeredCount++;
-        showEncouragement(questionIndex);
         
         // Auto-advance after 800ms
         setTimeout(() => {
