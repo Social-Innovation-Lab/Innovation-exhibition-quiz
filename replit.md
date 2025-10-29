@@ -22,10 +22,16 @@ A tablet-friendly Progressive Web App (PWA) quiz kiosk for BRAC exhibitions. Dis
 
 ### Database Schema (PostgreSQL)
 - **Single Table:** `quiz_records` - Stores all quiz data in one simplified table
-  - **Login credentials:** name, pin, phone
+  - **Login credentials (nullable):**
+    - `name` - Only filled for "Don't Have PIN" users
+    - `pin` - Only filled for "Have PIN" users
+    - `phone` - Only filled for "Don't Have PIN" users
   - **Quiz results:** score (out of 10), percent
   - **Prize tracking:** is_winner (70% threshold), gift_given (admin tracking)
   - **Timestamp:** created_at (auto-generated)
+- **Sign-up Methods:**
+  - **"Have PIN" users:** Only PIN is stored (name and phone are NULL)
+  - **"Don't Have PIN" users:** Only name and phone are stored (PIN is NULL)
 - **Questions:** Loaded directly from CSV file (not stored in database)
 - **Storage:** Uses Replit's built-in PostgreSQL database (accessible via DATABASE_URL)
 
@@ -89,9 +95,9 @@ Each quiz generates a fresh set of 10 questions:
 ```sql
 CREATE TABLE quiz_records (
     id SERIAL PRIMARY KEY,
-    name TEXT NOT NULL,
-    pin TEXT NOT NULL,
-    phone TEXT NOT NULL,
+    name TEXT,              -- NULL for "Have PIN" users
+    pin TEXT,               -- NULL for "Don't Have PIN" users
+    phone TEXT,             -- NULL for "Have PIN" users
     score INTEGER NOT NULL,
     percent REAL NOT NULL,
     is_winner INTEGER DEFAULT 0,

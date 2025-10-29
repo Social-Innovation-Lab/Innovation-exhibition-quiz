@@ -63,12 +63,13 @@ def init_db():
     ''')
     
     # Create single table with all quiz data
+    # Note: name, phone, and pin can be NULL depending on sign-up method
     cursor.execute('''
         CREATE TABLE quiz_records (
             id SERIAL PRIMARY KEY,
-            name TEXT NOT NULL,
-            pin TEXT NOT NULL,
-            phone TEXT NOT NULL,
+            name TEXT,
+            pin TEXT,
+            phone TEXT,
             score INTEGER NOT NULL,
             percent REAL NOT NULL,
             is_winner INTEGER DEFAULT 0,
@@ -190,9 +191,9 @@ def start():
             print(f"Validation failed - invalid PIN: {pin}")
             return redirect('/')
         
-        # Generate placeholder name and phone for PIN users
-        name = f"Player-{pin}"
-        phone = f"PIN{pin}"
+        # PIN users: only store PIN, leave name and phone as None
+        name = None
+        phone = None
         
     elif form_type == 'no_pin':
         # Don't Have PIN: name and phone required
@@ -204,9 +205,8 @@ def start():
             print(f"Validation failed - name:{name}, phone:{phone}")
             return redirect('/')
         
-        # Generate random 6-digit PIN for users without PIN
-        import random
-        pin = ''.join([str(random.randint(0, 9)) for _ in range(6)])
+        # Name+Phone users: only store name and phone, leave PIN as None
+        pin = None
         
     else:
         # Invalid form type
@@ -224,19 +224,20 @@ def start():
     print(f"Selected {len(questions)} questions for quiz")
     
     # Render quiz page directly (pass participant data through form)
+    # Use empty string instead of None for template rendering
     return render_template('quiz.html', 
                          items=questions, 
-                         participant_name=name,
-                         participant_pin=pin,
-                         participant_phone=phone)
+                         participant_name=name if name else '',
+                         participant_pin=pin if pin else '',
+                         participant_phone=phone if phone else '')
 
 @app.route('/submit', methods=['POST'])
 def submit():
     """Grade quiz and save results to single database table"""
     # Get participant data from form (not session to avoid cookie issues)
-    name = request.form.get('participant_name', 'Unknown').strip()
-    pin = request.form.get('participant_pin', '000000').strip()
-    phone = request.form.get('participant_phone', 'N/A').strip()
+    name = request.form.get('participant_name', '').strip() or None
+    pin = request.form.get('participant_pin', '').strip() or None
+    phone = request.form.get('participant_phone', '').strip() or None
     
     # Load all questions to match against submissions
     all_questions = load_questions_from_csv()
@@ -282,8 +283,11 @@ def submit():
     total_weighted_marks = 15.5
     
     # Render result page directly
+    # Display name for results page (use PIN if name not provided)
+    display_name = name if name else f"Player-{pin}" if pin else "Participant"
+    
     data = {
-        'name': name,
+        'name': display_name,
         'score': score,
         'total': total_questions,
         'weighted_score': round(weighted_score, 1),
