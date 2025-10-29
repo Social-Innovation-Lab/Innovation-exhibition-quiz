@@ -1,6 +1,12 @@
 {% extends "base.html" %}
 
 {% block content %}
+<!-- Countdown Overlay -->
+<div class="countdown-overlay" id="countdownOverlay">
+  <div class="countdown-number" id="countdownNumber">3</div>
+  <div class="countdown-text">Get Ready!</div>
+</div>
+
 <!-- Enhanced Progress Header -->
 <div class="quiz-header">
   <div class="progress-info">
@@ -11,7 +17,7 @@
     </div>
     <div class="timer-badge" id="timerBadge">
       <span class="clock-icon">⏰</span>
-      <span id="timerCount">100</span>
+      <span id="timerCount">150</span>
     </div>
   </div>
   <div class="progress-bar-container">
@@ -78,14 +84,67 @@
 </div>
 
 <style>
-.quiz-header {
-  position: sticky;
+.countdown-overlay {
+  position: fixed;
   top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(227, 24, 55, 0.95);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  opacity: 1;
+  transition: opacity 0.3s ease;
+}
+
+.countdown-overlay.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.countdown-number {
+  font-size: 120px;
+  font-weight: 900;
+  color: white;
+  animation: countPulse 1s ease-in-out;
+}
+
+.countdown-text {
+  font-size: 28px;
+  font-weight: 600;
+  color: white;
+  margin-top: 20px;
+  opacity: 0.9;
+}
+
+@keyframes countPulse {
+  0% {
+    transform: scale(0.5);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.quiz-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
   background: linear-gradient(135deg, #e31837 0%, #c41430 100%);
   color: white;
   padding: 20px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-  z-index: 100;
+  z-index: 1000;
   animation: slideDown 0.5s ease-out;
 }
 
@@ -185,7 +244,7 @@
 
 .quiz-container {
   max-width: 800px;
-  margin: 0 auto;
+  margin: 140px auto 0;
   padding: 20px;
 }
 

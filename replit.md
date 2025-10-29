@@ -5,8 +5,8 @@ A tablet-friendly Progressive Web App (PWA) quiz kiosk for BRAC exhibitions. Dis
 
 ## Project Status
 **Status:** ✅ Fully Functional  
-**Last Updated:** October 22, 2025  
-**Version:** 2.2
+**Last Updated:** October 29, 2025  
+**Version:** 2.3
 
 ## Key Features
 - **Tablet-Optimized UI:** Large tap targets (48px min), readable 18px fonts, sticky progress bar
@@ -132,6 +132,16 @@ Server runs on `http://0.0.0.0:5000`
 - **UX:** Touch-first, tablet-optimized, kiosk-safe
 - **Code Style:** Simple, readable Python/Flask with inline comments
 
+## Recent Changes
+- **2025-10-29 v2.3:** Two-path login system and timer enhancements:
+  - **Two-path sign-in**: Landing page now has two options - "Have PIN?" (PIN-only entry) and "Don't Have PIN?" (Name+Phone registration)
+  - **Auto-generated data**: "Have PIN" users auto-generate name as "Player-{PIN}" and phone as "PIN{PIN}"; "Don't Have PIN" users auto-generate random 6-digit PIN
+  - **Countdown timer**: Added 3-2-1 countdown before quiz starts with full-screen overlay animation
+  - **150-second timer**: Increased quiz duration from 100 to 150 seconds with clock emoji (⏰)
+  - **Fixed timer bar**: Quiz header now uses position:fixed to stay visible during scrolling
+  - **Clean UI**: Removed all emojis from option buttons and form labels for professional look
+  - **Updated messaging**: Changed "Choose an option to continue" to "Sign-up to play"
+  
 ## Recent Changes
 - **2025-10-22 v2.2:** Restored actual BRAC programme names in questions (removed "this programme" replacement), changed results page header from "Results" to "Score", compact landing page with smaller proportions
 - **2025-10-22 v2.1:** Interactive UX/UI overhaul with tablet kiosk optimizations:

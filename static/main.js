@@ -8,8 +8,8 @@
   let answeredCount = 0;
   const answers = new Set();
   
-  // 100-second timer
-  let timeRemaining = 100;
+  // 150-second timer
+  let timeRemaining = 150;
   let timerInterval = null;
 
   const encouragements = [
@@ -95,6 +95,32 @@
       const randomMsg = encouragements[Math.floor(Math.random() * encouragements.length)];
       encourageEl.textContent = randomMsg;
     }
+  }
+  
+  function showCountdown() {
+    const overlay = document.getElementById('countdownOverlay');
+    const numberEl = document.getElementById('countdownNumber');
+    
+    let count = 3;
+    numberEl.textContent = count;
+    overlay.classList.remove('hidden');
+    
+    const countdownInterval = setInterval(() => {
+      count--;
+      if (count > 0) {
+        numberEl.textContent = count;
+        // Re-trigger animation by removing and adding class
+        numberEl.style.animation = 'none';
+        setTimeout(() => {
+          numberEl.style.animation = 'countPulse 1s ease-in-out';
+        }, 10);
+      } else {
+        clearInterval(countdownInterval);
+        overlay.classList.add('hidden');
+        // Start timer after countdown finishes
+        startTimer();
+      }
+    }, 1000);
   }
   
   function startTimer() {
@@ -238,7 +264,7 @@
   // Initialize
   updateProgress();
   updateNavButtons();
-  startTimer();
+  showCountdown();
 
   // Kiosk mode: prevent accidental back/refresh
   let submitted = false;
