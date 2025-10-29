@@ -27,18 +27,25 @@
 
   function updateProgress() {
     document.getElementById('currentQ').textContent = currentQuestion + 1;
-    const progress = ((currentQuestion + 1) / totalQuestions) * 100;
-    document.getElementById('progressFill').style.width = progress + '%';
     
-    // Update dots
-    for (let i = 0; i <= currentQuestion; i++) {
-      const questionCards = document.querySelectorAll('.question-card');
-      const qIndex = i;
-      const hasAnswer = questionCards[qIndex] && questionCards[qIndex].querySelector('input[type="radio"]:checked');
+    // Count total answered questions
+    let totalAnswered = 0;
+    const questionCards = document.querySelectorAll('.question-card');
+    
+    for (let i = 0; i < totalQuestions; i++) {
+      const hasAnswer = questionCards[i] && questionCards[i].querySelector('input[type="radio"]:checked');
       if (hasAnswer) {
+        totalAnswered++;
         document.getElementById('dot' + i).classList.add('answered');
+      } else {
+        document.getElementById('dot' + i).classList.remove('answered');
       }
     }
+    
+    // Progress bar reaches each stamp based on answered questions
+    // Each question is 10% of the bar (100% / 10 questions)
+    const progress = (totalAnswered / totalQuestions) * 100;
+    document.getElementById('progressFill').style.width = progress + '%';
   }
 
   function showQuestion(index) {

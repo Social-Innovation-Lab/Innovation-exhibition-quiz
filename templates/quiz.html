@@ -21,12 +21,12 @@
     </div>
   </div>
   <div class="progress-bar-container">
-    <div class="progress-bar-fill" id="progressFill"></div>
     <div class="progress-dots">
       {% for i in range(10) %}
       <div class="dot" id="dot{{i}}"></div>
       {% endfor %}
     </div>
+    <div class="progress-bar-fill" id="progressFill"></div>
   </div>
 </div>
 
@@ -194,43 +194,49 @@
 .progress-bar-container {
   position: relative;
   background: rgba(255,255,255,0.2);
-  height: 8px;
+  height: 10px;
   border-radius: 10px;
-  overflow: hidden;
+  overflow: visible;
 }
 
 .progress-bar-fill {
+  position: absolute;
+  bottom: 0;
+  left: 0;
   height: 100%;
-  background: rgba(255,255,255,0.9);
+  background: white;
   border-radius: 10px;
-  transition: width 0.4s ease;
-  width: 10%;
+  transition: width 0.5s ease;
+  width: 0%;
+  z-index: 1;
 }
 
 .progress-dots {
   position: absolute;
-  top: -6px;
+  top: -8px;
   left: 0;
   right: 0;
   display: flex;
   justify-content: space-between;
-  padding: 0 2%;
+  padding: 0 1%;
+  z-index: 2;
 }
 
 .dot {
-  width: 20px;
-  height: 20px;
+  width: 24px;
+  height: 24px;
   background: rgba(255,255,255,0.3);
-  border: 3px solid #e31837;
+  border: 3px solid rgba(255,255,255,0.5);
   border-radius: 50%;
-  transition: all 0.3s ease;
+  transition: all 0.4s ease;
+  box-shadow: 0 0 0 rgba(255,255,255,0);
 }
 
 .dot.answered {
   background: white;
   border-color: white;
-  transform: scale(1.2);
-  box-shadow: 0 0 10px rgba(255,255,255,0.5);
+  transform: scale(1.15);
+  box-shadow: 0 0 12px rgba(255,255,255,0.6);
 }
 
 .quiz-container {
