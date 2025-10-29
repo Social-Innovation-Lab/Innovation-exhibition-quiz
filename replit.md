@@ -20,11 +20,12 @@ A tablet-friendly Progressive Web App (PWA) quiz kiosk for BRAC exhibitions. Dis
 
 ## Architecture
 
-### Database Schema (SQLite with WAL mode)
+### Database Schema (PostgreSQL)
 - **questions:** 220 questions across all programmes with difficulty (Easy/Medium/Hard) and weight (1/1.5/2)
 - **participants:** Name, PIN, phone, consent timestamp
 - **attempts:** Quiz scores (out of 10), winner status, gift given flag
 - **responses:** Individual question answers and correctness
+- **Storage:** Uses Replit's built-in PostgreSQL database (accessible via DATABASE_URL)
 
 ### Application Routes
 - `GET /` - Landing page with participant sign-in form
@@ -83,11 +84,16 @@ Each quiz generates a fresh set of 10 questions:
 - **Offline Support:** Quiz submissions require network, assets cached locally
 - **Install Prompt:** Works on iOS Safari and Android Chrome
 
-### Database Concurrency
+### Database Connection
 ```python
-# WAL mode for concurrent reads/writes
-conn.execute("PRAGMA journal_mode=WAL;")
-conn.execute("PRAGMA synchronous=NORMAL;")
+# PostgreSQL connection using psycopg2
+import psycopg2
+import psycopg2.extras
+
+def get_db():
+    conn = psycopg2.connect(DATABASE_URL)
+    conn.cursor_factory = psycopg2.extras.RealDictCursor
+    return conn
 ```
 
 ## Winner Criteria
@@ -133,6 +139,12 @@ Server runs on `http://0.0.0.0:5000`
 - **Code Style:** Simple, readable Python/Flask with inline comments
 
 ## Recent Changes
+- **2025-10-29 v2.5:** Migrated to PostgreSQL database:
+  - **Database migration**: Migrated from SQLite to Replit's built-in PostgreSQL database
+  - **Removed Excel export**: All data is now stored permanently in PostgreSQL instead of temporary Excel files
+  - **Persistent storage**: Quiz results, participants, and scores are now stored in a production-grade database
+  - **Updated dependencies**: Removed openpyxl, added psycopg2-binary for PostgreSQL support
+  - **Database queries**: Updated all queries to use PostgreSQL syntax (%s placeholders instead of ?)
 - **2025-10-29 v2.4:** Weighted scoring and tiered prize messages:
   - **Dual score display**: Results now show BOTH number of questions correct (out of 10) in the circle AND weighted marks (out of 15.5) in separate box
   - **Weighted calculation**: Easy questions = 1.0 mark, Medium = 1.5 marks, Hard = 2.0 marks

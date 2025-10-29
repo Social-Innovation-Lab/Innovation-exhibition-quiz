@@ -1,4 +1,5 @@
-import sqlite3
+import psycopg2
+import psycopg2.extras
 import csv
 import secrets
 from datetime import datetime
@@ -6,8 +7,6 @@ from flask import Flask, render_template, request, redirect, session, jsonify, m
 from functools import wraps
 import os
 import hashlib
-from openpyxl import Workbook, load_workbook
-from openpyxl.styles import Font, PatternFill, Alignment
 
 app = Flask(__name__)
 app.secret_key = os.environ.get('SESSION_SECRET', secrets.token_hex(32))
@@ -16,9 +15,8 @@ app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'  # Allows cookies in iframe redire
 app.config['SESSION_COOKIE_HTTPONLY'] = True
 app.config['PERMANENT_SESSION_LIFETIME'] = 3600  # 1 hour session
 
-DATABASE = 'quiz.db'
+DATABASE_URL = os.environ.get('DATABASE_URL')
 ADMIN_PIN = os.environ.get('ADMIN_PIN', '2025')
-EXCEL_FILE = 'quiz_results.xlsx'
 
 def generate_csrf_token():
     """Generate CSRF token for session"""
@@ -45,29 +43,28 @@ def inject_csrf_token():
     return dict(csrf_token=generate_csrf_token)
 
 def get_db():
-    """Get database connection with WAL mode"""
-    conn = sqlite3.connect(DATABASE, check_same_thread=False)
-    conn.row_factory = sqlite3.Row
-    conn.execute("PRAGMA journal_mode=WAL;")
-    conn.execute("PRAGMA synchronous=NORMAL;")
+    """Get database connection"""
+    conn = psycopg2.connect(DATABASE_URL)
+    conn.cursor_factory = psycopg2.extras.RealDictCursor
     return conn
 
 def init_db():
     """Initialize database schema and import questions"""
     conn = get_db()
+    cursor = conn.cursor()
     
     # Drop old tables to start fresh with new schema
-    conn.executescript('''
-        DROP TABLE IF EXISTS responses;
-        DROP TABLE IF EXISTS attempts;
-        DROP TABLE IF EXISTS rotation_queue;
-        DROP TABLE IF EXISTS questions;
+    cursor.execute('''
+        DROP TABLE IF EXISTS responses CASCADE;
+        DROP TABLE IF EXISTS attempts CASCADE;
+        DROP TABLE IF EXISTS participants CASCADE;
+        DROP TABLE IF EXISTS questions CASCADE;
     ''')
     
-    # Create tables with new schema
-    conn.executescript('''
+    # Create tables with PostgreSQL syntax
+    cursor.execute('''
         CREATE TABLE IF NOT EXISTS questions (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            id SERIAL PRIMARY KEY,
             programme_code TEXT NOT NULL,
             programme_name TEXT NOT NULL,
             difficulty TEXT NOT NULL,
@@ -80,18 +77,22 @@ def init_db():
             answer TEXT NOT NULL,
             answer_text TEXT NOT NULL
         );
-        
+    ''')
+    
+    cursor.execute('''
         CREATE TABLE IF NOT EXISTS participants (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            id SERIAL PRIMARY KEY,
             name TEXT NOT NULL,
             pin TEXT NOT NULL,
             phone TEXT NOT NULL,
             consent INTEGER DEFAULT 1,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         );
-        
+    ''')
+    
+    cursor.execute('''
         CREATE TABLE IF NOT EXISTS attempts (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            id SERIAL PRIMARY KEY,
             participant_id INTEGER NOT NULL,
             score INTEGER NOT NULL,
             total_questions INTEGER DEFAULT 10,
@@ -101,9 +102,11 @@ def init_db():
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             FOREIGN KEY (participant_id) REFERENCES participants(id)
         );
-        
+    ''')
+    
+    cursor.execute('''
         CREATE TABLE IF NOT EXISTS responses (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            id SERIAL PRIMARY KEY,
             attempt_id INTEGER NOT NULL,
             question_id INTEGER NOT NULL,
             selected_answer TEXT NOT NULL,
@@ -111,17 +114,20 @@ def init_db():
             FOREIGN KEY (attempt_id) REFERENCES attempts(id),
             FOREIGN KEY (question_id) REFERENCES questions(id)
         );
-        
-        CREATE INDEX IF NOT EXISTS idx_questions_difficulty ON questions(difficulty);
-        CREATE INDEX IF NOT EXISTS idx_attempts_winner ON attempts(is_winner);
     ''')
+    
+    cursor.execute('CREATE INDEX IF NOT EXISTS idx_questions_difficulty ON questions(difficulty);')
+    cursor.execute('CREATE INDEX IF NOT EXISTS idx_attempts_winner ON attempts(is_winner);')
+    
+    # Commit table creation before importing questions
+    conn.commit()
+    cursor.close()
+    conn.close()
     
     # Import questions
     print("Importing questions from CSV...")
     import_questions()
     
-    conn.commit()
-    conn.close()
     print("Database initialized successfully!")
 
 def capitalize_first_letter(text):
@@ -134,6 +140,7 @@ def import_questions():
     """Import questions from CSV file with actual programme names"""
     import re
     conn = get_db()
+    cursor = conn.cursor()
     csv_path = 'attached_assets/Untitled spreadsheet - QuestionBank_1761118191656.csv'
     
     with open(csv_path, 'r', encoding='utf-8') as f:
@@ -155,16 +162,17 @@ def import_questions():
             option_c = capitalize_first_letter(row['option_C'].strip())
             option_d = capitalize_first_letter(row['option_D'].strip())
             
-            conn.execute('''
+            cursor.execute('''
                 INSERT INTO questions (programme_code, programme_name, difficulty, weight, question, 
                                       option_A, option_B, option_C, option_D, answer, answer_text)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
             ''', (row['programme_code'], row['programme_name'], row['difficulty'], 
                   float(row['weight']), question_text,
                   option_a, option_b, option_c, option_d,
                   row['answer_letter'], row['answer_text']))
     
     conn.commit()
+    cursor.close()
     print(f"Imported questions from new question bank")
 
 def select_weighted_random_questions(num_questions=10):
@@ -177,6 +185,7 @@ def select_weighted_random_questions(num_questions=10):
     """
     import random
     conn = get_db()
+    cursor = conn.cursor()
     
     # Target distribution
     target_easy = 3
@@ -186,99 +195,32 @@ def select_weighted_random_questions(num_questions=10):
     selected_questions = []
     
     # Get Easy questions
-    easy_questions = conn.execute(
-        'SELECT * FROM questions WHERE difficulty = "Easy" ORDER BY RANDOM() LIMIT ?',
-        (target_easy,)
-    ).fetchall()
-    selected_questions.extend([dict(q) for q in easy_questions])
+    cursor.execute(
+        'SELECT * FROM questions WHERE difficulty = %s ORDER BY RANDOM() LIMIT %s',
+        ('Easy', target_easy)
+    )
+    selected_questions.extend(cursor.fetchall())
     
     # Get Medium questions
-    medium_questions = conn.execute(
-        'SELECT * FROM questions WHERE difficulty = "Medium" ORDER BY RANDOM() LIMIT ?',
-        (target_medium,)
-    ).fetchall()
-    selected_questions.extend([dict(q) for q in medium_questions])
+    cursor.execute(
+        'SELECT * FROM questions WHERE difficulty = %s ORDER BY RANDOM() LIMIT %s',
+        ('Medium', target_medium)
+    )
+    selected_questions.extend(cursor.fetchall())
     
     # Get Hard questions
-    hard_questions = conn.execute(
-        'SELECT * FROM questions WHERE difficulty = "Hard" ORDER BY RANDOM() LIMIT ?',
-        (target_hard,)
-    ).fetchall()
-    selected_questions.extend([dict(q) for q in hard_questions])
+    cursor.execute(
+        'SELECT * FROM questions WHERE difficulty = %s ORDER BY RANDOM() LIMIT %s',
+        ('Hard', target_hard)
+    )
+    selected_questions.extend(cursor.fetchall())
+    
+    cursor.close()
     
     # Shuffle the selected questions so difficulty levels are mixed
     random.shuffle(selected_questions)
     
     return selected_questions
-
-def export_to_excel(participant_id, score, percent, is_winner, total_questions=10):
-    """Export quiz result to Excel file"""
-    try:
-        conn = get_db()
-        participant = conn.execute(
-            'SELECT name, pin, phone FROM participants WHERE id = ?',
-            (participant_id,)
-        ).fetchone()
-        
-        if not participant:
-            return
-        
-        # Create or load workbook
-        if os.path.exists(EXCEL_FILE):
-            wb = load_workbook(EXCEL_FILE)
-            ws = wb.active
-        else:
-            wb = Workbook()
-            ws = wb.active
-            ws.title = "Quiz Results"
-            
-            # Create header row
-            headers = ['Name', 'PIN', 'Phone', 'Score', 'Percentage', 'Winner', 'Date & Time']
-            ws.append(headers)
-            
-            # Style headers
-            header_fill = PatternFill(start_color="E31837", end_color="E31837", fill_type="solid")
-            header_font = Font(bold=True, color="FFFFFF")
-            for cell in ws[1]:
-                cell.fill = header_fill
-                cell.font = header_font
-                cell.alignment = Alignment(horizontal="center", vertical="center")
-        
-        # Mask phone number (show last 4 digits only)
-        phone = participant['phone']
-        masked_phone = f"****{phone[-4:]}" if len(phone) >= 4 else phone
-        
-        # Add data row
-        row_data = [
-            participant['name'],
-            participant['pin'],
-            masked_phone,
-            f"{score}/{total_questions}",
-            f"{percent:.2f}%",
-            "Yes" if is_winner else "No",
-            datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-        ]
-        ws.append(row_data)
-        
-        # Auto-adjust column widths
-        for column in ws.columns:
-            max_length = 0
-            column_letter = column[0].column_letter
-            for cell in column:
-                try:
-                    if len(str(cell.value)) > max_length:
-                        max_length = len(str(cell.value))
-                except:
-                    pass
-            adjusted_width = min(max_length + 2, 50)
-            ws.column_dimensions[column_letter].width = adjusted_width
-        
-        # Save workbook
-        wb.save(EXCEL_FILE)
-        print(f"Exported result to {EXCEL_FILE}")
-        
-    except Exception as e:
-        print(f"Error exporting to Excel: {e}")
 
 @app.route('/')
 def index():
@@ -324,12 +266,14 @@ def start():
     
     # Create participant record
     conn = get_db()
-    cursor = conn.execute(
-        'INSERT INTO participants (name, pin, phone, consent) VALUES (?, ?, ?, ?)',
+    cursor = conn.cursor()
+    cursor.execute(
+        'INSERT INTO participants (name, pin, phone, consent) VALUES (%s, %s, %s, %s) RETURNING id',
         (name, pin, phone, 1)
     )
-    participant_id = cursor.lastrowid
+    participant_id = cursor.fetchone()['id']
     conn.commit()
+    cursor.close()
     
     print(f"Created participant: participant_id={participant_id}, name={name}, form_type={form_type}")
     
@@ -366,16 +310,17 @@ def submit():
     question_ids = [int(qid) for qid in question_ids_str.split(',') if qid]
     
     conn = get_db()
+    cursor = conn.cursor()
     
     # Total questions is now 10
     total_questions = len(question_ids)
     
     # Create attempt record
-    cursor = conn.execute(
-        'INSERT INTO attempts (participant_id, score, total_questions, percent, is_winner) VALUES (?, 0, ?, 0, 0)',
+    cursor.execute(
+        'INSERT INTO attempts (participant_id, score, total_questions, percent, is_winner) VALUES (%s, 0, %s, 0, 0) RETURNING id',
         (participant_id, total_questions)
     )
-    attempt_id = cursor.lastrowid
+    attempt_id = cursor.fetchone()['id']
     
     # Grade responses with weighted scoring
     score = 0
@@ -384,7 +329,8 @@ def submit():
         selected = request.form.get(str(qid), '').strip()
         
         # Get correct answer and weight
-        question = conn.execute('SELECT answer, weight FROM questions WHERE id = ?', (qid,)).fetchone()
+        cursor.execute('SELECT answer, weight FROM questions WHERE id = %s', (qid,))
+        question = cursor.fetchone()
         is_correct = 1 if (question and selected == question['answer']) else 0
         score += is_correct
         
@@ -393,8 +339,8 @@ def submit():
             weighted_score += question['weight']
         
         # Save response
-        conn.execute(
-            'INSERT INTO responses (attempt_id, question_id, selected_answer, is_correct) VALUES (?, ?, ?, ?)',
+        cursor.execute(
+            'INSERT INTO responses (attempt_id, question_id, selected_answer, is_correct) VALUES (%s, %s, %s, %s)',
             (attempt_id, qid, selected, is_correct)
         )
     
@@ -403,8 +349,8 @@ def submit():
     is_winner = 1 if score >= 7 else 0
     
     # Update attempt
-    conn.execute(
-        'UPDATE attempts SET score = ?, percent = ?, is_winner = ? WHERE id = ?',
+    cursor.execute(
+        'UPDATE attempts SET score = %s, percent = %s, is_winner = %s WHERE id = %s',
         (score, percent, is_winner, attempt_id)
     )
     
@@ -412,13 +358,12 @@ def submit():
     
     print(f"Quiz graded: score={score}/{total_questions}, percent={percent:.2f}%, winner={is_winner}")
     
-    # Export result to Excel file
-    export_to_excel(participant_id, score, percent, is_winner, total_questions)
-    
     # Get participant name for display
-    participant = conn.execute(
-        'SELECT name FROM participants WHERE id = ?', (participant_id,)
-    ).fetchone()
+    cursor.execute('SELECT name FROM participants WHERE id = %s', (participant_id,))
+    participant = cursor.fetchone()
+    
+    cursor.close()
+    conn.close()
     
     # Calculate total possible weighted marks (3 Easy + 3 Medium + 4 Hard)
     # Easy (1.0) × 3 = 3.0, Medium (1.5) × 3 = 4.5, Hard (2.0) × 4 = 8.0
@@ -445,10 +390,13 @@ def result():
     
     attempt_id = session['attempt_id']
     conn = get_db()
+    cursor = conn.cursor()
     
-    attempt = conn.execute(
-        'SELECT * FROM attempts WHERE id = ?', (attempt_id,)
-    ).fetchone()
+    cursor.execute('SELECT * FROM attempts WHERE id = %s', (attempt_id,))
+    attempt = cursor.fetchone()
+    
+    cursor.close()
+    conn.close()
     
     if not attempt:
         return redirect('/')
@@ -488,24 +436,32 @@ def admin_logout():
 def admin():
     """Admin dashboard with winner list"""
     conn = get_db()
+    cursor = conn.cursor()
     
     # Get all attempts with participant info
-    attempts = conn.execute('''
+    cursor.execute('''
         SELECT a.*, p.name, p.pin, p.phone
         FROM attempts a
         JOIN participants p ON a.participant_id = p.id
         ORDER BY a.created_at DESC
-    ''').fetchall()
+    ''')
+    attempts = cursor.fetchall()
     
     # Get statistics
     total_attempts = len(attempts)
-    total_winners = conn.execute('SELECT COUNT(*) FROM attempts WHERE is_winner = 1').fetchone()[0]
-    avg_score = conn.execute('SELECT AVG(score) FROM attempts').fetchone()[0] or 0
+    cursor.execute('SELECT COUNT(*) FROM attempts WHERE is_winner = 1')
+    total_winners = cursor.fetchone()['count']
+    cursor.execute('SELECT AVG(score) FROM attempts')
+    avg_score_row = cursor.fetchone()
+    avg_score = avg_score_row['avg'] if avg_score_row and avg_score_row['avg'] else 0
+    
+    cursor.close()
+    conn.close()
     
     stats = {
         'total_attempts': total_attempts,
         'total_winners': total_winners,
-        'avg_score': round(avg_score, 1)
+        'avg_score': round(float(avg_score), 1)
     }
     
     return render_template('admin.html', attempts=attempts, stats=stats)
@@ -519,8 +475,11 @@ def mark_gift(attempt_id):
         abort(403)
     
     conn = get_db()
-    conn.execute('UPDATE attempts SET gift_given = 1 WHERE id = ?', (attempt_id,))
+    cursor = conn.cursor()
+    cursor.execute('UPDATE attempts SET gift_given = 1 WHERE id = %s', (attempt_id,))
     conn.commit()
+    cursor.close()
+    conn.close()
     return redirect('/admin')
 
 @app.route('/admin/export')
@@ -528,14 +487,19 @@ def mark_gift(attempt_id):
 def export_csv():
     """Export winners to CSV"""
     conn = get_db()
+    cursor = conn.cursor()
     
-    winners = conn.execute('''
+    cursor.execute('''
         SELECT p.name, p.pin, p.phone, a.score, a.percent, a.created_at, a.gift_given
         FROM attempts a
         JOIN participants p ON a.participant_id = p.id
         WHERE a.is_winner = 1
         ORDER BY a.created_at DESC
-    ''').fetchall()
+    ''')
+    winners = cursor.fetchall()
+    
+    cursor.close()
+    conn.close()
     
     # Create CSV
     output = "Name,PIN,Phone,Score,Percentage,Date,Gift Given\n"
@@ -549,20 +513,6 @@ def export_csv():
     response.headers['Content-Type'] = 'text/csv'
     response.headers['Content-Disposition'] = 'attachment; filename=winners.csv'
     return response
-
-@app.route('/download-results')
-def download_results():
-    """Download Excel file with quiz results"""
-    if not os.path.exists(EXCEL_FILE):
-        return "No quiz results yet. Complete a quiz first.", 404
-    
-    from flask import send_file
-    return send_file(
-        EXCEL_FILE,
-        mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-        as_attachment=True,
-        download_name=f'brac_quiz_results_{datetime.now().strftime("%Y%m%d_%H%M%S")}.xlsx'
-    )
 
 @app.route('/manifest.json')
 def manifest():
@@ -580,9 +530,23 @@ def manifest():
         ]
     })
 
-# Initialize database on startup (before app runs)
-if not os.path.exists(DATABASE):
-    init_db()
+# Initialize database on startup (check if tables exist)
+def check_database():
+    """Check if database tables exist, create them if not"""
+    try:
+        conn = get_db()
+        cursor = conn.cursor()
+        cursor.execute("SELECT EXISTS (SELECT FROM information_schema.tables WHERE table_name = 'questions')")
+        exists = cursor.fetchone()['exists']
+        cursor.close()
+        conn.close()
+        if not exists:
+            init_db()
+    except Exception as e:
+        print(f"Database check failed: {e}. Attempting to initialize...")
+        init_db()
+
+check_database()
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
