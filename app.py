@@ -80,6 +80,7 @@ def init_db():
             phone TEXT,
             score INTEGER NOT NULL,
             percent REAL NOT NULL,
+            weighted_score REAL,
             is_winner INTEGER DEFAULT 0,
             gift_given INTEGER DEFAULT 0,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -279,18 +280,18 @@ def submit():
     percent = (score / total_questions) * 100
     is_winner = 1 if score >= 7 else 0
     
-    # Save single record to database
+    # Save single record to database (including weighted_score)
     conn = get_db()
     cursor = conn.cursor()
     cursor.execute(
-        'INSERT INTO quiz_records (name, pin, phone, score, percent, is_winner) VALUES (%s, %s, %s, %s, %s, %s)',
-        (name, pin, phone, score, percent, is_winner)
+        'INSERT INTO quiz_records (name, pin, phone, score, percent, weighted_score, is_winner) VALUES (%s, %s, %s, %s, %s, %s, %s)',
+        (name, pin, phone, score, percent, weighted_score, is_winner)
     )
     conn.commit()
     cursor.close()
     conn.close()
     
-    print(f"Quiz saved: name={name}, score={score}/{total_questions}, percent={percent:.2f}%, winner={is_winner}")
+    print(f"Quiz saved: name={name}, score={score}/{total_questions}, percent={percent:.2f}%, weighted_score={weighted_score:.1f}, winner={is_winner}")
     
     # Calculate total possible weighted marks (2 Easy + 4 Medium + 4 Hard)
     # Easy (1.0) × 2 = 2.0, Medium (1.5) × 4 = 6.0, Hard (2.0) × 4 = 8.0

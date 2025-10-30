@@ -30,10 +30,11 @@ A single `quiz_records` table stores all participant and quiz data:
 - `name` (TEXT, nullable)
 - `pin` (TEXT, nullable)
 - `phone` (TEXT, nullable)
-- `score` (INTEGER, NOT NULL)
-- `percent` (REAL, NOT NULL)
-- `is_winner` (INTEGER, DEFAULT 0)
-- `gift_given` (INTEGER, DEFAULT 0)
+- `score` (INTEGER, NOT NULL) - Number of correct answers (0-10)
+- `percent` (REAL, NOT NULL) - Percentage score (0-100)
+- `weighted_score` (REAL, nullable) - Weighted score based on difficulty (max 16.0)
+- `is_winner` (INTEGER, DEFAULT 0) - 1 if score ≥70%, 0 otherwise
+- `gift_given` (INTEGER, DEFAULT 0) - 1 if gift has been distributed, 0 otherwise
 - `created_at` (TIMESTAMP, DEFAULT CURRENT_TIMESTAMP)
 
 ### Application Routes
