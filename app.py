@@ -104,8 +104,15 @@ def capitalize_first_letter(text):
 def load_questions_from_csv():
     """Load questions from CSV file (not stored in database)"""
     import re
-    csv_path = 'attached_assets/Untitled spreadsheet - QuestionBank_1761118191656.csv'
+    csv_path = 'attached_assets/Quiz App ques 1.0 - QuestionBank_1762244846797.csv'
     questions = []
+    
+    # Weight mapping: Easy=0.5, Medium=0.75, Hard=1.5 (total 10 marks for 2+4+4 distribution)
+    weight_mapping = {
+        'Easy': 0.5,
+        'Medium': 0.75,
+        'Hard': 1.5
+    }
     
     with open(csv_path, 'r', encoding='utf-8') as f:
         reader = csv.DictReader(f)
@@ -126,11 +133,15 @@ def load_questions_from_csv():
             option_c = capitalize_first_letter(row['option_C'].strip())
             option_d = capitalize_first_letter(row['option_D'].strip())
             
+            # Apply custom weight based on difficulty level
+            difficulty = row['difficulty']
+            custom_weight = weight_mapping.get(difficulty, 1.0)
+            
             questions.append({
                 'programme_code': row['programme_code'],
                 'programme_name': row['programme_name'],
-                'difficulty': row['difficulty'],
-                'weight': float(row['weight']),
+                'difficulty': difficulty,
+                'weight': custom_weight,  # Use custom weight instead of CSV weight
                 'question': question_text,
                 'option_A': option_a,
                 'option_B': option_b,
@@ -146,9 +157,10 @@ def select_weighted_random_questions(num_questions=10):
     """Select random questions with difficulty-based weighting
     
     Target distribution for 10 questions:
-    - Easy (weight 1.0): 2 questions (20%)
-    - Medium (weight 1.5): 4 questions (40%)
-    - Hard (weight 2.0): 4 questions (40%)
+    - Easy (weight 0.5): 2 questions (20%) = 1.0 marks
+    - Medium (weight 0.75): 4 questions (40%) = 3.0 marks
+    - Hard (weight 1.5): 4 questions (40%) = 6.0 marks
+    Total: 10.0 marks
     """
     import random
     
@@ -294,8 +306,8 @@ def submit():
     print(f"Quiz saved: name={name}, score={score}/{total_questions}, percent={percent:.2f}%, weighted_score={weighted_score:.1f}, winner={is_winner}")
     
     # Calculate total possible weighted marks (2 Easy + 4 Medium + 4 Hard)
-    # Easy (1.0) × 2 = 2.0, Medium (1.5) × 4 = 6.0, Hard (2.0) × 4 = 8.0
-    total_weighted_marks = 16.0
+    # Easy (0.5) × 2 = 1.0, Medium (0.75) × 4 = 3.0, Hard (1.5) × 4 = 6.0
+    total_weighted_marks = 10.0
     
     # Render result page directly
     # Display name for results page (use PIN if name not provided)
