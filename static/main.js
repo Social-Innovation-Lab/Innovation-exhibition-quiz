@@ -70,7 +70,7 @@
     const submitBtn = document.getElementById('submitBtn');
     
     if (currentQuestion === totalQuestions - 1) {
-      submitBtn.style.display = 'block';
+      submitBtn.style.display = 'flex';
       // Enable submit if all 10 questions answered
       const shouldDisable = answeredCount < totalQuestions;
       submitBtn.disabled = shouldDisable;

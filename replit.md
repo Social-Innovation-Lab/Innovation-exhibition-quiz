@@ -48,10 +48,12 @@ A single `quiz_records` table stores all participant and quiz data:
 - `GET /manifest.json`: PWA manifest file.
 
 ## Recent Changes
-- **2025-11-04 (Latest):** Mobile UX improvements and phone validation:
-  - **Submit button mobile fix:** Enhanced proportional scaling with better clamp() values for all screen sizes
-  - **Phone validation:** Added 11-digit phone number validation (maxlength, pattern, and JavaScript validation)
-  - **Responsive sizing:** Submit button now uses clamp(280px, 85vw, 600px) for optimal mobile display
+- **2025-11-04 (Latest):** Complete mobile Submit button proportions fix:
+  - **Mobile-specific overrides:** Applied `!important` rules to fully override desktop CSS constraints
+  - **Full-width mobile:** Submit button uses 100% width with no max-width constraint on mobile
+  - **Viewport-based sizing:** Height uses `clamp(48px, 12vw, 60px)` for proper aspect ratio
+  - **Flex display fix:** Changed JavaScript from `display: block` to `display: flex` for proper centering
+  - **Phone validation:** Added 11-digit phone number validation (maxlength, pattern, and JavaScript)
 - **2025-11-04:** Updated question bank and weighting system:
   - **New CSV:** Switched to `Quiz App ques 1.0 - QuestionBank_1762244846797.csv` (231 questions)
   - **Updated weights:** Easy = 0.5, Medium = 0.75, Hard = 1.5 (total max: 10.0 marks)
