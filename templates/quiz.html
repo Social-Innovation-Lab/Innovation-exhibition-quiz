@@ -472,20 +472,24 @@ body {
 
 .submit-btn {
   width: 100%;
-  max-width: 600px;
-  padding: clamp(16px, 2.5vh, 20px);
-  font-size: clamp(18px, 3.5vw, 22px);
+  max-width: clamp(280px, 85vw, 600px);
+  padding: clamp(14px, 2vh, 18px) clamp(20px, 4vw, 32px);
+  font-size: clamp(16px, 3.2vw, 20px);
   font-weight: 700;
   color: white;
   background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
   border: none;
-  border-radius: clamp(10px, 2vw, 12px);
+  border-radius: clamp(8px, 1.5vw, 12px);
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
-  min-height: clamp(60px, 8vh, 70px);
+  box-shadow: 0 clamp(4px, 1vh, 6px) clamp(16px, 3vh, 20px) rgba(76, 175, 80, 0.4);
+  min-height: clamp(52px, 7vh, 64px);
   animation: bounceIn 0.6s ease-out;
   margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(6px, 1vw, 10px);
 }
 
 .submit-btn:hover {
@@ -722,19 +726,18 @@ body {
   }
   
   .submit-btn {
-    font-size: 16px;
-    padding: 12px 24px;
+    font-size: clamp(15px, 3.5vw, 18px);
+    padding: clamp(12px, 1.8vh, 14px) clamp(18px, 4vw, 24px);
     width: 100%;
+    max-width: 100%;
+    min-height: clamp(48px, 6.5vh, 56px);
   }
   
   .nav-controls {
     flex-direction: column;
     align-items: center;
     gap: clamp(10px, 2vh, 15px);
-  }
-  
-  .submit-btn {
-    max-width: 100%;
+    margin-top: clamp(20px, 3vh, 30px);
   }
 }
 </style>

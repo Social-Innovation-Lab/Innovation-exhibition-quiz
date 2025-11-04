@@ -82,7 +82,7 @@
       <label class="form-label">
         <span>Phone Number</span>
       </label>
-      <input name="phone" type="tel" inputmode="tel" autocomplete="tel" required class="form-input" placeholder="Enter phone number">
+      <input name="phone" type="tel" inputmode="tel" autocomplete="tel" maxlength="11" pattern="[0-9]{11}" required class="form-input" placeholder="Enter 11-digit phone number">
     </div>
     
     <button type="submit" class="start-button">
@@ -441,6 +441,15 @@ document.getElementById('noPinForm').addEventListener('submit', function(e) {
   if (!phone.value.trim()) {
     e.preventDefault();
     alert('Please enter your phone number');
+    phone.focus();
+    return false;
+  }
+  
+  // Validate phone number is exactly 11 digits
+  const phoneDigits = phone.value.replace(/\D/g, '');
+  if (phoneDigits.length !== 11) {
+    e.preventDefault();
+    alert('Phone number must be exactly 11 digits');
     phone.focus();
     return false;
   }
