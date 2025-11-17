@@ -48,14 +48,16 @@ A single `quiz_records` table stores all participant and quiz data:
 - `GET /manifest.json`: PWA manifest file.
 
 ## Recent Changes
-- **2025-11-17 (Latest):** UX improvements - smooth transitions, compact option boxes, and weighted score display:
+- **2025-11-17 (Latest):** UX improvements - highlighted questions, minimal option boxes, and weighted score display:
   - **Smooth transitions:** Changed carousel animation from bouncy cubic-bezier to smooth ease-in-out (0.4s)
-  - **Compact option boxes:** Significantly reduced size - padding (10-14px), min-height (48-60px), border (2px), smaller letter circles (32-38px), tighter gaps (10-12px)
+  - **Highlighted questions:** Pink gradient background, 2px pink border, bolder font (600 weight), larger text (18-22px), enhanced shadow
+  - **Minimal option boxes:** Further reduced padding (8-12px vertical, 10-14px horizontal), min-height (44-54px), tighter gaps (8-10px)
   - **Optimized fonts:** Text (14-16px), letter (14-16px), line-height (1.4) for better coherence
   - **Weighted score display:** Result page now shows weighted score (out of 10) in the circle instead of regular score
   - **Weighted percentage:** Percentage calculation based on weighted score (weighted_score / 10.0 * 100)
   - **Winner detection:** Updated to use weighted_score >= 7.0 (70% of max weighted marks)
   - **Prize tiers:** All tier calculations now use weighted_percent instead of regular percent
+  - **Removed Back buttons:** Cleaner login flow without back navigation buttons
 - **2025-11-17:** Added visible swipe indicators for quiz navigation:
   - **Visual indicators:** Animated red circular buttons with left/right arrows appear on the screen edges
   - **Smart visibility:** Left arrow shows when not on first question, right arrow shows when not on last question
