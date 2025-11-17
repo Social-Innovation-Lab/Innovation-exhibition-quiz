@@ -57,6 +57,7 @@ A single `quiz_records` table stores all participant and quiz data:
   - **Winner detection:** Updated to use weighted_score >= 7.0 (70% of max weighted marks)
   - **Prize tiers:** All tier calculations now use weighted_percent instead of regular percent
   - **Kiosk mode:** Removed back buttons from credential forms to prevent accidental navigation
+  - **Loading overlay:** Added smooth loading screen during credential submission to hide backend transitions
   - **Swipe indicators:** Added visible red circular arrows on screen edges for left/right navigation
 - **2025-11-17:** Added visible swipe indicators for quiz navigation (merged into latest):
   - **Visual indicators:** Animated red circular buttons with left/right arrows appear on the screen edges
