@@ -52,10 +52,10 @@
       <label class="form-label">
         <span>PIN (6 digits)</span>
       </label>
-      <input name="pin" type="text" inputmode="numeric" pattern="[0-9]{6}" required class="form-input" placeholder="Enter 6-digit PIN">
+      <input name="pin" type="text" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" required class="form-input" placeholder="Enter 6-digit PIN" id="pinInput">
     </div>
     
-    <button type="submit" class="start-button">
+    <button type="submit" class="start-button" id="pinSubmitBtn" disabled>
       <span>Start Quiz</span>
       <span class="button-arrow">→</span>
     </button>
@@ -71,17 +71,17 @@
       <label class="form-label">
         <span>Full Name</span>
       </label>
-      <input name="name" type="text" required autocomplete="name" class="form-input" placeholder="Enter your name">
+      <input name="name" type="text" required autocomplete="name" class="form-input" placeholder="Enter your name" id="nameInput">
     </div>
     
     <div class="form-group">
       <label class="form-label">
         <span>Phone Number</span>
       </label>
-      <input name="phone" type="tel" inputmode="tel" autocomplete="tel" maxlength="11" pattern="[0-9]{11}" required class="form-input" placeholder="Enter 11-digit phone number">
+      <input name="phone" type="tel" inputmode="tel" autocomplete="tel" maxlength="11" pattern="[0-9]{11}" required class="form-input" placeholder="Enter 11-digit phone number" id="phoneInput">
     </div>
     
-    <button type="submit" class="start-button">
+    <button type="submit" class="start-button" id="phoneSubmitBtn" disabled>
       <span>Start Quiz</span>
       <span class="button-arrow">→</span>
     </button>
@@ -334,14 +334,22 @@
   margin-top: 6px;
 }
 
-.start-button:hover {
+.start-button:hover:not(:disabled) {
   transform: translateY(-2px);
   box-shadow: 0 8px 25px rgba(227, 24, 55, 0.4);
 }
 
-.start-button:active {
+.start-button:active:not(:disabled) {
   transform: translateY(0);
   box-shadow: 0 4px 15px rgba(227, 24, 55, 0.3);
+}
+
+.start-button:disabled {
+  background: linear-gradient(135deg, #b0b0b0 0%, #909090 100%);
+  cursor: not-allowed;
+  opacity: 0.6;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  transform: none;
 }
 
 .button-arrow {
@@ -408,6 +416,53 @@ function showOptions() {
   document.getElementById('optionSelection').style.display = 'block';
   document.getElementById('havePinForm').style.display = 'none';
   document.getElementById('noPinForm').style.display = 'none';
+}
+
+// Real-time validation for PIN input
+const pinInput = document.getElementById('pinInput');
+const pinSubmitBtn = document.getElementById('pinSubmitBtn');
+
+if (pinInput && pinSubmitBtn) {
+  pinInput.addEventListener('input', function() {
+    const value = this.value.replace(/\D/g, ''); // Remove non-digits
+    this.value = value; // Update input to only digits
+    
+    // Enable button only if exactly 6 digits
+    if (value.length === 6) {
+      pinSubmitBtn.disabled = false;
+    } else {
+      pinSubmitBtn.disabled = true;
+    }
+  });
+}
+
+// Real-time validation for Name and Phone inputs
+const nameInput = document.getElementById('nameInput');
+const phoneInput = document.getElementById('phoneInput');
+const phoneSubmitBtn = document.getElementById('phoneSubmitBtn');
+
+function validatePhoneForm() {
+  if (!nameInput || !phoneInput || !phoneSubmitBtn) return;
+  
+  const nameValid = nameInput.value.trim().length > 0;
+  const phoneValue = phoneInput.value.replace(/\D/g, '');
+  const phoneValid = phoneValue.length === 11;
+  
+  // Enable button only if both name and phone are valid
+  if (nameValid && phoneValid) {
+    phoneSubmitBtn.disabled = false;
+  } else {
+    phoneSubmitBtn.disabled = true;
+  }
+}
+
+if (nameInput && phoneInput && phoneSubmitBtn) {
+  nameInput.addEventListener('input', validatePhoneForm);
+  phoneInput.addEventListener('input', function() {
+    const value = this.value.replace(/\D/g, ''); // Remove non-digits
+    this.value = value; // Update input to only digits
+    validatePhoneForm();
+  });
 }
 
 // Form validation for Have PIN form

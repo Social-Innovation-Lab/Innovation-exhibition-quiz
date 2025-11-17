@@ -48,7 +48,13 @@ A single `quiz_records` table stores all participant and quiz data:
 - `GET /manifest.json`: PWA manifest file.
 
 ## Recent Changes
-- **2025-11-17 (Latest):** Result screen messaging update and UX improvements:
+- **2025-11-17 (Latest):** Landing page button validation and result screen updates:
+  - **Real-time button validation:** Start Quiz button now activates/deactivates based on input validation
+  - **PIN form:** Button enabled only when exactly 6 digits entered, greyed out otherwise
+  - **Registration form:** Button enabled only when name is filled AND phone is exactly 11 digits, greyed out otherwise
+  - **Auto-digit filtering:** PIN and phone inputs automatically remove non-digit characters
+  - **Disabled state styling:** Greyed out button with reduced opacity (0.6) and no-hover effects
+- **2025-11-17:** Result screen messaging update and UX improvements:
   - **Smooth transitions:** Changed carousel animation from bouncy cubic-bezier to smooth ease-in-out (0.4s)
   - **Minimal option boxes:** Significantly reduced size - padding (8-10px vertical, 10-12px horizontal), min-height (44-50px), border radius (8px), tighter gaps (8-10px)
   - **Larger option text:** Increased font to 16-18px (from 14-16px) with bold weight (600) for better readability
