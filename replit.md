@@ -48,7 +48,13 @@ A single `quiz_records` table stores all participant and quiz data:
 - `GET /manifest.json`: PWA manifest file.
 
 ## Recent Changes
-- **2025-11-04 (Latest):** Complete mobile Submit button proportions fix:
+- **2025-11-17 (Latest):** Added visible swipe indicators for quiz navigation:
+  - **Visual indicators:** Animated red circular buttons with left/right arrows appear on the screen edges
+  - **Smart visibility:** Left arrow shows when not on first question, right arrow shows when not on last question
+  - **Interactive:** Users can tap the indicators or swipe to navigate between questions
+  - **Pulsing animation:** Subtle pulse effect to draw attention and guide users
+  - **Responsive sizing:** Indicators scale proportionally using clamp() for all screen sizes
+- **2025-11-04:** Complete mobile Submit button proportions fix:
   - **Mobile-specific overrides:** Applied `!important` rules to fully override desktop CSS constraints
   - **Full-width mobile:** Submit button uses 100% width with no max-width constraint on mobile
   - **Viewport-based sizing:** Height uses `clamp(48px, 12vw, 60px)` for proper aspect ratio

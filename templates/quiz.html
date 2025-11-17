@@ -39,6 +39,18 @@
     <input type="hidden" name="participant_phone" value="{{participant_phone}}">
     
     <div class="carousel-wrapper">
+      <!-- Swipe Indicators -->
+      <div class="swipe-indicator swipe-left" id="swipeLeft">
+        <svg width="40" height="40" viewBox="0 0 40 40">
+          <path d="M25 10 L15 20 L25 30" stroke="white" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="swipe-indicator swipe-right" id="swipeRight">
+        <svg width="40" height="40" viewBox="0 0 40 40">
+          <path d="M15 10 L25 20 L15 30" stroke="white" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      
       {% for q in items %}
       <div class="question-card {% if loop.index == 1 %}active{% endif %}" data-question="{{loop.index}}">
         <div class="card-header">
@@ -263,6 +275,58 @@ body {
   position: relative;
   min-height: 500px;
   overflow: visible;
+}
+
+.swipe-indicator {
+  position: fixed;
+  top: 50%;
+  transform: translateY(-50%);
+  width: clamp(50px, 10vw, 70px);
+  height: clamp(50px, 10vw, 70px);
+  background: rgba(227, 24, 55, 0.8);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(227, 24, 55, 0.4);
+  animation: pulse 2s infinite;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.swipe-indicator.visible {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.swipe-indicator:active {
+  transform: translateY(-50%) scale(0.9);
+}
+
+.swipe-left {
+  left: clamp(10px, 2vw, 20px);
+}
+
+.swipe-right {
+  right: clamp(10px, 2vw, 20px);
+}
+
+.swipe-indicator svg {
+  width: clamp(30px, 6vw, 40px);
+  height: clamp(30px, 6vw, 40px);
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+}
+
+@keyframes pulse {
+  0%, 100% {
+    box-shadow: 0 4px 15px rgba(227, 24, 55, 0.4);
+  }
+  50% {
+    box-shadow: 0 4px 25px rgba(227, 24, 55, 0.7);
+  }
 }
 
 .question-card {
