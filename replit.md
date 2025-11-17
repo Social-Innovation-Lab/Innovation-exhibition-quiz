@@ -48,7 +48,10 @@ A single `quiz_records` table stores all participant and quiz data:
 - `GET /manifest.json`: PWA manifest file.
 
 ## Recent Changes
-- **2025-11-17 (Latest):** Enhanced timer visibility:
+- **2025-11-17 (Latest):** Landing page tagline update:
+  - **New tagline:** Changed from "Play the Quiz to Flex Your Reflex" to "Let's see how BRAC-savvy you really are. Play the quiz!"
+  - **Removed emoji:** Removed 👤 emoji from "Next Player" button on result page
+- **2025-11-17:** Enhanced timer visibility:
   - **Prominent white badge:** Timer now has high-contrast white background (95% opacity) with visible border
   - **"TIME" label:** Added clear label above the countdown number for better recognition
   - **Larger stopwatch icon:** Changed to ⏱️ emoji with increased size (24-28px)
