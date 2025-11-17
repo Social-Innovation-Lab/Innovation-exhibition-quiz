@@ -59,6 +59,7 @@ A single `quiz_records` table stores all participant and quiz data:
 - **2025-11-17:** Landing page text updates:
   - **New tagline:** Changed from "Play the Quiz to Flex Your Reflex" to "Let's see how BRAC-savvy you really are"
   - **Registration heading:** Changed from "Sign-up to play" to "Register to play"
+  - **Step card text:** Changed "Sign Up" to "Register" in how-it-works section
   - **Removed emoji:** Removed 👤 emoji from "Next Player" button on result page
 - **2025-11-17:** Enhanced timer visibility:
   - **Prominent white badge:** Timer now has high-contrast white background (95% opacity) with visible border
