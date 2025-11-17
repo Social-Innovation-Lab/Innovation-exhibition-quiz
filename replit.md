@@ -48,7 +48,14 @@ A single `quiz_records` table stores all participant and quiz data:
 - `GET /manifest.json`: PWA manifest file.
 
 ## Recent Changes
-- **2025-11-17 (Latest):** Added visible swipe indicators for quiz navigation:
+- **2025-11-17 (Latest):** UX improvements - smooth transitions, better tile spacing, and weighted score display:
+  - **Smooth transitions:** Changed carousel animation from bouncy cubic-bezier to smooth ease-in-out (0.4s)
+  - **Option tile improvements:** Reduced padding/gaps, optimized font sizes with clamp() for coherent spacing
+  - **Weighted score display:** Result page now shows weighted score (out of 10) in the circle instead of regular score
+  - **Weighted percentage:** Percentage calculation based on weighted score (weighted_score / 10.0 * 100)
+  - **Winner detection:** Updated to use weighted_score >= 7.0 (70% of max weighted marks)
+  - **Prize tiers:** All tier calculations now use weighted_percent instead of regular percent
+- **2025-11-17:** Added visible swipe indicators for quiz navigation:
   - **Visual indicators:** Animated red circular buttons with left/right arrows appear on the screen edges
   - **Smart visibility:** Left arrow shows when not on first question, right arrow shows when not on last question
   - **Interactive:** Users can tap the indicators or swipe to navigate between questions
