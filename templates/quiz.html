@@ -366,21 +366,20 @@ body {
 }
 
 .question-text {
-  background: linear-gradient(135deg, #fff5f7 0%, #ffe8ec 100%);
+  background: white;
   padding: clamp(20px, 3vh, 28px) clamp(18px, 3vw, 24px);
   border-radius: 14px;
   margin-bottom: 25px;
-  box-shadow: 0 4px 20px rgba(227, 24, 55, 0.12);
-  border: 2px solid #ffe0e5;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.08);
   animation: fadeIn 0.6s ease-out 0.1s backwards;
 }
 
 .question-text p {
   font-size: clamp(18px, 3.5vw, 22px);
   line-height: 1.5;
-  color: #1a1a1a;
+  color: #222;
   margin: 0;
-  font-weight: 600;
+  font-weight: 500;
 }
 
 .options-grid {
@@ -412,12 +411,12 @@ body {
   align-items: center;
   gap: clamp(8px, 1.5vw, 10px);
   padding: clamp(8px, 1.4vh, 12px) clamp(10px, 2vw, 14px);
-  background: white;
-  border: 2px solid #e0e0e0;
+  background: linear-gradient(135deg, #fff5f7 0%, #ffe8ec 100%);
+  border: 2px solid #ffe0e5;
   border-radius: 10px;
   transition: all 0.25s ease;
   min-height: clamp(44px, 7vh, 54px);
-  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  box-shadow: 0 2px 8px rgba(227, 24, 55, 0.08);
 }
 
 .option-letter {
@@ -440,6 +439,7 @@ body {
   font-size: clamp(14px, 2.6vw, 16px);
   color: #333;
   line-height: 1.4;
+  font-weight: 600;
 }
 
 .checkmark {
