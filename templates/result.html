@@ -28,35 +28,44 @@
     <div class="percentage-display">{{data.weighted_percent}}%</div>
     
     <!-- Status Message -->
-    {% if data.is_winner %}
+    {% if data.weighted_percent == 100 %}
+      <div class="winner-message">
+        <div class="trophy-icon">🎉</div>
+        <h2 class="status-title">PERFECT!</h2>
+        <p class="status-text">You know BRAC inside-out. There is a surprise waiting for you!</p>
+      </div>
+    {% elif data.weighted_percent >= 85 %}
+      <div class="winner-message">
+        <div class="trophy-icon">🌟</div>
+        <h2 class="status-title">Amazing!</h2>
+        <p class="status-text">There is a gift for you at the counter</p>
+      </div>
+    {% elif data.weighted_percent >= 75 %}
       <div class="winner-message">
         <div class="trophy-icon">💪</div>
-        <h2 class="status-title">Bravo!</h2>
-        <p class="status-text">We see you! Stop flexing now!</p>
-        <div class="prize-banner">
-          {% if data.weighted_percent >= 90 %}
-            <span>You've won a One-on-one meeting with the leader!</span>
-          {% elif data.weighted_percent >= 80 %}
-            <span>You've won a gift!</span>
-          {% else %}
-            <span>You've won a lunch token!</span>
-          {% endif %}
-        </div>
+        <h2 class="status-title">Great Work!</h2>
+        <p class="status-text">Please collect your gift from the counter</p>
+      </div>
+    {% elif data.weighted_percent >= 60 %}
+      <div class="winner-message">
+        <div class="trophy-icon">👏</div>
+        <h2 class="status-title">Good Job!</h2>
+        <p class="status-text">Please collect your gift from the counter</p>
       </div>
     {% else %}
       <div class="try-again-message">
-        <div class="emoji-icon">✌️</div>
+        <div class="emoji-icon">👍</div>
         <h2 class="status-title">Good Try!</h2>
-        <p class="status-text">You scored {{data.weighted_percent}}%. Not enough knowledge to flex</p>
+        <p class="status-text">We appreciate your effort</p>
       </div>
     {% endif %}
     
     <!-- Call to Action -->
     <div class="cta-section">
-      <p class="thank-you">Thank You</p>
+      <p class="thank-you">Thank you for participating</p>
       <a class="play-again-btn" href="/">
         <span class="btn-icon">👤</span>
-        <span>Next</span>
+        <span>Next Player</span>
       </a>
     </div>
   </div>
