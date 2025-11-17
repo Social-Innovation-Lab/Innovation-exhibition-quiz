@@ -48,7 +48,12 @@ A single `quiz_records` table stores all participant and quiz data:
 - `GET /manifest.json`: PWA manifest file.
 
 ## Recent Changes
-- **2025-11-17 (Latest):** Landing page button validation and result screen updates:
+- **2025-11-17 (Latest):** Result page font size optimization:
+  - **Smaller "Thank you" message:** Reduced from 20-24px to 16-18px
+  - **Larger secondary messages:** Increased from 14-16px to 16-18px with bold weight (700)
+  - **Unified sizing:** Both "Thank you for participating" and secondary messages now use same font size (16-18px)
+  - **Bold secondary text:** Messages like "We appreciate your effort", gift messages, and surprise message are now bold
+- **2025-11-17:** Landing page button validation and result screen updates:
   - **Real-time button validation:** Start Quiz button now activates/deactivates based on input validation
   - **PIN form:** Button enabled only when exactly 6 digits entered, greyed out otherwise
   - **Registration form:** Button enabled only when name is filled AND phone is exactly 11 digits, greyed out otherwise
