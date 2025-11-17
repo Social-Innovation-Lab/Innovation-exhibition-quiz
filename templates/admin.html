@@ -23,7 +23,7 @@
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
       <h2 style="margin:0;">All Attempts</h2>
       <div>
-        <a href="/admin/export" class="btn">Export Winners CSV</a>
+        <a href="/admin/export" class="btn">Export CSV</a>
         <a href="/" class="btn" style="background:#666;">Reset Device</a>
         <a href="/admin/logout" class="btn" style="background:#999;">Logout</a>
       </div>
@@ -38,9 +38,6 @@
           <th>Phone</th>
           <th>Weighted Score</th>
           <th>%</th>
-          <th>Status</th>
-          <th>Gift</th>
-          <th>Action</th>
         </tr>
       </thead>
       <tbody>
@@ -52,32 +49,6 @@
           <td>****{{a.phone[-4:]}}</td>
           <td>{{"%0.1f"|format(a.weighted_score)}}/10</td>
           <td>{{"%0.1f"|format(a.percent)}}%</td>
-          <td>
-            {% if a.is_winner %}
-              <span class="winner-badge">WINNER</span>
-            {% else %}
-              -
-            {% endif %}
-          </td>
-          <td>
-            {% if a.is_winner %}
-              {% if a.gift_given %}
-                ✅ Given
-              {% else %}
-                ⏳ Pending
-              {% endif %}
-            {% else %}
-              -
-            {% endif %}
-          </td>
-          <td>
-            {% if a.is_winner and not a.gift_given %}
-              <form method="POST" action="/admin/mark_gift/{{a.id}}" style="display:inline;">
-                <input type="hidden" name="csrf_token" value="{{csrf_token()}}">
-                <button type="submit" style="background:none; color:var(--brand); border:none; text-decoration:underline; cursor:pointer; padding:0; font-size:inherit;">Mark Given</button>
-              </form>
-            {% endif %}
-          </td>
         </tr>
         {% endfor %}
       </tbody>

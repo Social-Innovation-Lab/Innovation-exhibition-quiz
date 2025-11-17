@@ -21,7 +21,7 @@ The core application is built with Flask, served by `app.py`. It utilizes a Post
 - **Weighted Random Question Selection:** Each quiz dynamically generates 10 questions with a distribution of 2 Easy (0.5 marks each), 4 Medium (0.75 marks each), and 4 Hard (1.5 marks each) questions, shuffled to mix difficulty. Total weighted marks: 10.0
 - **Winner Detection:** Participants scoring 70% or higher (7.0 weighted marks) are marked as winners.
 - **Two-path Sign-in:** Participants can sign in with a PIN or register with their name and phone number.
-- **Admin Dashboard:** Provides real-time statistics, a list of winners, gift tracking, and CSV export functionality, secured by an admin PIN.
+- **Admin Dashboard:** Provides real-time statistics, a list of all quiz attempts, and CSV export functionality, secured by an admin PIN.
 - **Security:** Admin routes are protected by PIN authentication, and session management uses a `SESSION_SECRET`.
 
 ### Database Schema (PostgreSQL)
@@ -32,8 +32,6 @@ A single `quiz_records` table stores all participant and quiz data:
 - `phone` (TEXT, nullable)
 - `percent` (REAL, NOT NULL) - Percentage score (0-100) based on weighted score
 - `weighted_score` (REAL, nullable) - Weighted score based on difficulty (max 10.0)
-- `is_winner` (INTEGER, DEFAULT 0) - 1 if weighted_score ≥7.0, 0 otherwise
-- `gift_given` (INTEGER, DEFAULT 0) - 1 if gift has been distributed, 0 otherwise
 - `created_at` (TIMESTAMP, DEFAULT CURRENT_TIMESTAMP)
 
 ### Application Routes
@@ -42,12 +40,17 @@ A single `quiz_records` table stores all participant and quiz data:
 - `POST /submit`: Grades responses and saves the attempt.
 - `GET /result`: Displays quiz results and winner status.
 - `GET /admin`: Admin dashboard.
-- `GET /admin/mark_gift/<id>`: Marks a gift as given for a specific winner.
-- `GET /admin/export`: Downloads winners data in CSV format.
+- `GET /admin/export`: Downloads all quiz records in CSV format.
 - `GET /manifest.json`: PWA manifest file.
 
 ## Recent Changes
-- **2025-11-17 (Latest):** Database schema update:
+- **2025-11-17 (Latest):** Database simplification:
+  - **Removed is_winner and gift_given columns:** Simplified database schema by removing tracking columns
+  - **Winner detection:** Winners (≥70% / 7.0+ weighted score) now calculated dynamically, not stored
+  - **Admin dashboard:** Removed Status, Gift, and Action columns; now shows all attempts without filtering
+  - **CSV export:** Changed from "Export Winners CSV" to "Export CSV" - exports all records
+  - **Removed gift tracking:** Removed `/admin/mark_gift` route and gift distribution tracking functionality
+- **2025-11-17:** Database schema update:
   - **Removed score column:** Simplified database by removing the regular score (0-10) column
   - **Weighted-only scoring:** All scoring now based solely on weighted_score (0-10.0)
   - **Percentage calculation:** Percent field now calculated from weighted_score instead of regular score

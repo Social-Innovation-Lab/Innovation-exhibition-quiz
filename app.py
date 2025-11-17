@@ -80,13 +80,9 @@ def init_db():
             phone TEXT,
             percent REAL NOT NULL,
             weighted_score REAL,
-            is_winner INTEGER DEFAULT 0,
-            gift_given INTEGER DEFAULT 0,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         );
     ''')
-    
-    cursor.execute('CREATE INDEX idx_winner ON quiz_records(is_winner);')
     
     conn.commit()
     cursor.close()
@@ -285,24 +281,23 @@ def submit():
                     weighted_score += q['weight']
                 break
     
-    # Calculate percentage and winner status based on weighted score
+    # Calculate percentage based on weighted score
     # Total possible weighted marks: 2 Easy (0.5×2=1.0) + 4 Medium (0.75×4=3.0) + 4 Hard (1.5×4=6.0) = 10.0
     total_weighted_marks = 10.0
     weighted_percent = (weighted_score / total_weighted_marks) * 100
-    is_winner = 1 if weighted_score >= 7.0 else 0  # 70% of weighted score (70% of 10.0)
     
-    # Save single record to database (including weighted_score)
+    # Save single record to database
     conn = get_db()
     cursor = conn.cursor()
     cursor.execute(
-        'INSERT INTO quiz_records (name, pin, phone, percent, weighted_score, is_winner) VALUES (%s, %s, %s, %s, %s, %s)',
-        (name, pin, phone, weighted_percent, weighted_score, is_winner)
+        'INSERT INTO quiz_records (name, pin, phone, percent, weighted_score) VALUES (%s, %s, %s, %s, %s)',
+        (name, pin, phone, weighted_percent, weighted_score)
     )
     conn.commit()
     cursor.close()
     conn.close()
     
-    print(f"Quiz saved: name={name}, weighted_score={weighted_score:.1f}/10.0, weighted_percent={weighted_percent:.2f}%, winner={is_winner}")
+    print(f"Quiz saved: name={name}, weighted_score={weighted_score:.1f}/10.0, weighted_percent={weighted_percent:.2f}%")
     
     # Render result page directly
     # Display name for results page (use PIN if name not provided)
@@ -314,7 +309,7 @@ def submit():
         'total_weighted': total_weighted_marks,
         'percent': round(weighted_percent, 2),
         'weighted_percent': round(weighted_percent, 2),
-        'is_winner': is_winner
+        'is_winner': 1 if weighted_score >= 7.0 else 0  # For result page display only
     }
     
     return render_template('result.html', data=data)
@@ -355,8 +350,8 @@ def admin():
     
     # Get statistics
     total_attempts = len(records)
-    cursor.execute('SELECT COUNT(*) FROM quiz_records WHERE is_winner = 1')
-    total_winners = cursor.fetchone()['count']
+    # Count winners (weighted_score >= 7.0)
+    total_winners = sum(1 for r in records if r.get('weighted_score', 0) >= 7.0)
     cursor.execute('SELECT AVG(weighted_score) FROM quiz_records')
     avg_weighted_row = cursor.fetchone()
     avg_weighted = avg_weighted_row['avg'] if avg_weighted_row and avg_weighted_row['avg'] else 0
@@ -372,51 +367,34 @@ def admin():
     
     return render_template('admin.html', attempts=records, stats=stats)
 
-@app.route('/admin/mark_gift/<int:record_id>', methods=['POST'])
-@admin_required
-def mark_gift(record_id):
-    """Mark gift as given"""
-    csrf_token = request.form.get('csrf_token')
-    if not verify_csrf_token(csrf_token):
-        abort(403)
-    
-    conn = get_db()
-    cursor = conn.cursor()
-    cursor.execute('UPDATE quiz_records SET gift_given = 1 WHERE id = %s', (record_id,))
-    conn.commit()
-    cursor.close()
-    conn.close()
-    return redirect('/admin')
 
 @app.route('/admin/export')
 @admin_required
 def export_csv():
-    """Export winners to CSV"""
+    """Export all quiz records to CSV"""
     conn = get_db()
     cursor = conn.cursor()
     
     cursor.execute('''
-        SELECT name, pin, phone, weighted_score, percent, created_at, gift_given
+        SELECT name, pin, phone, weighted_score, percent, created_at
         FROM quiz_records
-        WHERE is_winner = 1
         ORDER BY created_at DESC
     ''')
-    winners = cursor.fetchall()
+    records = cursor.fetchall()
     
     cursor.close()
     conn.close()
     
     # Create CSV
-    output = "Name,PIN,Phone,Weighted Score,Percentage,Date,Gift Given\n"
-    for w in winners:
+    output = "Name,PIN,Phone,Weighted Score,Percentage,Date\n"
+    for r in records:
         # Mask phone number (show only last 4 digits)
-        masked_phone = '****' + w['phone'][-4:] if len(w['phone']) >= 4 else w['phone']
-        gift_status = 'Yes' if w['gift_given'] else 'No'
-        output += f'"{w["name"]}",{w["pin"]},{masked_phone},{w["weighted_score"]:.1f},{w["percent"]:.2f}%,{w["created_at"]},{gift_status}\n'
+        masked_phone = '****' + r['phone'][-4:] if r['phone'] and len(r['phone']) >= 4 else (r['phone'] or '')
+        output += f'"{r["name"]}",{r["pin"]},{masked_phone},{r["weighted_score"]:.1f},{r["percent"]:.2f}%,{r["created_at"]}\n'
     
     response = make_response(output)
     response.headers['Content-Type'] = 'text/csv'
-    response.headers['Content-Disposition'] = 'attachment; filename=winners.csv'
+    response.headers['Content-Disposition'] = 'attachment; filename=quiz_records.csv'
     return response
 
 @app.route('/manifest.json')
