@@ -46,6 +46,8 @@
   <form method="POST" action="/start" class="quiz-form" id="havePinForm" style="display: none;">
     <input type="hidden" name="form_type" value="have_pin">
     
+    <button type="button" class="back-btn" onclick="showOptions()">← Back</button>
+    
     <h3 class="form-title">Enter Your PIN</h3>
     
     <div class="form-group">
@@ -64,6 +66,8 @@
   <!-- Don't Have PIN Form -->
   <form method="POST" action="/start" class="quiz-form" id="noPinForm" style="display: none;">
     <input type="hidden" name="form_type" value="no_pin">
+    
+    <button type="button" class="back-btn" onclick="showOptions()">← Back</button>
     
     <h3 class="form-title">Register to Play</h3>
     
@@ -88,20 +92,7 @@
   </form>
 </div>
 
-<!-- Loading Overlay -->
-<div id="loadingOverlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, #e31837 0%, #c41430 100%); z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-  <div style="text-align: center; color: white;">
-    <div style="width: 60px; height: 60px; border: 4px solid rgba(255,255,255,0.3); border-top: 4px solid white; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 20px;"></div>
-    <h2 style="font-size: 24px; font-weight: 700; margin: 0; animation: pulse 1.5s ease-in-out infinite;">Loading Quiz...</h2>
-  </div>
-</div>
-
 <style>
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
 .welcome-container {
   min-height: 100vh;
   display: flex;
@@ -433,8 +424,6 @@ document.getElementById('havePinForm').addEventListener('submit', function(e) {
     return false;
   }
   console.log('Have PIN form submitting');
-  // Show loading overlay
-  document.getElementById('loadingOverlay').style.display = 'flex';
 });
 
 // Form validation for No PIN form
@@ -466,8 +455,6 @@ document.getElementById('noPinForm').addEventListener('submit', function(e) {
   }
   
   console.log('No PIN form submitting');
-  // Show loading overlay
-  document.getElementById('loadingOverlay').style.display = 'flex';
 });
 
 if('serviceWorker' in navigator){
