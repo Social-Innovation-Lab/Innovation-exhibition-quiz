@@ -78,7 +78,6 @@ def init_db():
             name TEXT,
             pin TEXT,
             phone TEXT,
-            score INTEGER NOT NULL,
             percent REAL NOT NULL,
             weighted_score REAL,
             is_winner INTEGER DEFAULT 0,
@@ -270,7 +269,6 @@ def submit():
     all_questions = load_questions_from_csv()
     
     # Grade responses with weighted scoring
-    score = 0
     weighted_score = 0.0
     total_questions = 10
     
@@ -284,14 +282,12 @@ def submit():
             if q['question'] == question_text:
                 is_correct = (selected == q['answer'])
                 if is_correct:
-                    score += 1
                     weighted_score += q['weight']
                 break
     
     # Calculate percentage and winner status based on weighted score
     # Total possible weighted marks: 2 Easy (0.5×2=1.0) + 4 Medium (0.75×4=3.0) + 4 Hard (1.5×4=6.0) = 10.0
     total_weighted_marks = 10.0
-    percent = (score / total_questions) * 100
     weighted_percent = (weighted_score / total_weighted_marks) * 100
     is_winner = 1 if weighted_score >= 7.0 else 0  # 70% of weighted score (70% of 10.0)
     
@@ -299,14 +295,14 @@ def submit():
     conn = get_db()
     cursor = conn.cursor()
     cursor.execute(
-        'INSERT INTO quiz_records (name, pin, phone, score, percent, weighted_score, is_winner) VALUES (%s, %s, %s, %s, %s, %s, %s)',
-        (name, pin, phone, score, percent, weighted_score, is_winner)
+        'INSERT INTO quiz_records (name, pin, phone, percent, weighted_score, is_winner) VALUES (%s, %s, %s, %s, %s, %s)',
+        (name, pin, phone, weighted_percent, weighted_score, is_winner)
     )
     conn.commit()
     cursor.close()
     conn.close()
     
-    print(f"Quiz saved: name={name}, score={score}/{total_questions}, percent={percent:.2f}%, weighted_score={weighted_score:.1f}/10.0, weighted_percent={weighted_percent:.2f}%, winner={is_winner}")
+    print(f"Quiz saved: name={name}, weighted_score={weighted_score:.1f}/10.0, weighted_percent={weighted_percent:.2f}%, winner={is_winner}")
     
     # Render result page directly
     # Display name for results page (use PIN if name not provided)
@@ -314,11 +310,9 @@ def submit():
     
     data = {
         'name': display_name,
-        'score': score,
-        'total': total_questions,
         'weighted_score': round(weighted_score, 1),
         'total_weighted': total_weighted_marks,
-        'percent': round(percent, 2),
+        'percent': round(weighted_percent, 2),
         'weighted_percent': round(weighted_percent, 2),
         'is_winner': is_winner
     }
@@ -363,9 +357,9 @@ def admin():
     total_attempts = len(records)
     cursor.execute('SELECT COUNT(*) FROM quiz_records WHERE is_winner = 1')
     total_winners = cursor.fetchone()['count']
-    cursor.execute('SELECT AVG(score) FROM quiz_records')
-    avg_score_row = cursor.fetchone()
-    avg_score = avg_score_row['avg'] if avg_score_row and avg_score_row['avg'] else 0
+    cursor.execute('SELECT AVG(weighted_score) FROM quiz_records')
+    avg_weighted_row = cursor.fetchone()
+    avg_weighted = avg_weighted_row['avg'] if avg_weighted_row and avg_weighted_row['avg'] else 0
     
     cursor.close()
     conn.close()
@@ -373,7 +367,7 @@ def admin():
     stats = {
         'total_attempts': total_attempts,
         'total_winners': total_winners,
-        'avg_score': round(float(avg_score), 1)
+        'avg_weighted_score': round(float(avg_weighted), 1)
     }
     
     return render_template('admin.html', attempts=records, stats=stats)
@@ -402,7 +396,7 @@ def export_csv():
     cursor = conn.cursor()
     
     cursor.execute('''
-        SELECT name, pin, phone, score, percent, created_at, gift_given
+        SELECT name, pin, phone, weighted_score, percent, created_at, gift_given
         FROM quiz_records
         WHERE is_winner = 1
         ORDER BY created_at DESC
@@ -413,12 +407,12 @@ def export_csv():
     conn.close()
     
     # Create CSV
-    output = "Name,PIN,Phone,Score,Percentage,Date,Gift Given\n"
+    output = "Name,PIN,Phone,Weighted Score,Percentage,Date,Gift Given\n"
     for w in winners:
         # Mask phone number (show only last 4 digits)
         masked_phone = '****' + w['phone'][-4:] if len(w['phone']) >= 4 else w['phone']
         gift_status = 'Yes' if w['gift_given'] else 'No'
-        output += f'"{w["name"]}",{w["pin"]},{masked_phone},{w["score"]},{w["percent"]:.2f}%,{w["created_at"]},{gift_status}\n'
+        output += f'"{w["name"]}",{w["pin"]},{masked_phone},{w["weighted_score"]:.1f},{w["percent"]:.2f}%,{w["created_at"]},{gift_status}\n'
     
     response = make_response(output)
     response.headers['Content-Type'] = 'text/csv'

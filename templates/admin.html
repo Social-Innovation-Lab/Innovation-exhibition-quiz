@@ -14,8 +14,8 @@
       <p>Winners (≥70%)</p>
     </div>
     <div class="stat-card">
-      <h3>{{stats.avg_score}}</h3>
-      <p>Average Score</p>
+      <h3>{{stats.avg_weighted_score}}</h3>
+      <p>Avg Weighted Score</p>
     </div>
   </div>
   
@@ -36,7 +36,7 @@
           <th>Name</th>
           <th>PIN</th>
           <th>Phone</th>
-          <th>Score</th>
+          <th>Weighted Score</th>
           <th>%</th>
           <th>Status</th>
           <th>Gift</th>
@@ -50,7 +50,7 @@
           <td>{{a.name}}</td>
           <td>{{a.pin}}</td>
           <td>****{{a.phone[-4:]}}</td>
-          <td>{{a.score}}/22</td>
+          <td>{{"%0.1f"|format(a.weighted_score)}}/10</td>
           <td>{{"%0.1f"|format(a.percent)}}%</td>
           <td>
             {% if a.is_winner %}

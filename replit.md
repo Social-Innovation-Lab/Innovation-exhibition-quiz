@@ -30,10 +30,9 @@ A single `quiz_records` table stores all participant and quiz data:
 - `name` (TEXT, nullable)
 - `pin` (TEXT, nullable)
 - `phone` (TEXT, nullable)
-- `score` (INTEGER, NOT NULL) - Number of correct answers (0-10)
-- `percent` (REAL, NOT NULL) - Percentage score (0-100)
+- `percent` (REAL, NOT NULL) - Percentage score (0-100) based on weighted score
 - `weighted_score` (REAL, nullable) - Weighted score based on difficulty (max 10.0)
-- `is_winner` (INTEGER, DEFAULT 0) - 1 if score ≥70%, 0 otherwise
+- `is_winner` (INTEGER, DEFAULT 0) - 1 if weighted_score ≥7.0, 0 otherwise
 - `gift_given` (INTEGER, DEFAULT 0) - 1 if gift has been distributed, 0 otherwise
 - `created_at` (TIMESTAMP, DEFAULT CURRENT_TIMESTAMP)
 
@@ -48,7 +47,13 @@ A single `quiz_records` table stores all participant and quiz data:
 - `GET /manifest.json`: PWA manifest file.
 
 ## Recent Changes
-- **2025-11-17 (Latest):** Landing page text updates:
+- **2025-11-17 (Latest):** Database schema update:
+  - **Removed score column:** Simplified database by removing the regular score (0-10) column
+  - **Weighted-only scoring:** All scoring now based solely on weighted_score (0-10.0)
+  - **Percentage calculation:** Percent field now calculated from weighted_score instead of regular score
+  - **Admin dashboard:** Updated to show average weighted score instead of average regular score
+  - **CSV export:** Updated to export weighted score instead of regular score
+- **2025-11-17:** Landing page text updates:
   - **New tagline:** Changed from "Play the Quiz to Flex Your Reflex" to "Let's see how BRAC-savvy you really are"
   - **Registration heading:** Changed from "Sign-up to play" to "Register to play"
   - **Removed emoji:** Removed 👤 emoji from "Next Player" button on result page
