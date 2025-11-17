@@ -48,13 +48,13 @@ A single `quiz_records` table stores all participant and quiz data:
 - `GET /manifest.json`: PWA manifest file.
 
 ## Recent Changes
-- **2025-11-17 (Latest):** UX improvements - highlighted options, minimal boxes, and weighted score display:
+- **2025-11-17 (Latest):** UX improvements - minimal option boxes with bigger fonts and weighted score display:
   - **Smooth transitions:** Changed carousel animation from bouncy cubic-bezier to smooth ease-in-out (0.4s)
-  - **Highlighted option boxes:** Soft pink gradient background, 2px pink border on all answer options
-  - **Bold options text:** Font weight 600 on answer options for better readability
+  - **Minimal option boxes:** Significantly reduced size - padding (8-10px vertical, 10-12px horizontal), min-height (44-50px), border radius (8px), tighter gaps (8-10px)
+  - **Larger option text:** Increased font to 16-18px (from 14-16px) with bold weight (600) for better readability
+  - **Smaller letter circles:** Reduced to 32-36px for more compact design
+  - **Clean white design:** White background, gray border on all answer options
   - **Clean question display:** White background, normal weight (500) for questions
-  - **Minimal option boxes:** Further reduced padding (8-12px vertical, 10-14px horizontal), min-height (44-54px), tighter gaps (8-10px)
-  - **Optimized fonts:** Text (14-16px), letter (14-16px), line-height (1.4) for better coherence
   - **Weighted score display:** Result page now shows weighted score (out of 10) in the circle instead of regular score
   - **Weighted percentage:** Percentage calculation based on weighted score (weighted_score / 10.0 * 100)
   - **Winner detection:** Updated to use weighted_score >= 7.0 (70% of max weighted marks)
