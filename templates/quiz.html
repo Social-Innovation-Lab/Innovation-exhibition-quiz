@@ -334,7 +334,7 @@ body {
   width: 100%;
   opacity: 0;
   transform: translateX(100%);
-  transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  transition: all 0.4s ease-in-out;
   pointer-events: none;
 }
 
@@ -409,34 +409,34 @@ body {
 .option-content {
   display: flex;
   align-items: center;
-  gap: 15px;
-  padding: 20px;
+  gap: clamp(12px, 2vw, 15px);
+  padding: clamp(14px, 2.5vh, 18px) clamp(16px, 3vw, 20px);
   background: white;
   border: 3px solid #e0e0e0;
-  border-radius: 14px;
-  transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-  min-height: 70px;
+  border-radius: 12px;
+  transition: all 0.25s ease;
+  min-height: clamp(60px, 10vh, 75px);
   box-shadow: 0 2px 8px rgba(0,0,0,0.05);
 }
 
 .option-letter {
   flex-shrink: 0;
-  width: 45px;
-  height: 45px;
+  width: clamp(38px, 7vw, 45px);
+  height: clamp(38px, 7vw, 45px);
   display: flex;
   align-items: center;
   justify-content: center;
   background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
   border-radius: 50%;
   font-weight: 700;
-  font-size: 18px;
+  font-size: clamp(16px, 3vw, 18px);
   color: #555;
-  transition: all 0.3s ease;
+  transition: all 0.25s ease;
 }
 
 .option-text {
   flex: 1;
-  font-size: 17px;
+  font-size: clamp(15px, 2.8vw, 17px);
   color: #333;
   line-height: 1.5;
 }

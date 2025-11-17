@@ -9,29 +9,23 @@
       <p class="participant-name">{{data.name}}</p>
     </div>
     
-    <!-- Animated Score Circle -->
+    <!-- Animated Score Circle (Weighted Score) -->
     <div class="score-circle">
       <svg class="circle-svg" viewBox="0 0 200 200" preserveAspectRatio="xMidYMid meet">
         <circle class="circle-bg" cx="100" cy="100" r="90" />
         <circle class="circle-progress" id="progressCircle" cx="100" cy="100" r="90" 
-                data-final-offset="{{565 - (565 * data.percent / 100)}}" />
+                data-final-offset="{{565 - (565 * data.weighted_percent / 100)}}" />
       </svg>
       <div class="score-content">
         <div class="score-display">
-          <span class="score-number" id="animatedScore">0</span><span class="score-separator">/</span><span class="score-total-number">{{data.total}}</span>
+          <span class="score-number" id="animatedScore">0</span><span class="score-separator">/</span><span class="score-total-number">{{data.total_weighted|int}}</span>
         </div>
-        <div class="score-label">Right Answers!</div>
+        <div class="score-label">Weighted Score</div>
       </div>
     </div>
     
-    <!-- Percentage Display -->
-    <div class="percentage-display">{{data.percent}}%</div>
-    
-    <!-- Weighted Score Display -->
-    <div class="weighted-score-display">
-      <span class="weighted-label">Weighted Score:</span>
-      <span class="weighted-value">{{data.weighted_score}} / {{data.total_weighted}}</span>
-    </div>
+    <!-- Percentage Display (Weighted) -->
+    <div class="percentage-display">{{data.weighted_percent}}%</div>
     
     <!-- Status Message -->
     {% if data.is_winner %}
@@ -40,9 +34,9 @@
         <h2 class="status-title">Bravo!</h2>
         <p class="status-text">We see you! Stop flexing now!</p>
         <div class="prize-banner">
-          {% if data.percent >= 90 %}
+          {% if data.weighted_percent >= 90 %}
             <span>You've won a One-on-one meeting with the leader!</span>
-          {% elif data.percent >= 80 %}
+          {% elif data.weighted_percent >= 80 %}
             <span>You've won a gift!</span>
           {% else %}
             <span>You've won a lunch token!</span>
@@ -53,7 +47,7 @@
       <div class="try-again-message">
         <div class="emoji-icon">✌️</div>
         <h2 class="status-title">Good Try!</h2>
-        <p class="status-text">You scored {{data.percent}}%. Not enough knowledge to flex</p>
+        <p class="status-text">You scored {{data.weighted_percent}}%. Not enough knowledge to flex</p>
       </div>
     {% endif %}
     
@@ -378,7 +372,7 @@
 <script>
 // Animated score counter and circle
 window.addEventListener('load', function() {
-  const finalScore = {{data.score}};
+  const finalScore = {{data.weighted_score}};
   const scoreElement = document.getElementById('animatedScore');
   const progressCircle = document.getElementById('progressCircle');
   const finalOffset = progressCircle.getAttribute('data-final-offset');
@@ -390,19 +384,19 @@ window.addEventListener('load', function() {
     progressCircle.style.strokeDashoffset = finalOffset;
   }, 100);
   
-  // Animate the score number
+  // Animate the score number (with decimal for weighted score)
   function animateScore() {
     const elapsed = Date.now() - startTime;
     const progress = Math.min(elapsed / duration, 1);
     const easeOutQuart = 1 - Math.pow(1 - progress, 4);
-    const currentScore = Math.floor(easeOutQuart * finalScore);
+    const currentScore = (easeOutQuart * finalScore).toFixed(1);
     
     scoreElement.textContent = currentScore;
     
     if (progress < 1) {
       requestAnimationFrame(animateScore);
     } else {
-      scoreElement.textContent = finalScore;
+      scoreElement.textContent = finalScore.toFixed(1);
     }
   }
   

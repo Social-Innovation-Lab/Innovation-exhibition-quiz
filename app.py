@@ -288,9 +288,12 @@ def submit():
                     weighted_score += q['weight']
                 break
     
-    # Calculate percentage and winner status (70% = 7/10)
+    # Calculate percentage and winner status based on weighted score
+    # Total possible weighted marks: 2 Easy (0.5×2=1.0) + 4 Medium (0.75×4=3.0) + 4 Hard (1.5×4=6.0) = 10.0
+    total_weighted_marks = 10.0
     percent = (score / total_questions) * 100
-    is_winner = 1 if score >= 7 else 0
+    weighted_percent = (weighted_score / total_weighted_marks) * 100
+    is_winner = 1 if weighted_score >= 7.0 else 0  # 70% of weighted score
     
     # Save single record to database (including weighted_score)
     conn = get_db()
@@ -303,11 +306,7 @@ def submit():
     cursor.close()
     conn.close()
     
-    print(f"Quiz saved: name={name}, score={score}/{total_questions}, percent={percent:.2f}%, weighted_score={weighted_score:.1f}, winner={is_winner}")
-    
-    # Calculate total possible weighted marks (2 Easy + 4 Medium + 4 Hard)
-    # Easy (0.5) × 2 = 1.0, Medium (0.75) × 4 = 3.0, Hard (1.5) × 4 = 6.0
-    total_weighted_marks = 10.0
+    print(f"Quiz saved: name={name}, score={score}/{total_questions}, percent={percent:.2f}%, weighted_score={weighted_score:.1f}/10.0, weighted_percent={weighted_percent:.2f}%, winner={is_winner}")
     
     # Render result page directly
     # Display name for results page (use PIN if name not provided)
@@ -320,6 +319,7 @@ def submit():
         'weighted_score': round(weighted_score, 1),
         'total_weighted': total_weighted_marks,
         'percent': round(percent, 2),
+        'weighted_percent': round(weighted_percent, 2),
         'is_winner': is_winner
     }
     
