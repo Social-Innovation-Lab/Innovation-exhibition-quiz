@@ -16,8 +16,11 @@
       <span class="total-q">10</span>
     </div>
     <div class="timer-badge" id="timerBadge">
-      <span class="clock-icon">⏰</span>
-      <span id="timerCount">150</span>
+      <span class="clock-icon">⏱️</span>
+      <div class="timer-content">
+        <span class="timer-label">TIME</span>
+        <span class="timer-value" id="timerCount">150</span>
+      </div>
     </div>
   </div>
   <div class="progress-bar-container">
@@ -188,27 +191,72 @@
 .timer-badge {
   display: flex;
   align-items: center;
-  gap: 0.8vw;
-  background: rgba(255,255,255,0.2);
-  padding: 0.8vh 1.8vw;
-  border-radius: 20px;
-  font-size: clamp(16px, 2.2vw, 18px);
-  font-weight: 700;
+  gap: clamp(6px, 1.5vw, 10px);
+  background: rgba(255,255,255,0.95);
+  padding: clamp(8px, 1.5vh, 12px) clamp(12px, 2.5vw, 16px);
+  border-radius: 25px;
+  border: clamp(2px, 0.4vw, 3px) solid rgba(255,255,255,0.3);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
   transition: all 0.3s ease;
 }
 
 .timer-badge.warning {
-  background: rgba(255,200,0,0.3);
-  animation: pulse 0.5s ease infinite;
+  background: rgba(255,230,0,0.95);
+  border-color: rgba(255,200,0,0.5);
+  animation: timerPulse 0.8s ease infinite;
 }
 
 .timer-badge.danger {
-  background: rgba(255,100,100,0.4);
-  animation: pulse 0.3s ease infinite;
+  background: rgba(255,80,80,0.95);
+  border-color: rgba(255,50,50,0.5);
+  animation: timerPulse 0.4s ease infinite;
 }
 
 .clock-icon {
-  font-size: clamp(18px, 2.5vw, 20px);
+  font-size: clamp(24px, 4vw, 28px);
+}
+
+.timer-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  line-height: 1;
+}
+
+.timer-label {
+  font-size: clamp(9px, 1.8vw, 11px);
+  font-weight: 700;
+  color: #e31837;
+  letter-spacing: 0.5px;
+  margin-bottom: 2px;
+}
+
+.timer-value {
+  font-size: clamp(20px, 3.5vw, 24px);
+  font-weight: 900;
+  color: #e31837;
+}
+
+.timer-badge.warning .timer-label,
+.timer-badge.warning .timer-value {
+  color: #d97706;
+}
+
+.timer-badge.danger .timer-label,
+.timer-badge.danger .timer-value {
+  color: #fff;
+}
+
+@keyframes timerPulse {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  }
+  50% {
+    transform: scale(1.05);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+  }
 }
 
 .progress-bar-container {

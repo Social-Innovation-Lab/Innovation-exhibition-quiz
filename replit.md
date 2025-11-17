@@ -48,7 +48,14 @@ A single `quiz_records` table stores all participant and quiz data:
 - `GET /manifest.json`: PWA manifest file.
 
 ## Recent Changes
-- **2025-11-17 (Latest):** Result page font size optimization:
+- **2025-11-17 (Latest):** Enhanced timer visibility:
+  - **Prominent white badge:** Timer now has high-contrast white background (95% opacity) with visible border
+  - **"TIME" label:** Added clear label above the countdown number for better recognition
+  - **Larger stopwatch icon:** Changed to ⏱️ emoji with increased size (24-28px)
+  - **Bold countdown:** Timer value now uses font-weight 900 with larger size (20-24px)
+  - **Color-coded states:** White (normal), Yellow (warning <30s), Red (danger <10s)
+  - **Enhanced pulse animation:** Stronger visual feedback during warning/danger states
+- **2025-11-17:** Result page font size optimization:
   - **Smaller "Thank you" message:** Reduced from 20-24px to 16-18px
   - **Larger secondary messages:** Increased from 14-16px to 16-18px with bold weight (700)
   - **Unified sizing:** Both "Thank you for participating" and secondary messages now use same font size (16-18px)
