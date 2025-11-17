@@ -107,6 +107,13 @@ def load_questions_from_csv():
     csv_path = 'Quiz App ques set2 - QuestionBank_1763360490832.csv'
     questions = []
     
+    # Weight mapping: Easy=0.5, Medium=0.75, Hard=1.5 (total 10 marks for 2+4+4 distribution)
+    weight_mapping = {
+        'Easy': 0.5,
+        'Medium': 0.75,
+        'Hard': 1.5
+    }
+    
     with open(csv_path, 'r', encoding='utf-8') as f:
         reader = csv.DictReader(f)
         for row in reader:
@@ -126,15 +133,15 @@ def load_questions_from_csv():
             option_c = capitalize_first_letter(row['option_C'].strip())
             option_d = capitalize_first_letter(row['option_D'].strip())
             
-            # Use weight directly from CSV
+            # Apply custom weight based on difficulty level
             difficulty = row['difficulty']
-            weight = float(row['weight'])
+            custom_weight = weight_mapping.get(difficulty, 1.0)
             
             questions.append({
                 'programme_code': row['programme_code'],
                 'programme_name': row['programme_name'],
                 'difficulty': difficulty,
-                'weight': weight,  # Use weight from CSV
+                'weight': custom_weight,  # Use custom weight instead of CSV weight
                 'question': question_text,
                 'option_A': option_a,
                 'option_B': option_b,
@@ -150,10 +157,10 @@ def select_weighted_random_questions(num_questions=10):
     """Select random questions with difficulty-based weighting
     
     Target distribution for 10 questions:
-    - Easy (weight 1): 2 questions (20%) = 2.0 marks
-    - Medium (weight 1.5): 4 questions (40%) = 6.0 marks
-    - Hard (weight 2): 4 questions (40%) = 8.0 marks
-    Total: 16.0 marks
+    - Easy (weight 0.5): 2 questions (20%) = 1.0 marks
+    - Medium (weight 0.75): 4 questions (40%) = 3.0 marks
+    - Hard (weight 1.5): 4 questions (40%) = 6.0 marks
+    Total: 10.0 marks
     """
     import random
     
@@ -282,11 +289,11 @@ def submit():
                 break
     
     # Calculate percentage and winner status based on weighted score
-    # Total possible weighted marks: 2 Easy (1×2=2.0) + 4 Medium (1.5×4=6.0) + 4 Hard (2×4=8.0) = 16.0
-    total_weighted_marks = 16.0
+    # Total possible weighted marks: 2 Easy (0.5×2=1.0) + 4 Medium (0.75×4=3.0) + 4 Hard (1.5×4=6.0) = 10.0
+    total_weighted_marks = 10.0
     percent = (score / total_questions) * 100
     weighted_percent = (weighted_score / total_weighted_marks) * 100
-    is_winner = 1 if weighted_score >= 11.2 else 0  # 70% of weighted score (70% of 16.0)
+    is_winner = 1 if weighted_score >= 7.0 else 0  # 70% of weighted score (70% of 10.0)
     
     # Save single record to database (including weighted_score)
     conn = get_db()
@@ -299,7 +306,7 @@ def submit():
     cursor.close()
     conn.close()
     
-    print(f"Quiz saved: name={name}, score={score}/{total_questions}, percent={percent:.2f}%, weighted_score={weighted_score:.1f}/16.0, weighted_percent={weighted_percent:.2f}%, winner={is_winner}")
+    print(f"Quiz saved: name={name}, score={score}/{total_questions}, percent={percent:.2f}%, weighted_score={weighted_score:.1f}/10.0, weighted_percent={weighted_percent:.2f}%, winner={is_winner}")
     
     # Render result page directly
     # Display name for results page (use PIN if name not provided)

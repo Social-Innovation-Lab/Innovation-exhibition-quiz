@@ -18,8 +18,8 @@ The core application is built with Flask, served by `app.py`. It utilizes a Post
 
 **Key Features:**
 - **PWA Enabled:** Includes a service worker for caching static assets and offline support, along with a `manifest.json` for home screen installation.
-- **Weighted Random Question Selection:** Each quiz dynamically generates 10 questions with a distribution of 2 Easy (1 mark each), 4 Medium (1.5 marks each), and 4 Hard (2 marks each) questions, shuffled to mix difficulty. Total weighted marks: 16.0
-- **Winner Detection:** Participants scoring 70% or higher (11.2 weighted marks) are marked as winners.
+- **Weighted Random Question Selection:** Each quiz dynamically generates 10 questions with a distribution of 2 Easy (0.5 marks each), 4 Medium (0.75 marks each), and 4 Hard (1.5 marks each) questions, shuffled to mix difficulty. Total weighted marks: 10.0
+- **Winner Detection:** Participants scoring 70% or higher (7.0 weighted marks) are marked as winners.
 - **Two-path Sign-in:** Participants can sign in with a PIN or register with their name and phone number.
 - **Admin Dashboard:** Provides real-time statistics, a list of winners, gift tracking, and CSV export functionality, secured by an admin PIN.
 - **Security:** Admin routes are protected by PIN authentication, and session management uses a `SESSION_SECRET`.
@@ -80,11 +80,11 @@ A single `quiz_records` table stores all participant and quiz data:
   - **Flex display fix:** Changed JavaScript from `display: block` to `display: flex` for proper centering
   - **Phone validation:** Added 11-digit phone number validation (maxlength, pattern, and JavaScript)
 - **2025-11-17:** Updated question bank and weighting system:
-  - **New CSV:** Switched to `Quiz App ques set2 - QuestionBank_1763360490832.csv` (314 questions)
-  - **Updated weights:** Easy = 1, Medium = 1.5, Hard = 2 (total max: 16.0 marks)
-  - **Weight source:** Using weights directly from CSV file instead of custom mapping
-  - **Question distribution:** 2 Easy (2.0) + 4 Medium (6.0) + 4 Hard (8.0) = 16.0 total marks
-  - **Winner threshold:** 70% of 16.0 = 11.2 weighted marks
+  - **New CSV:** Switched to `Quiz App ques set2 - QuestionBank_1763360490832.csv` (281 questions)
+  - **Custom weights:** Easy = 0.5, Medium = 0.75, Hard = 1.5 (total max: 10.0 marks)
+  - **Weight source:** Using custom weight mapping instead of CSV weights
+  - **Question distribution:** 2 Easy (1.0) + 4 Medium (3.0) + 4 Hard (6.0) = 10.0 total marks
+  - **Winner threshold:** 70% of 10.0 = 7.0 weighted marks
 - **2025-10-29:** Comprehensive responsive design fixes with SVG viewBox and clamp() scaling
 
 ## External Dependencies
