@@ -48,9 +48,10 @@ A single `quiz_records` table stores all participant and quiz data:
 - `GET /manifest.json`: PWA manifest file.
 
 ## Recent Changes
-- **2025-11-17 (Latest):** UX improvements - smooth transitions, better tile spacing, and weighted score display:
+- **2025-11-17 (Latest):** UX improvements - smooth transitions, compact option boxes, and weighted score display:
   - **Smooth transitions:** Changed carousel animation from bouncy cubic-bezier to smooth ease-in-out (0.4s)
-  - **Option tile improvements:** Reduced padding/gaps, optimized font sizes with clamp() for coherent spacing
+  - **Compact option boxes:** Significantly reduced size - padding (10-14px), min-height (48-60px), border (2px), smaller letter circles (32-38px), tighter gaps (10-12px)
+  - **Optimized fonts:** Text (14-16px), letter (14-16px), line-height (1.4) for better coherence
   - **Weighted score display:** Result page now shows weighted score (out of 10) in the circle instead of regular score
   - **Weighted percentage:** Percentage calculation based on weighted score (weighted_score / 10.0 * 100)
   - **Winner detection:** Updated to use weighted_score >= 7.0 (70% of max weighted marks)

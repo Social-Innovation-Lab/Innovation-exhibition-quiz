@@ -384,7 +384,7 @@ body {
 
 .options-grid {
   display: grid;
-  gap: 15px;
+  gap: clamp(10px, 2vh, 12px);
   margin-bottom: 20px;
 }
 
@@ -409,36 +409,36 @@ body {
 .option-content {
   display: flex;
   align-items: center;
-  gap: clamp(12px, 2vw, 15px);
-  padding: clamp(14px, 2.5vh, 18px) clamp(16px, 3vw, 20px);
+  gap: clamp(10px, 1.8vw, 12px);
+  padding: clamp(10px, 1.8vh, 14px) clamp(12px, 2.5vw, 16px);
   background: white;
-  border: 3px solid #e0e0e0;
-  border-radius: 12px;
+  border: 2px solid #e0e0e0;
+  border-radius: 10px;
   transition: all 0.25s ease;
-  min-height: clamp(60px, 10vh, 75px);
+  min-height: clamp(48px, 8vh, 60px);
   box-shadow: 0 2px 8px rgba(0,0,0,0.05);
 }
 
 .option-letter {
   flex-shrink: 0;
-  width: clamp(38px, 7vw, 45px);
-  height: clamp(38px, 7vw, 45px);
+  width: clamp(32px, 6vw, 38px);
+  height: clamp(32px, 6vw, 38px);
   display: flex;
   align-items: center;
   justify-content: center;
   background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
   border-radius: 50%;
   font-weight: 700;
-  font-size: clamp(16px, 3vw, 18px);
+  font-size: clamp(14px, 2.8vw, 16px);
   color: #555;
   transition: all 0.25s ease;
 }
 
 .option-text {
   flex: 1;
-  font-size: clamp(15px, 2.8vw, 17px);
+  font-size: clamp(14px, 2.6vw, 16px);
   color: #333;
-  line-height: 1.5;
+  line-height: 1.4;
 }
 
 .checkmark {
