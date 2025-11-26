@@ -50,7 +50,8 @@ A single `quiz_records` table stores all participant and quiz data:
   - **Orange accent color (#FF8A50):** Used for score circle, percentage display, option hover states, navigation buttons
   - **Red accent (#e31837):** Reserved for "Question X" labels for emphasis
   - **Purple buttons:** Submit Quiz button and Next Player button use purple gradient (#6B2D7B → #5A2468)
-  - **Frosted glass effect:** Semi-transparent white cards with backdrop blur throughout
+  - **How it Works section:** Changed from frosted glass card to transparent with simple white border
+  - **Frosted glass effect:** Semi-transparent white cards with backdrop blur for forms and option buttons
   - **Responsive design:** Added comprehensive media queries for tablet (768px) and mobile (480px) breakpoints
   - **Proportional scaling:** Logo, text, and cards scale smoothly using clamp() functions
   - **Countdown overlay:** Now uses matching orange-pink gradient instead of red
