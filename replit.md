@@ -44,7 +44,17 @@ A single `quiz_records` table stores all participant and quiz data:
 - `GET /manifest.json`: PWA manifest file.
 
 ## Recent Changes
-- **2025-11-26 (Latest):** Visual design update:
+- **2025-11-26 (Latest):** Complete visual design overhaul with consistent theming:
+  - **Balanced gradient background:** Warm orange-to-pink gradient (#FFA033 → #FF8A50 → #FF7860 → #EC407A) across all pages
+  - **Purple text theme (#6B2D7B):** Applied to subtitles, step text, form labels, timer text, score numbers, status titles
+  - **Orange accent color (#FF8A50):** Used for score circle, percentage display, option hover states, navigation buttons
+  - **Red accent (#e31837):** Reserved for "Question X" labels for emphasis
+  - **Purple buttons:** Submit Quiz button and Next Player button use purple gradient (#6B2D7B → #5A2468)
+  - **Frosted glass effect:** Semi-transparent white cards with backdrop blur throughout
+  - **Responsive design:** Added comprehensive media queries for tablet (768px) and mobile (480px) breakpoints
+  - **Proportional scaling:** Logo, text, and cards scale smoothly using clamp() functions
+  - **Countdown overlay:** Now uses matching orange-pink gradient instead of red
+- **2025-11-26:** Visual design update:
   - **New gradient background:** Changed from white/light pink to vibrant orange-to-pink gradient (#FF9500 → #FF6B35 → #E91E63)
   - **New logo:** Replaced BRAC logo with Innovation Exhibition logo featuring lightbulb design
   - **Updated UI elements:** White text on gradient background, semi-transparent white cards with enhanced shadows
