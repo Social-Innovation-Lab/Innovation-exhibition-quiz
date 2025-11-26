@@ -4,7 +4,7 @@
 This project is a tablet-friendly Progressive Web App (PWA) designed as a quiz kiosk for BRAC exhibitions. Its primary purpose is to engage participants with 10 randomly generated questions, incorporating weighted difficulty and actual BRAC programme names. The application identifies winners (achieving ≥70% score) and automatically tracks them for gift distribution, with all data stored in a PostgreSQL database and accessible via an admin dashboard. The project aims to provide an engaging, robust, and easily manageable quiz experience for exhibition attendees.
 
 ## User Preferences
-- **Design:** Clean, minimal, BRAC brand colors (#e31837 red)
+- **Design:** Vibrant orange-to-pink gradient background (#FF9500 → #FF6B35 → #E91E63), Innovation Exhibition branding
 - **UX:** Touch-first, tablet-optimized, kiosk-safe
 - **Code Style:** Simple, readable Python/Flask with inline comments
 
@@ -44,7 +44,12 @@ A single `quiz_records` table stores all participant and quiz data:
 - `GET /manifest.json`: PWA manifest file.
 
 ## Recent Changes
-- **2025-11-17 (Latest):** Database simplification:
+- **2025-11-26 (Latest):** Visual design update:
+  - **New gradient background:** Changed from white/light pink to vibrant orange-to-pink gradient (#FF9500 → #FF6B35 → #E91E63)
+  - **New logo:** Replaced BRAC logo with Innovation Exhibition logo featuring lightbulb design
+  - **Updated UI elements:** White text on gradient background, semi-transparent white cards with enhanced shadows
+  - **Consistent theming:** Applied gradient background to both landing page and result page
+- **2025-11-17:** Database simplification:
   - **Removed is_winner and gift_given columns:** Simplified database schema by removing tracking columns
   - **Winner detection:** Winners (≥70% / 7.0+ weighted score) now calculated dynamically, not stored
   - **Admin dashboard:** Removed Status, Gift, and Action columns; now shows all attempts without filtering
