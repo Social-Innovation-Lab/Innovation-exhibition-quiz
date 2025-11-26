@@ -44,13 +44,7 @@ A single `quiz_records` table stores all participant and quiz data:
 - `GET /manifest.json`: PWA manifest file.
 
 ## Recent Changes
-- **2025-11-26 (Latest):** Added Bangla/English language selection and UI improvements:
-  - **Language selection:** Users can now choose between English (🇬🇧) and বাংলা (🇧🇩) before starting the quiz
-  - **Bordered steps section:** Changed "how-it-works" from frosted glass card to transparent with purple border
-  - **Full translation support:** All UI text (titles, labels, placeholders, buttons) translates based on language choice
-  - **Language passed to quiz:** Selected language stored in hidden form field for quiz page translation
-  - **Responsive language buttons:** Pill-shaped bordered buttons with hover effects, scale for mobile/tablet
-- **2025-11-26:** Complete visual design overhaul with consistent theming:
+- **2025-11-26 (Latest):** Complete visual design overhaul with consistent theming:
   - **Balanced gradient background:** Warm orange-to-pink gradient (#FFA033 → #FF8A50 → #FF7860 → #EC407A) across all pages
   - **Purple text theme (#6B2D7B):** Applied to subtitles, step text, form labels, timer text, score numbers, status titles
   - **Orange accent color (#FF8A50):** Used for score circle, percentage display, option hover states, navigation buttons
