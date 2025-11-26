@@ -8,20 +8,22 @@
     <p class="hero-subtitle">Let's see how BRAC-savvy you really are</p>
     
     <!-- How It Works Section -->
-    <div class="how-it-works">
-      <div class="step-card">
-        <div class="step-icon">📝</div>
-        <div class="step-text">Register</div>
-      </div>
-      <div class="step-arrow">→</div>
-      <div class="step-card">
-        <div class="step-icon">🎯</div>
-        <div class="step-text">Answer 10 Questions in 150 seconds</div>
-      </div>
-      <div class="step-arrow">→</div>
-      <div class="step-card">
-        <div class="step-icon">🏆</div>
-        <div class="step-text">Win Prizes!</div>
+    <div class="how-it-works-card">
+      <div class="steps-row">
+        <div class="step-item">
+          <div class="step-icon">📝</div>
+          <div class="step-text">Register</div>
+        </div>
+        <div class="step-arrow">→</div>
+        <div class="step-item">
+          <div class="step-icon">🎯</div>
+          <div class="step-text">Answer 10 Questions in 150 seconds</div>
+        </div>
+        <div class="step-arrow">→</div>
+        <div class="step-item">
+          <div class="step-icon">🏆</div>
+          <div class="step-text">Win Prizes!</div>
+        </div>
       </div>
     </div>
   </div>
@@ -95,7 +97,7 @@
   align-items: center;
   justify-content: center;
   padding: 15px;
-  background: linear-gradient(135deg, #FF9500 0%, #FF6B35 50%, #E91E63 100%);
+  background: linear-gradient(135deg, #FF9500 0%, #FF8C00 40%, #FF6B35 70%, #E91E63 100%);
 }
 
 .hero-section {
@@ -105,7 +107,7 @@
 }
 
 .hero-logo {
-  max-width: clamp(200px, 50vw, 350px);
+  max-width: clamp(280px, 60vw, 450px);
   height: auto;
   margin: 0 auto 20px;
   display: block;
@@ -122,55 +124,45 @@
   animation: fadeInUp 0.6s ease-out 0.2s backwards;
 }
 
-.how-it-works {
+.how-it-works-card {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 16px;
+  padding: 20px 25px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  max-width: 600px;
+  margin: 0 auto;
+  animation: fadeInUp 0.6s ease-out 0.3s backwards;
+}
+
+.steps-row {
   display: flex;
-  gap: 8px;
+  gap: 15px;
   justify-content: center;
   align-items: center;
   flex-wrap: wrap;
-  max-width: 500px;
-  margin: 0 auto;
 }
 
-.step-card {
+.step-item {
   flex: 1;
-  min-width: 85px;
-  background: rgba(255, 255, 255, 0.95);
-  border-radius: 10px;
-  padding: 12px 8px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
-  transition: all 0.3s ease;
-  animation: fadeInUp 0.6s ease-out backwards;
+  min-width: 80px;
+  text-align: center;
+  padding: 8px;
 }
-
-.step-card:nth-child(1) { animation-delay: 0.3s; }
-.step-card:nth-child(3) { animation-delay: 0.4s; }
-.step-card:nth-child(5) { animation-delay: 0.5s; }
 
 .step-arrow {
-  font-size: 20px;
-  color: #fff;
+  font-size: 24px;
+  color: #FF6B35;
   font-weight: 700;
-  text-shadow: 0 2px 4px rgba(0,0,0,0.2);
-  animation: fadeIn 0.6s ease-out 0.35s backwards, pulse 2s ease-in-out infinite;
   flex-shrink: 0;
 }
 
-.step-arrow:nth-child(2) { animation-delay: 0.35s; }
-.step-arrow:nth-child(4) { animation-delay: 0.45s; }
-
-.step-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
-}
-
 .step-icon {
-  font-size: 24px;
-  margin-bottom: 5px;
+  font-size: 28px;
+  margin-bottom: 8px;
 }
 
 .step-text {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
   color: #555;
   line-height: 1.3;
