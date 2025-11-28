@@ -209,6 +209,29 @@ def index():
     session.clear()
     return render_template('index.html')
 
+def count_player_attempts(pin=None, phone=None):
+    """Count how many times a player has attempted the quiz"""
+    conn = get_db()
+    cursor = conn.cursor()
+    
+    if pin:
+        cursor.execute('SELECT COUNT(*) as count FROM quiz_records WHERE pin = %s', (pin,))
+    elif phone:
+        cursor.execute('SELECT COUNT(*) as count FROM quiz_records WHERE phone = %s', (phone,))
+    else:
+        cursor.close()
+        conn.close()
+        return 0
+    
+    result = cursor.fetchone()
+    count = result['count'] if result else 0
+    
+    cursor.close()
+    conn.close()
+    return count
+
+MAX_ATTEMPTS = 3
+
 @app.route('/start', methods=['POST'])
 def start():
     """Handle participant sign-in and start quiz"""
@@ -227,6 +250,12 @@ def start():
             print(f"Validation failed - invalid PIN: {pin}")
             return redirect('/')
         
+        # Check attempt limit for PIN users
+        attempts = count_player_attempts(pin=pin)
+        if attempts >= MAX_ATTEMPTS:
+            error_msg = 'আপনি ইতিমধ্যে ৩ বার খেলেছেন' if language == 'bn' else 'You have already played 3 times'
+            return render_template('index.html', error=error_msg, error_lang=language)
+        
         # PIN users: only store PIN, leave name and phone as None
         name = None
         phone = None
@@ -240,6 +269,12 @@ def start():
         if not all([name, phone]):
             print(f"Validation failed - name:{name}, phone:{phone}")
             return redirect('/')
+        
+        # Check attempt limit for phone users
+        attempts = count_player_attempts(phone=phone)
+        if attempts >= MAX_ATTEMPTS:
+            error_msg = 'আপনি ইতিমধ্যে ৩ বার খেলেছেন' if language == 'bn' else 'You have already played 3 times'
+            return render_template('index.html', error=error_msg, error_lang=language)
         
         # Name+Phone users: only store name and phone, leave PIN as None
         pin = None
@@ -410,6 +445,38 @@ def export_csv():
     response.headers['Content-Type'] = 'text/csv'
     response.headers['Content-Disposition'] = 'attachment; filename=quiz_records.csv'
     return response
+
+@app.route('/leaderboard')
+def leaderboard():
+    """Leaderboard page showing top scores"""
+    conn = get_db()
+    cursor = conn.cursor()
+    
+    # Get top 10 scores (best score per player, identified by phone or PIN)
+    # For players with multiple attempts, show their best score
+    cursor.execute('''
+        SELECT 
+            COALESCE(name, 'Player-' || pin) as display_name,
+            phone,
+            pin,
+            MAX(COALESCE(weighted_score, 0)) as best_score,
+            MAX(COALESCE(percent, 0)) as best_percent,
+            COUNT(*) as attempts
+        FROM quiz_records 
+        GROUP BY COALESCE(name, 'Player-' || pin), phone, pin
+        ORDER BY best_score DESC NULLS LAST, best_percent DESC NULLS LAST
+        LIMIT 10
+    ''')
+    
+    top_players = cursor.fetchall()
+    
+    cursor.close()
+    conn.close()
+    
+    # Get language from session for translations
+    language = session.get('language', 'en')
+    
+    return render_template('leaderboard.html', players=top_players, lang=language)
 
 @app.route('/manifest.json')
 def manifest():

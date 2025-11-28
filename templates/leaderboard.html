@@ -1,0 +1,291 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="leaderboard-container">
+  <div class="leaderboard-card">
+    <div class="leaderboard-header">
+      <a href="/" class="back-link">← {{ "ফিরে যান" if lang == 'bn' else "Back" }}</a>
+      <h1 class="leaderboard-title">🏆 {{ "লিডারবোর্ড" if lang == 'bn' else "Leaderboard" }}</h1>
+      <p class="leaderboard-subtitle">{{ "সেরা ১০ খেলোয়াড়" if lang == 'bn' else "Top 10 Players" }}</p>
+    </div>
+    
+    {% if players %}
+    <div class="leaderboard-table">
+      <div class="table-header">
+        <div class="col-rank">{{ "র‌্যাংক" if lang == 'bn' else "Rank" }}</div>
+        <div class="col-name">{{ "নাম" if lang == 'bn' else "Name" }}</div>
+        <div class="col-score">{{ "স্কোর" if lang == 'bn' else "Score" }}</div>
+        <div class="col-percent">%</div>
+      </div>
+      
+      {% for player in players %}
+      <div class="table-row {% if loop.index == 1 %}gold{% elif loop.index == 2 %}silver{% elif loop.index == 3 %}bronze{% endif %}">
+        <div class="col-rank">
+          {% if loop.index == 1 %}
+            <span class="medal">🥇</span>
+          {% elif loop.index == 2 %}
+            <span class="medal">🥈</span>
+          {% elif loop.index == 3 %}
+            <span class="medal">🥉</span>
+          {% else %}
+            <span class="rank-number">{{ loop.index }}</span>
+          {% endif %}
+        </div>
+        <div class="col-name">
+          <span class="player-name">{{ player.display_name }}</span>
+          {% if player.attempts > 1 %}
+          <span class="attempts-badge">{{ player.attempts }} {{ "বার" if lang == 'bn' else "tries" }}</span>
+          {% endif %}
+        </div>
+        <div class="col-score">{{ "%.1f"|format(player.best_score or 0) }}/10</div>
+        <div class="col-percent">{{ "%.0f"|format(player.best_percent or 0) }}%</div>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="no-players">
+      <div class="empty-icon">📊</div>
+      <p>{{ "এখনো কোনো স্কোর নেই" if lang == 'bn' else "No scores yet" }}</p>
+      <p class="hint">{{ "প্রথম খেলোয়াড় হোন!" if lang == 'bn' else "Be the first to play!" }}</p>
+    </div>
+    {% endif %}
+    
+    <div class="cta-section">
+      <a href="/" class="play-btn">
+        {{ "কুইজ খেলুন" if lang == 'bn' else "Play Quiz" }} →
+      </a>
+    </div>
+  </div>
+</div>
+
+<style>
+.leaderboard-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 15px;
+  background: linear-gradient(135deg, #FFA033 0%, #FF8A50 40%, #FF7860 70%, #EC407A 100%);
+}
+
+.leaderboard-card {
+  max-width: 600px;
+  width: 100%;
+  background: rgba(255, 255, 255, 0.98);
+  border-radius: 20px;
+  padding: 25px;
+  box-shadow: 0 15px 50px rgba(0,0,0,0.25);
+  animation: slideUp 0.6s ease-out;
+}
+
+.leaderboard-header {
+  text-align: center;
+  margin-bottom: 25px;
+}
+
+.back-link {
+  display: inline-block;
+  color: #6B2D7B;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 14px;
+  margin-bottom: 15px;
+  transition: all 0.3s ease;
+}
+
+.back-link:hover {
+  transform: translateX(-5px);
+}
+
+.leaderboard-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: #6B2D7B;
+  margin: 0 0 8px;
+}
+
+.leaderboard-subtitle {
+  font-size: 16px;
+  color: #666;
+  margin: 0;
+}
+
+.leaderboard-table {
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid #eee;
+}
+
+.table-header {
+  display: grid;
+  grid-template-columns: 60px 1fr 80px 60px;
+  background: linear-gradient(135deg, #6B2D7B 0%, #5A2468 100%);
+  color: white;
+  padding: 12px 15px;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.table-row {
+  display: grid;
+  grid-template-columns: 60px 1fr 80px 60px;
+  padding: 12px 15px;
+  border-bottom: 1px solid #f0f0f0;
+  align-items: center;
+  transition: all 0.3s ease;
+}
+
+.table-row:hover {
+  background: #f9f9f9;
+}
+
+.table-row:last-child {
+  border-bottom: none;
+}
+
+.table-row.gold {
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.15) 0%, rgba(255, 193, 7, 0.1) 100%);
+}
+
+.table-row.silver {
+  background: linear-gradient(135deg, rgba(192, 192, 192, 0.15) 0%, rgba(176, 176, 176, 0.1) 100%);
+}
+
+.table-row.bronze {
+  background: linear-gradient(135deg, rgba(205, 127, 50, 0.15) 0%, rgba(176, 102, 28, 0.1) 100%);
+}
+
+.medal {
+  font-size: 24px;
+}
+
+.rank-number {
+  font-size: 18px;
+  font-weight: 700;
+  color: #666;
+}
+
+.col-name {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.player-name {
+  font-weight: 600;
+  color: #333;
+  font-size: 15px;
+}
+
+.attempts-badge {
+  font-size: 11px;
+  color: #888;
+  background: #f0f0f0;
+  padding: 2px 8px;
+  border-radius: 10px;
+  display: inline-block;
+  width: fit-content;
+}
+
+.col-score {
+  font-weight: 700;
+  color: #FF8A50;
+  font-size: 15px;
+}
+
+.col-percent {
+  font-weight: 600;
+  color: #6B2D7B;
+  font-size: 15px;
+}
+
+.no-players {
+  text-align: center;
+  padding: 40px 20px;
+}
+
+.empty-icon {
+  font-size: 48px;
+  margin-bottom: 15px;
+}
+
+.no-players p {
+  font-size: 18px;
+  color: #666;
+  margin: 0 0 8px;
+}
+
+.no-players .hint {
+  font-size: 14px;
+  color: #888;
+}
+
+.cta-section {
+  text-align: center;
+  margin-top: 25px;
+  padding-top: 20px;
+  border-top: 2px solid #f0f0f0;
+}
+
+.play-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 30px;
+  background: linear-gradient(135deg, #FF8A50 0%, #FF6B35 100%);
+  color: white;
+  text-decoration: none;
+  border-radius: 50px;
+  font-size: 16px;
+  font-weight: 700;
+  box-shadow: 0 6px 16px rgba(255, 107, 53, 0.3);
+  transition: all 0.3s ease;
+}
+
+.play-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 30px rgba(255, 107, 53, 0.4);
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 480px) {
+  .leaderboard-card {
+    padding: 18px;
+  }
+  
+  .leaderboard-title {
+    font-size: 24px;
+  }
+  
+  .table-header,
+  .table-row {
+    grid-template-columns: 50px 1fr 65px 50px;
+    padding: 10px 12px;
+    font-size: 13px;
+  }
+  
+  .medal {
+    font-size: 20px;
+  }
+  
+  .player-name {
+    font-size: 14px;
+  }
+  
+  .col-score,
+  .col-percent {
+    font-size: 14px;
+  }
+}
+</style>
+{% endblock %}

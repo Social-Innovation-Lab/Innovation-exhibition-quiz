@@ -44,7 +44,15 @@ A single `quiz_records` table stores all participant and quiz data:
 - `GET /manifest.json`: PWA manifest file.
 
 ## Recent Changes
-- **2025-11-28 (Latest):** Added language selection feature (Bangla/English):
+- **2025-11-28 (Latest):** Added attempt limit and leaderboard features:
+  - **3-attempt limit:** Players can only play 3 times (tracked by phone number or PIN)
+  - **Error messaging:** Bilingual error message shown when player exceeds attempt limit
+  - **Leaderboard page:** New `/leaderboard` route showing top 10 players
+  - **Leaderboard features:** Shows rank, name, best score, percentage, and attempt count
+  - **Medal icons:** Gold, silver, bronze medals for top 3 players
+  - **Leaderboard links:** Added on landing page and result page
+  - **Best score display:** For players with multiple attempts, shows their highest score
+- **2025-11-28:** Added language selection feature (Bangla/English):
   - **Language selection UI:** New step on landing page with "English" and "বাংলা" buttons
   - **Session-based language:** Language preference stored in session for quiz duration
   - **Bilingual support:** All UI elements translated (landing page, quiz, result page)

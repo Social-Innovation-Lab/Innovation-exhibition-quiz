@@ -28,6 +28,15 @@
     </div>
   </div>
 
+  <!-- Error Message -->
+  {% if error %}
+  <div class="error-banner" id="errorBanner">
+    <span class="error-icon">⚠️</span>
+    <span class="error-text">{{ error }}</span>
+    <button class="error-close" onclick="document.getElementById('errorBanner').style.display='none'">×</button>
+  </div>
+  {% endif %}
+
   <!-- Language Selection -->
   <div id="languageSelection" class="option-selection">
     <h2 class="selection-title">Choose Language / ভাষা নির্বাচন করুন</h2>
@@ -41,6 +50,7 @@
         <span class="btn-desc">বাংলায় খেলুন</span>
       </button>
     </div>
+    <a href="/leaderboard" class="leaderboard-link">🏆 View Leaderboard / লিডারবোর্ড দেখুন</a>
   </div>
 
   <!-- Option Selection (hidden initially) -->
@@ -184,10 +194,86 @@
   line-height: 1.3;
 }
 
+.error-banner {
+  width: 100%;
+  max-width: 500px;
+  background: rgba(220, 53, 69, 0.95);
+  color: white;
+  padding: 15px 20px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+  animation: slideDown 0.4s ease-out;
+  box-shadow: 0 4px 15px rgba(220, 53, 69, 0.3);
+}
+
+.error-icon {
+  font-size: 24px;
+}
+
+.error-text {
+  flex: 1;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.error-close {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  color: white;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  font-size: 18px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.error-close:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.leaderboard-link {
+  display: inline-block;
+  margin-top: 20px;
+  padding: 10px 20px;
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(8px);
+  border-radius: 25px;
+  color: #6B2D7B;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.leaderboard-link:hover {
+  background: rgba(255, 255, 255, 0.35);
+  transform: translateY(-2px);
+}
+
 .option-selection {
   width: 100%;
   max-width: 500px;
   animation: fadeInUp 0.6s ease-out 0.6s backwards;
+  text-align: center;
 }
 
 .selection-title {

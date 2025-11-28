@@ -64,9 +64,14 @@
     <!-- Call to Action -->
     <div class="cta-section">
       <p class="thank-you">{{ "অংশগ্রহণের জন্য ধন্যবাদ" if lang == 'bn' else "Thank you for participating" }}</p>
-      <a class="play-again-btn" href="/">
-        <span>{{ "পরবর্তী খেলোয়াড়" if lang == 'bn' else "Next Player" }}</span>
-      </a>
+      <div class="button-row">
+        <a class="play-again-btn" href="/">
+          <span>{{ "পরবর্তী খেলোয়াড়" if lang == 'bn' else "Next Player" }}</span>
+        </a>
+        <a class="leaderboard-btn" href="/leaderboard">
+          <span>🏆 {{ "লিডারবোর্ড" if lang == 'bn' else "Leaderboard" }}</span>
+        </a>
+      </div>
     </div>
   </div>
 </div>
@@ -298,6 +303,34 @@
 .play-again-btn:hover {
   transform: translateY(-3px);
   box-shadow: 0 12px 30px rgba(107, 45, 123, 0.4);
+}
+
+.button-row {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: center;
+}
+
+.leaderboard-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 20px;
+  background: rgba(255, 138, 80, 0.15);
+  border: 2px solid #FF8A50;
+  color: #FF8A50;
+  text-decoration: none;
+  border-radius: 50px;
+  font-size: 14px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.leaderboard-btn:hover {
+  background: #FF8A50;
+  color: white;
+  transform: translateY(-2px);
 }
 
 .btn-icon {
