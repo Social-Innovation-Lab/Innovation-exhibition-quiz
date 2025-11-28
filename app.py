@@ -96,10 +96,20 @@ def capitalize_first_letter(text):
         return text
     return text[0].upper() + text[1:] if text else text
 
-def load_questions_from_csv():
-    """Load questions from CSV file (not stored in database)"""
+def load_questions_from_csv(language='en'):
+    """Load questions from CSV file based on language (not stored in database)"""
     import re
-    csv_path = 'Quiz App ques set2 - QuestionBank_1763360490832.csv'
+    
+    # Use different CSV files based on language
+    if language == 'bn':
+        csv_path = 'questions_bangla.csv'
+        # Fallback to English if Bangla CSV doesn't exist
+        if not os.path.exists(csv_path):
+            print(f"Bangla CSV not found, falling back to English")
+            csv_path = 'Quiz App ques set2 - QuestionBank_1763360490832.csv'
+    else:
+        csv_path = 'Quiz App ques set2 - QuestionBank_1763360490832.csv'
+    
     questions = []
     
     # Weight mapping: Easy=0.5, Medium=0.75, Hard=1.5 (total 10 marks for 2+4+4 distribution)
@@ -148,7 +158,7 @@ def load_questions_from_csv():
     
     return questions
 
-def select_weighted_random_questions(num_questions=10):
+def select_weighted_random_questions(num_questions=10, language='en'):
     """Select random questions with difficulty-based weighting
     
     Target distribution for 10 questions:
@@ -159,8 +169,8 @@ def select_weighted_random_questions(num_questions=10):
     """
     import random
     
-    # Load all questions from CSV
-    all_questions = load_questions_from_csv()
+    # Load all questions from CSV based on language
+    all_questions = load_questions_from_csv(language)
     
     # Target distribution
     target_easy = 2
@@ -203,6 +213,10 @@ def index():
 def start():
     """Handle participant sign-in and start quiz"""
     form_type = request.form.get('form_type', '').strip()
+    language = request.form.get('language', 'en').strip()
+    
+    # Store language preference in session
+    session['language'] = language
     
     if form_type == 'have_pin':
         # Have PIN: only PIN field required
@@ -234,10 +248,10 @@ def start():
         # Invalid form type
         return redirect('/')
     
-    print(f"Starting quiz for: name={name}, pin={pin}, form_type={form_type}")
+    print(f"Starting quiz for: name={name}, pin={pin}, form_type={form_type}, language={language}")
     
     # Get 10 random questions with weighted distribution
-    questions = select_weighted_random_questions(10)
+    questions = select_weighted_random_questions(10, language)
     
     # Format for template
     for q in questions:

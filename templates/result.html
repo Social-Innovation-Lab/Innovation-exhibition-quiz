@@ -1,11 +1,12 @@
 {% extends "base.html" %}
+{% set lang = session.get('language', 'en') %}
 
 {% block content %}
 <div class="result-container">
   <div class="result-card">
     <!-- Animated Header -->
     <div class="result-header">
-      <h1 class="congrats-text">{{ "🏆 Congratulations!" if data.is_winner else "Score" }}</h1>
+      <h1 class="congrats-text">{{ ("🏆 অভিনন্দন!" if lang == 'bn' else "🏆 Congratulations!") if data.is_winner else ("স্কোর" if lang == 'bn' else "Score") }}</h1>
       <p class="participant-name">{{data.name}}</p>
     </div>
     
@@ -20,7 +21,7 @@
         <div class="score-display">
           <span class="score-number" id="animatedScore">0</span><span class="score-separator">/</span><span class="score-total-number">{{data.total_weighted|int}}</span>
         </div>
-        <div class="score-label">Weighted Score</div>
+        <div class="score-label">{{ "ওজনযুক্ত স্কোর" if lang == 'bn' else "Weighted Score" }}</div>
       </div>
     </div>
     
@@ -31,40 +32,40 @@
     {% if data.weighted_percent == 100 %}
       <div class="winner-message">
         <div class="trophy-icon">🎉</div>
-        <h2 class="status-title">PERFECT!</h2>
-        <p class="status-text">You know BRAC inside-out. There is a surprise waiting for you!</p>
+        <h2 class="status-title">{{ "নিখুঁত!" if lang == 'bn' else "PERFECT!" }}</h2>
+        <p class="status-text">{{ "আপনি ব্র্যাক সম্পর্কে সব জানেন। আপনার জন্য একটি সারপ্রাইজ অপেক্ষা করছে!" if lang == 'bn' else "You know BRAC inside-out. There is a surprise waiting for you!" }}</p>
       </div>
     {% elif data.weighted_percent >= 85 %}
       <div class="winner-message">
         <div class="trophy-icon">🌟</div>
-        <h2 class="status-title">Amazing!</h2>
-        <p class="status-text">There is a gift for you at the counter</p>
+        <h2 class="status-title">{{ "অসাধারণ!" if lang == 'bn' else "Amazing!" }}</h2>
+        <p class="status-text">{{ "কাউন্টার থেকে আপনার উপহার নিন" if lang == 'bn' else "There is a gift for you at the counter" }}</p>
       </div>
     {% elif data.weighted_percent >= 75 %}
       <div class="winner-message">
         <div class="trophy-icon">💪</div>
-        <h2 class="status-title">Great Work!</h2>
-        <p class="status-text">Please collect your gift from the counter</p>
+        <h2 class="status-title">{{ "চমৎকার!" if lang == 'bn' else "Great Work!" }}</h2>
+        <p class="status-text">{{ "কাউন্টার থেকে আপনার উপহার সংগ্রহ করুন" if lang == 'bn' else "Please collect your gift from the counter" }}</p>
       </div>
     {% elif data.weighted_percent >= 60 %}
       <div class="winner-message">
         <div class="trophy-icon">👏</div>
-        <h2 class="status-title">Good Job!</h2>
-        <p class="status-text">Please collect your gift from the counter</p>
+        <h2 class="status-title">{{ "ভালো হয়েছে!" if lang == 'bn' else "Good Job!" }}</h2>
+        <p class="status-text">{{ "কাউন্টার থেকে আপনার উপহার সংগ্রহ করুন" if lang == 'bn' else "Please collect your gift from the counter" }}</p>
       </div>
     {% else %}
       <div class="try-again-message">
         <div class="emoji-icon">👍</div>
-        <h2 class="status-title">Good Try!</h2>
-        <p class="status-text">We appreciate your effort</p>
+        <h2 class="status-title">{{ "ভালো চেষ্টা!" if lang == 'bn' else "Good Try!" }}</h2>
+        <p class="status-text">{{ "আপনার প্রচেষ্টার জন্য ধন্যবাদ" if lang == 'bn' else "We appreciate your effort" }}</p>
       </div>
     {% endif %}
     
     <!-- Call to Action -->
     <div class="cta-section">
-      <p class="thank-you">Thank you for participating</p>
+      <p class="thank-you">{{ "অংশগ্রহণের জন্য ধন্যবাদ" if lang == 'bn' else "Thank you for participating" }}</p>
       <a class="play-again-btn" href="/">
-        <span>Next Player</span>
+        <span>{{ "পরবর্তী খেলোয়াড়" if lang == 'bn' else "Next Player" }}</span>
       </a>
     </div>
   </div>

@@ -1,10 +1,13 @@
 {% extends "base.html" %}
 
 {% block content %}
+<!-- Language setting -->
+<input type="hidden" id="quizLanguage" value="{{ session.get('language', 'en') }}">
+
 <!-- Countdown Overlay -->
 <div class="countdown-overlay" id="countdownOverlay">
   <div class="countdown-number" id="countdownNumber">3</div>
-  <div class="countdown-text">Get Ready!</div>
+  <div class="countdown-text" id="countdownText">Get Ready!</div>
 </div>
 
 <!-- Enhanced Progress Header -->
@@ -57,7 +60,7 @@
       {% for q in items %}
       <div class="question-card {% if loop.index == 1 %}active{% endif %}" data-question="{{loop.index}}">
         <div class="card-header">
-          <span class="q-number">Question {{loop.index}}</span>
+          <span class="q-number" data-en="Question {{loop.index}}" data-bn="প্রশ্ন {{loop.index}}">Question {{loop.index}}</span>
         </div>
         
         <div class="question-text">
@@ -88,7 +91,7 @@
     <!-- Submit Button Only -->
     <div class="nav-controls">
       <button type="submit" class="submit-btn" id="submitBtn" style="display: none;">
-        <span>🏆 Submit Quiz</span>
+        <span id="submitBtnText">🏆 Submit Quiz</span>
       </button>
     </div>
   </form>
@@ -870,6 +873,54 @@ body {
 {% block scripts %}
 <script src="/static/main.js?v=2.7"></script>
 <script>
+// Apply language translations
+const quizLang = document.getElementById('quizLanguage').value || 'en';
+
+const quizTranslations = {
+  en: {
+    getReady: 'Get Ready!',
+    submitQuiz: '🏆 Submit Quiz',
+    timeLabel: 'TIME'
+  },
+  bn: {
+    getReady: 'প্রস্তুত হোন!',
+    submitQuiz: '🏆 কুইজ জমা দিন',
+    timeLabel: 'সময়'
+  }
+};
+
+// Apply translations on page load
+document.addEventListener('DOMContentLoaded', function() {
+  const t = quizTranslations[quizLang];
+  
+  // Update countdown text
+  const countdownText = document.getElementById('countdownText');
+  if (countdownText) {
+    countdownText.textContent = t.getReady;
+  }
+  
+  // Update submit button
+  const submitBtnText = document.getElementById('submitBtnText');
+  if (submitBtnText) {
+    submitBtnText.textContent = t.submitQuiz;
+  }
+  
+  // Update TIME label
+  const timerLabel = document.querySelector('.timer-label');
+  if (timerLabel) {
+    timerLabel.textContent = t.timeLabel;
+  }
+  
+  // Update Question labels if Bangla
+  if (quizLang === 'bn') {
+    document.querySelectorAll('.q-number').forEach(function(el) {
+      if (el.dataset.bn) {
+        el.textContent = el.dataset.bn;
+      }
+    });
+  }
+});
+
 if('serviceWorker' in navigator){
   navigator.serviceWorker.register('/static/sw.js').catch(()=>{});
 }

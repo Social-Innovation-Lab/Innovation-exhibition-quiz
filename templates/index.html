@@ -28,17 +28,32 @@
     </div>
   </div>
 
-  <!-- Option Selection -->
-  <div id="optionSelection" class="option-selection">
-    <h2 class="selection-title">Register to play</h2>
+  <!-- Language Selection -->
+  <div id="languageSelection" class="option-selection">
+    <h2 class="selection-title">Choose Language / ভাষা নির্বাচন করুন</h2>
+    <div class="option-buttons language-buttons">
+      <button type="button" class="option-btn language-btn" onclick="selectLanguage('en')">
+        <span class="btn-text">🇬🇧 English</span>
+        <span class="btn-desc">Play in English</span>
+      </button>
+      <button type="button" class="option-btn language-btn" onclick="selectLanguage('bn')">
+        <span class="btn-text">🇧🇩 বাংলা</span>
+        <span class="btn-desc">বাংলায় খেলুন</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Option Selection (hidden initially) -->
+  <div id="optionSelection" class="option-selection" style="display: none;">
+    <h2 class="selection-title" id="registerTitle">Register to play</h2>
     <div class="option-buttons">
       <button type="button" class="option-btn" onclick="showForm('havePin')">
-        <span class="btn-text">Have PIN?</span>
-        <span class="btn-desc">Enter your 6-digit PIN</span>
+        <span class="btn-text" id="havePinText">Have PIN?</span>
+        <span class="btn-desc" id="havePinDesc">Enter your 6-digit PIN</span>
       </button>
       <button type="button" class="option-btn" onclick="showForm('noPin')">
-        <span class="btn-text">Don't Have PIN?</span>
-        <span class="btn-desc">Register with Name & Phone</span>
+        <span class="btn-text" id="noPinText">Don't Have PIN?</span>
+        <span class="btn-desc" id="noPinDesc">Register with Name & Phone</span>
       </button>
     </div>
   </div>
@@ -46,8 +61,9 @@
   <!-- Have PIN Form -->
   <form method="POST" action="/start" class="quiz-form" id="havePinForm" style="display: none;">
     <input type="hidden" name="form_type" value="have_pin">
+    <input type="hidden" name="language" id="havePinLanguage" value="en">
     
-    <h3 class="form-title">Enter Your PIN</h3>
+    <h3 class="form-title" id="pinFormTitle">Enter Your PIN</h3>
     
     <div class="form-group">
       <label class="form-label">
@@ -65,8 +81,9 @@
   <!-- Don't Have PIN Form -->
   <form method="POST" action="/start" class="quiz-form" id="noPinForm" style="display: none;">
     <input type="hidden" name="form_type" value="no_pin">
+    <input type="hidden" name="language" id="noPinLanguage" value="en">
     
-    <h3 class="form-title">Register to Play</h3>
+    <h3 class="form-title" id="noPinFormTitle">Register to Play</h3>
     
     <div class="form-group">
       <label class="form-label">
@@ -511,6 +528,90 @@
 
 {% block scripts %}
 <script>
+// Current selected language
+let selectedLanguage = 'en';
+
+// Translations
+const translations = {
+  en: {
+    registerTitle: 'Register to play',
+    havePinText: 'Have PIN?',
+    havePinDesc: 'Enter your 6-digit PIN',
+    noPinText: "Don't Have PIN?",
+    noPinDesc: 'Register with Name & Phone',
+    pinFormTitle: 'Enter Your PIN',
+    noPinFormTitle: 'Register to Play',
+    pinLabel: 'PIN (6 digits)',
+    pinPlaceholder: 'Enter 6-digit PIN',
+    nameLabel: 'Full Name',
+    namePlaceholder: 'Enter your name',
+    phoneLabel: 'Phone Number',
+    phonePlaceholder: 'Enter 11-digit phone number',
+    startQuiz: 'Start Quiz',
+    pinError: 'PIN must be exactly 6 digits (numbers only)',
+    nameError: 'Please enter your name',
+    phoneError: 'Please enter your phone number',
+    phoneDigitsError: 'Phone number must be exactly 11 digits'
+  },
+  bn: {
+    registerTitle: 'খেলতে নিবন্ধন করুন',
+    havePinText: 'পিন আছে?',
+    havePinDesc: 'আপনার ৬ সংখ্যার পিন দিন',
+    noPinText: 'পিন নেই?',
+    noPinDesc: 'নাম ও ফোন দিয়ে নিবন্ধন করুন',
+    pinFormTitle: 'আপনার পিন দিন',
+    noPinFormTitle: 'খেলতে নিবন্ধন করুন',
+    pinLabel: 'পিন (৬ সংখ্যা)',
+    pinPlaceholder: '৬ সংখ্যার পিন দিন',
+    nameLabel: 'পুরো নাম',
+    namePlaceholder: 'আপনার নাম দিন',
+    phoneLabel: 'ফোন নম্বর',
+    phonePlaceholder: '১১ সংখ্যার ফোন নম্বর দিন',
+    startQuiz: 'কুইজ শুরু করুন',
+    pinError: 'পিন অবশ্যই ৬ সংখ্যার হতে হবে (শুধু নম্বর)',
+    nameError: 'আপনার নাম দিন',
+    phoneError: 'আপনার ফোন নম্বর দিন',
+    phoneDigitsError: 'ফোন নম্বর অবশ্যই ১১ সংখ্যার হতে হবে'
+  }
+};
+
+function selectLanguage(lang) {
+  selectedLanguage = lang;
+  
+  // Update hidden language fields
+  document.getElementById('havePinLanguage').value = lang;
+  document.getElementById('noPinLanguage').value = lang;
+  
+  // Apply translations
+  const t = translations[lang];
+  
+  // Update option selection
+  document.getElementById('registerTitle').textContent = t.registerTitle;
+  document.getElementById('havePinText').textContent = t.havePinText;
+  document.getElementById('havePinDesc').textContent = t.havePinDesc;
+  document.getElementById('noPinText').textContent = t.noPinText;
+  document.getElementById('noPinDesc').textContent = t.noPinDesc;
+  
+  // Update PIN form
+  document.getElementById('pinFormTitle').textContent = t.pinFormTitle;
+  document.querySelector('#havePinForm .form-label span').textContent = t.pinLabel;
+  document.getElementById('pinInput').placeholder = t.pinPlaceholder;
+  document.querySelector('#havePinForm .start-button span:first-child').textContent = t.startQuiz;
+  
+  // Update No PIN form
+  document.getElementById('noPinFormTitle').textContent = t.noPinFormTitle;
+  const noPinLabels = document.querySelectorAll('#noPinForm .form-label span');
+  noPinLabels[0].textContent = t.nameLabel;
+  noPinLabels[1].textContent = t.phoneLabel;
+  document.getElementById('nameInput').placeholder = t.namePlaceholder;
+  document.getElementById('phoneInput').placeholder = t.phonePlaceholder;
+  document.querySelector('#noPinForm .start-button span:first-child').textContent = t.startQuiz;
+  
+  // Hide language selection and show options
+  document.getElementById('languageSelection').style.display = 'none';
+  document.getElementById('optionSelection').style.display = 'block';
+}
+
 function showForm(type) {
   document.getElementById('optionSelection').style.display = 'none';
   
@@ -579,9 +680,10 @@ if (nameInput && phoneInput && phoneSubmitBtn) {
 // Form validation for Have PIN form
 document.getElementById('havePinForm').addEventListener('submit', function(e) {
   const pin = this.querySelector('input[name="pin"]');
+  const t = translations[selectedLanguage];
   if (pin.value.length !== 6 || !/^\d{6}$/.test(pin.value)) {
     e.preventDefault();
-    alert('PIN must be exactly 6 digits (numbers only)');
+    alert(t.pinError);
     pin.focus();
     return false;
   }
@@ -592,17 +694,18 @@ document.getElementById('havePinForm').addEventListener('submit', function(e) {
 document.getElementById('noPinForm').addEventListener('submit', function(e) {
   const name = this.querySelector('input[name="name"]');
   const phone = this.querySelector('input[name="phone"]');
+  const t = translations[selectedLanguage];
   
   if (!name.value.trim()) {
     e.preventDefault();
-    alert('Please enter your name');
+    alert(t.nameError);
     name.focus();
     return false;
   }
   
   if (!phone.value.trim()) {
     e.preventDefault();
-    alert('Please enter your phone number');
+    alert(t.phoneError);
     phone.focus();
     return false;
   }
@@ -611,7 +714,7 @@ document.getElementById('noPinForm').addEventListener('submit', function(e) {
   const phoneDigits = phone.value.replace(/\D/g, '');
   if (phoneDigits.length !== 11) {
     e.preventDefault();
-    alert('Phone number must be exactly 11 digits');
+    alert(t.phoneDigitsError);
     phone.focus();
     return false;
   }
