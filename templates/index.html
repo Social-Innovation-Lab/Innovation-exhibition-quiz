@@ -42,75 +42,40 @@
     <h2 class="selection-title">Choose Language / ভাষা নির্বাচন করুন</h2>
     <div class="option-buttons language-buttons">
       <button type="button" class="option-btn language-btn" onclick="selectLanguage('en')">
-        <span class="btn-text">🇬🇧 English</span>
+        <span class="btn-text">English</span>
         <span class="btn-desc">Play in English</span>
       </button>
       <button type="button" class="option-btn language-btn" onclick="selectLanguage('bn')">
-        <span class="btn-text">🇧🇩 বাংলা</span>
+        <span class="btn-text">বাংলা</span>
         <span class="btn-desc">বাংলায় খেলুন</span>
       </button>
     </div>
     <a href="/leaderboard" class="leaderboard-link">🏆 View Leaderboard / লিডারবোর্ড দেখুন</a>
   </div>
 
-  <!-- Option Selection (hidden initially) -->
-  <div id="optionSelection" class="option-selection" style="display: none;">
-    <h2 class="selection-title" id="registerTitle">Register to play</h2>
-    <div class="option-buttons">
-      <button type="button" class="option-btn" onclick="showForm('havePin')">
-        <span class="btn-text" id="havePinText">Have PIN?</span>
-        <span class="btn-desc" id="havePinDesc">Enter your 6-digit PIN</span>
-      </button>
-      <button type="button" class="option-btn" onclick="showForm('noPin')">
-        <span class="btn-text" id="noPinText">Don't Have PIN?</span>
-        <span class="btn-desc" id="noPinDesc">Register with Name & Phone</span>
-      </button>
-    </div>
-  </div>
-
-  <!-- Have PIN Form -->
-  <form method="POST" action="/start" class="quiz-form" id="havePinForm" style="display: none;">
-    <input type="hidden" name="form_type" value="have_pin">
-    <input type="hidden" name="language" id="havePinLanguage" value="en">
+  <!-- Registration Form (hidden initially) -->
+  <form method="POST" action="/start" class="quiz-form" id="registrationForm" style="display: none;">
+    <input type="hidden" name="form_type" value="register">
+    <input type="hidden" name="language" id="formLanguage" value="en">
     
-    <h3 class="form-title" id="pinFormTitle">Enter Your PIN</h3>
+    <h3 class="form-title" id="formTitle">Register to Play</h3>
     
     <div class="form-group">
       <label class="form-label">
-        <span>PIN (6 digits)</span>
-      </label>
-      <input name="pin" type="text" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" required class="form-input" placeholder="Enter 6-digit PIN" id="pinInput">
-    </div>
-    
-    <button type="submit" class="start-button" id="pinSubmitBtn" disabled>
-      <span>Start Quiz</span>
-      <span class="button-arrow">→</span>
-    </button>
-  </form>
-
-  <!-- Don't Have PIN Form -->
-  <form method="POST" action="/start" class="quiz-form" id="noPinForm" style="display: none;">
-    <input type="hidden" name="form_type" value="no_pin">
-    <input type="hidden" name="language" id="noPinLanguage" value="en">
-    
-    <h3 class="form-title" id="noPinFormTitle">Register to Play</h3>
-    
-    <div class="form-group">
-      <label class="form-label">
-        <span>Full Name</span>
+        <span id="nameLabel">Full Name</span>
       </label>
       <input name="name" type="text" required autocomplete="name" class="form-input" placeholder="Enter your name" id="nameInput">
     </div>
     
     <div class="form-group">
       <label class="form-label">
-        <span>Phone Number</span>
+        <span id="emailLabel">Email</span>
       </label>
-      <input name="phone" type="tel" inputmode="tel" autocomplete="tel" maxlength="11" pattern="[0-9]{11}" required class="form-input" placeholder="Enter 11-digit phone number" id="phoneInput">
+      <input name="email" type="email" inputmode="email" autocomplete="email" required class="form-input" placeholder="Enter your email" id="emailInput">
     </div>
     
-    <button type="submit" class="start-button" id="phoneSubmitBtn" disabled>
-      <span>Start Quiz</span>
+    <button type="submit" class="start-button" id="submitBtn" disabled>
+      <span id="submitBtnText">Start Quiz</span>
       <span class="button-arrow">→</span>
     </button>
   </form>
@@ -620,166 +585,73 @@ let selectedLanguage = 'en';
 // Translations
 const translations = {
   en: {
-    registerTitle: 'Register to play',
-    havePinText: 'Have PIN?',
-    havePinDesc: 'Enter your 6-digit PIN',
-    noPinText: "Don't Have PIN?",
-    noPinDesc: 'Register with Name & Phone',
-    pinFormTitle: 'Enter Your PIN',
-    noPinFormTitle: 'Register to Play',
-    pinLabel: 'PIN (6 digits)',
-    pinPlaceholder: 'Enter 6-digit PIN',
+    formTitle: 'Register to Play',
     nameLabel: 'Full Name',
     namePlaceholder: 'Enter your name',
-    phoneLabel: 'Phone Number',
-    phonePlaceholder: 'Enter 11-digit phone number',
+    emailLabel: 'Email',
+    emailPlaceholder: 'Enter your email',
     startQuiz: 'Start Quiz',
-    pinError: 'PIN must be exactly 6 digits (numbers only)',
     nameError: 'Please enter your name',
-    phoneError: 'Please enter your phone number',
-    phoneDigitsError: 'Phone number must be exactly 11 digits'
+    emailError: 'Please enter a valid email address'
   },
   bn: {
-    registerTitle: 'খেলতে নিবন্ধন করুন',
-    havePinText: 'পিন আছে?',
-    havePinDesc: 'আপনার ৬ সংখ্যার পিন দিন',
-    noPinText: 'পিন নেই?',
-    noPinDesc: 'নাম ও ফোন দিয়ে নিবন্ধন করুন',
-    pinFormTitle: 'আপনার পিন দিন',
-    noPinFormTitle: 'খেলতে নিবন্ধন করুন',
-    pinLabel: 'পিন (৬ সংখ্যা)',
-    pinPlaceholder: '৬ সংখ্যার পিন দিন',
+    formTitle: 'খেলতে নিবন্ধন করুন',
     nameLabel: 'পুরো নাম',
     namePlaceholder: 'আপনার নাম দিন',
-    phoneLabel: 'ফোন নম্বর',
-    phonePlaceholder: '১১ সংখ্যার ফোন নম্বর দিন',
+    emailLabel: 'ইমেইল',
+    emailPlaceholder: 'আপনার ইমেইল দিন',
     startQuiz: 'কুইজ শুরু করুন',
-    pinError: 'পিন অবশ্যই ৬ সংখ্যার হতে হবে (শুধু নম্বর)',
     nameError: 'আপনার নাম দিন',
-    phoneError: 'আপনার ফোন নম্বর দিন',
-    phoneDigitsError: 'ফোন নম্বর অবশ্যই ১১ সংখ্যার হতে হবে'
+    emailError: 'সঠিক ইমেইল ঠিকানা দিন'
   }
 };
 
 function selectLanguage(lang) {
   selectedLanguage = lang;
   
-  // Update hidden language fields
-  document.getElementById('havePinLanguage').value = lang;
-  document.getElementById('noPinLanguage').value = lang;
+  // Update hidden language field
+  document.getElementById('formLanguage').value = lang;
   
   // Apply translations
   const t = translations[lang];
   
-  // Update option selection
-  document.getElementById('registerTitle').textContent = t.registerTitle;
-  document.getElementById('havePinText').textContent = t.havePinText;
-  document.getElementById('havePinDesc').textContent = t.havePinDesc;
-  document.getElementById('noPinText').textContent = t.noPinText;
-  document.getElementById('noPinDesc').textContent = t.noPinDesc;
-  
-  // Update PIN form
-  document.getElementById('pinFormTitle').textContent = t.pinFormTitle;
-  document.querySelector('#havePinForm .form-label span').textContent = t.pinLabel;
-  document.getElementById('pinInput').placeholder = t.pinPlaceholder;
-  document.querySelector('#havePinForm .start-button span:first-child').textContent = t.startQuiz;
-  
-  // Update No PIN form
-  document.getElementById('noPinFormTitle').textContent = t.noPinFormTitle;
-  const noPinLabels = document.querySelectorAll('#noPinForm .form-label span');
-  noPinLabels[0].textContent = t.nameLabel;
-  noPinLabels[1].textContent = t.phoneLabel;
+  // Update form labels and placeholders
+  document.getElementById('formTitle').textContent = t.formTitle;
+  document.getElementById('nameLabel').textContent = t.nameLabel;
   document.getElementById('nameInput').placeholder = t.namePlaceholder;
-  document.getElementById('phoneInput').placeholder = t.phonePlaceholder;
-  document.querySelector('#noPinForm .start-button span:first-child').textContent = t.startQuiz;
+  document.getElementById('emailLabel').textContent = t.emailLabel;
+  document.getElementById('emailInput').placeholder = t.emailPlaceholder;
+  document.getElementById('submitBtnText').textContent = t.startQuiz;
   
-  // Hide language selection and show options
+  // Hide language selection and show registration form
   document.getElementById('languageSelection').style.display = 'none';
-  document.getElementById('optionSelection').style.display = 'block';
+  document.getElementById('registrationForm').style.display = 'block';
 }
 
-function showForm(type) {
-  document.getElementById('optionSelection').style.display = 'none';
-  
-  if (type === 'havePin') {
-    document.getElementById('havePinForm').style.display = 'block';
-    document.getElementById('noPinForm').style.display = 'none';
-  } else {
-    document.getElementById('noPinForm').style.display = 'block';
-    document.getElementById('havePinForm').style.display = 'none';
-  }
-}
-
-function showOptions() {
-  document.getElementById('optionSelection').style.display = 'block';
-  document.getElementById('havePinForm').style.display = 'none';
-  document.getElementById('noPinForm').style.display = 'none';
-}
-
-// Real-time validation for PIN input
-const pinInput = document.getElementById('pinInput');
-const pinSubmitBtn = document.getElementById('pinSubmitBtn');
-
-if (pinInput && pinSubmitBtn) {
-  pinInput.addEventListener('input', function() {
-    const value = this.value.replace(/\D/g, ''); // Remove non-digits
-    this.value = value; // Update input to only digits
-    
-    // Enable button only if exactly 6 digits
-    if (value.length === 6) {
-      pinSubmitBtn.disabled = false;
-    } else {
-      pinSubmitBtn.disabled = true;
-    }
-  });
-}
-
-// Real-time validation for Name and Phone inputs
+// Real-time validation for Name and Email inputs
 const nameInput = document.getElementById('nameInput');
-const phoneInput = document.getElementById('phoneInput');
-const phoneSubmitBtn = document.getElementById('phoneSubmitBtn');
+const emailInput = document.getElementById('emailInput');
+const submitBtn = document.getElementById('submitBtn');
 
-function validatePhoneForm() {
-  if (!nameInput || !phoneInput || !phoneSubmitBtn) return;
+function validateForm() {
+  if (!nameInput || !emailInput || !submitBtn) return;
   
   const nameValid = nameInput.value.trim().length > 0;
-  const phoneValue = phoneInput.value.replace(/\D/g, '');
-  const phoneValid = phoneValue.length === 11;
+  const emailValid = emailInput.value.trim().length > 0 && emailInput.validity.valid;
   
-  // Enable button only if both name and phone are valid
-  if (nameValid && phoneValid) {
-    phoneSubmitBtn.disabled = false;
-  } else {
-    phoneSubmitBtn.disabled = true;
-  }
+  // Enable button only if both name and email are valid
+  submitBtn.disabled = !(nameValid && emailValid);
 }
 
-if (nameInput && phoneInput && phoneSubmitBtn) {
-  nameInput.addEventListener('input', validatePhoneForm);
-  phoneInput.addEventListener('input', function() {
-    const value = this.value.replace(/\D/g, ''); // Remove non-digits
-    this.value = value; // Update input to only digits
-    validatePhoneForm();
-  });
+if (nameInput && emailInput && submitBtn) {
+  nameInput.addEventListener('input', validateForm);
+  emailInput.addEventListener('input', validateForm);
 }
 
-// Form validation for Have PIN form
-document.getElementById('havePinForm').addEventListener('submit', function(e) {
-  const pin = this.querySelector('input[name="pin"]');
-  const t = translations[selectedLanguage];
-  if (pin.value.length !== 6 || !/^\d{6}$/.test(pin.value)) {
-    e.preventDefault();
-    alert(t.pinError);
-    pin.focus();
-    return false;
-  }
-  console.log('Have PIN form submitting');
-});
-
-// Form validation for No PIN form
-document.getElementById('noPinForm').addEventListener('submit', function(e) {
+// Form validation on submit
+document.getElementById('registrationForm').addEventListener('submit', function(e) {
   const name = this.querySelector('input[name="name"]');
-  const phone = this.querySelector('input[name="phone"]');
+  const email = this.querySelector('input[name="email"]');
   const t = translations[selectedLanguage];
   
   if (!name.value.trim()) {
@@ -789,23 +661,14 @@ document.getElementById('noPinForm').addEventListener('submit', function(e) {
     return false;
   }
   
-  if (!phone.value.trim()) {
+  if (!email.value.trim() || !email.validity.valid) {
     e.preventDefault();
-    alert(t.phoneError);
-    phone.focus();
+    alert(t.emailError);
+    email.focus();
     return false;
   }
   
-  // Validate phone number is exactly 11 digits
-  const phoneDigits = phone.value.replace(/\D/g, '');
-  if (phoneDigits.length !== 11) {
-    e.preventDefault();
-    alert(t.phoneDigitsError);
-    phone.focus();
-    return false;
-  }
-  
-  console.log('No PIN form submitting');
+  console.log('Registration form submitting');
 });
 
 if('serviceWorker' in navigator){

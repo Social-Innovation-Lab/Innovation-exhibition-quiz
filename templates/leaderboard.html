@@ -33,9 +33,6 @@
         </div>
         <div class="col-name">
           <span class="player-name">{{ player.display_name }}</span>
-          {% if player.attempts > 1 %}
-          <span class="attempts-badge">{{ player.attempts }} {{ "বার" if lang == 'bn' else "tries" }}</span>
-          {% endif %}
         </div>
         <div class="col-score">{{ "%.1f"|format(player.best_score or 0) }}/10</div>
         <div class="col-percent">{{ "%.0f"|format(player.best_percent or 0) }}%</div>
@@ -175,16 +172,6 @@
   font-weight: 600;
   color: #333;
   font-size: 15px;
-}
-
-.attempts-badge {
-  font-size: 11px;
-  color: #888;
-  background: #f0f0f0;
-  padding: 2px 8px;
-  border-radius: 10px;
-  display: inline-block;
-  width: fit-content;
 }
 
 .col-score {

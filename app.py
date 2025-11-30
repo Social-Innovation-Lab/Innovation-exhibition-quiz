@@ -71,13 +71,11 @@ def init_db():
     ''')
     
     # Create single table with all quiz data
-    # Note: name, phone, and pin can be NULL depending on sign-up method
     cursor.execute('''
         CREATE TABLE quiz_records (
             id SERIAL PRIMARY KEY,
             name TEXT,
-            pin TEXT,
-            phone TEXT,
+            email TEXT,
             percent REAL NOT NULL,
             weighted_score REAL,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -210,15 +208,13 @@ def index():
     session.clear()
     return render_template('index.html')
 
-def count_player_attempts(pin=None, phone=None):
+def count_player_attempts(email=None):
     """Count how many times a player has attempted the quiz"""
     conn = get_db()
     cursor = conn.cursor()
     
-    if pin:
-        cursor.execute('SELECT COUNT(*) as count FROM quiz_records WHERE pin = %s', (pin,))
-    elif phone:
-        cursor.execute('SELECT COUNT(*) as count FROM quiz_records WHERE phone = %s', (phone,))
+    if email:
+        cursor.execute('SELECT COUNT(*) as count FROM quiz_records WHERE email = %s', (email,))
     else:
         cursor.close()
         conn.close()
@@ -235,56 +231,34 @@ MAX_ATTEMPTS = 3
 
 @app.route('/start', methods=['POST'])
 def start():
-    """Handle participant sign-in and start quiz"""
+    """Handle participant registration and start quiz"""
     form_type = request.form.get('form_type', '').strip()
     language = request.form.get('language', 'en').strip()
     
     # Store language preference in session
     session['language'] = language
     
-    if form_type == 'have_pin':
-        # Have PIN: only PIN field required
-        pin = request.form.get('pin', '').strip()
-        
-        # Validate PIN format (exactly 6 digits)
-        if not (pin.isdigit() and len(pin) == 6):
-            print(f"Validation failed - invalid PIN: {pin}")
-            return redirect('/')
-        
-        # Check attempt limit for PIN users
-        attempts = count_player_attempts(pin=pin)
-        if attempts >= MAX_ATTEMPTS:
-            error_msg = 'আপনি ইতিমধ্যে ৩ বার খেলেছেন' if language == 'bn' else 'You have already played 3 times'
-            return render_template('index.html', error=error_msg, error_lang=language)
-        
-        # PIN users: only store PIN, leave name and phone as None
-        name = None
-        phone = None
-        
-    elif form_type == 'no_pin':
-        # Don't Have PIN: name and phone required
+    if form_type == 'register':
+        # Registration: name and email required
         name = request.form.get('name', '').strip()
-        phone = request.form.get('phone', '').strip()
+        email = request.form.get('email', '').strip().lower()
         
         # Validate required fields
-        if not all([name, phone]):
-            print(f"Validation failed - name:{name}, phone:{phone}")
+        if not all([name, email]):
+            print(f"Validation failed - name:{name}, email:{email}")
             return redirect('/')
         
-        # Check attempt limit for phone users
-        attempts = count_player_attempts(phone=phone)
+        # Check attempt limit for email users
+        attempts = count_player_attempts(email=email)
         if attempts >= MAX_ATTEMPTS:
             error_msg = 'আপনি ইতিমধ্যে ৩ বার খেলেছেন' if language == 'bn' else 'You have already played 3 times'
             return render_template('index.html', error=error_msg, error_lang=language)
-        
-        # Name+Phone users: only store name and phone, leave PIN as None
-        pin = None
         
     else:
         # Invalid form type
         return redirect('/')
     
-    print(f"Starting quiz for: name={name}, pin={pin}, form_type={form_type}, language={language}")
+    print(f"Starting quiz for: name={name}, email={email}, language={language}")
     
     # Get 10 random questions with weighted distribution
     questions = select_weighted_random_questions(10, language)
@@ -296,20 +270,17 @@ def start():
     print(f"Selected {len(questions)} questions for quiz")
     
     # Render quiz page directly (pass participant data through form)
-    # Use empty string instead of None for template rendering
     return render_template('quiz.html', 
                          items=questions, 
-                         participant_name=name if name else '',
-                         participant_pin=pin if pin else '',
-                         participant_phone=phone if phone else '')
+                         participant_name=name,
+                         participant_email=email)
 
 @app.route('/submit', methods=['POST'])
 def submit():
     """Grade quiz and save results to single database table"""
     # Get participant data from form (not session to avoid cookie issues)
     name = request.form.get('participant_name', '').strip() or None
-    pin = request.form.get('participant_pin', '').strip() or None
-    phone = request.form.get('participant_phone', '').strip() or None
+    email = request.form.get('participant_email', '').strip().lower() or None
     
     # Load all questions to match against submissions
     all_questions = load_questions_from_csv()
@@ -340,18 +311,17 @@ def submit():
     conn = get_db()
     cursor = conn.cursor()
     cursor.execute(
-        'INSERT INTO quiz_records (name, pin, phone, percent, weighted_score) VALUES (%s, %s, %s, %s, %s)',
-        (name, pin, phone, weighted_percent, weighted_score)
+        'INSERT INTO quiz_records (name, email, percent, weighted_score) VALUES (%s, %s, %s, %s)',
+        (name, email, weighted_percent, weighted_score)
     )
     conn.commit()
     cursor.close()
     conn.close()
     
-    print(f"Quiz saved: name={name}, weighted_score={weighted_score:.1f}/10.0, weighted_percent={weighted_percent:.2f}%")
+    print(f"Quiz saved: name={name}, email={email}, weighted_score={weighted_score:.1f}/10.0, weighted_percent={weighted_percent:.2f}%")
     
     # Render result page directly
-    # Display name for results page (use PIN if name not provided)
-    display_name = name if name else f"Player-{pin}" if pin else "Participant"
+    display_name = name if name else "Participant"
     
     data = {
         'name': display_name,
@@ -426,7 +396,7 @@ def export_csv():
     cursor = conn.cursor()
     
     cursor.execute('''
-        SELECT name, pin, phone, weighted_score, percent, created_at
+        SELECT name, email, weighted_score, percent, created_at
         FROM quiz_records
         ORDER BY created_at DESC
     ''')
@@ -436,11 +406,9 @@ def export_csv():
     conn.close()
     
     # Create CSV
-    output = "Name,PIN,Phone,Weighted Score,Percentage,Date\n"
+    output = "Name,Email,Weighted Score,Percentage,Date\n"
     for r in records:
-        # Mask phone number (show only last 4 digits)
-        masked_phone = '****' + r['phone'][-4:] if r['phone'] and len(r['phone']) >= 4 else (r['phone'] or '')
-        output += f'"{r["name"]}",{r["pin"]},{masked_phone},{r["weighted_score"]:.1f},{r["percent"]:.2f}%,{r["created_at"]}\n'
+        output += f'"{r["name"]}",{r["email"]},{r["weighted_score"]:.1f},{r["percent"]:.2f}%,{r["created_at"]}\n'
     
     response = make_response(output)
     response.headers['Content-Type'] = 'text/csv'
@@ -453,18 +421,16 @@ def leaderboard():
     conn = get_db()
     cursor = conn.cursor()
     
-    # Get top 10 scores (best score per player, identified by phone or PIN)
+    # Get top 10 scores (best score per player, identified by email)
     # For players with multiple attempts, show their best score
     cursor.execute('''
         SELECT 
-            COALESCE(name, 'Player-' || pin) as display_name,
-            phone,
-            pin,
+            COALESCE(name, 'Participant') as display_name,
+            email,
             MAX(COALESCE(weighted_score, 0)) as best_score,
-            MAX(COALESCE(percent, 0)) as best_percent,
-            COUNT(*) as attempts
+            MAX(COALESCE(percent, 0)) as best_percent
         FROM quiz_records 
-        GROUP BY COALESCE(name, 'Player-' || pin), phone, pin
+        GROUP BY COALESCE(name, 'Participant'), email
         ORDER BY best_score DESC NULLS LAST, best_percent DESC NULLS LAST
         LIMIT 10
     ''')
