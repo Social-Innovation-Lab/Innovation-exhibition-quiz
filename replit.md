@@ -18,16 +18,18 @@ The core application is built with Flask, served by `app.py`. It utilizes a Post
 
 **Key Features:**
 - **PWA Enabled:** Includes a service worker for caching static assets and offline support, and a `manifest.json` for home screen installation.
-- **Weighted Random Question Selection:** Each quiz dynamically generates 10 questions with a distribution of 2 Easy (0.5 marks), 4 Medium (0.75 marks), and 4 Hard (1.5 marks), shuffled for mixed difficulty. Total weighted marks: 10.0.
+- **Weighted Random Question Selection:** Each quiz dynamically generates 10 questions with a distribution of 2 Easy (0.5 marks), 4 Medium (0.75 marks), and 4 Hard (1.5 marks), shuffled for mixed difficulty. Total weighted marks: 10.0. Questions are automatically cleaned to remove number prefixes like "15. Q:".
 - **Winner Detection:** Participants scoring 70% or higher (7.0 weighted marks) are marked as winners.
 - **Single Registration:** Participants register with their name and email address.
 - **Admin Dashboard:** Provides real-time statistics, a list of all quiz attempts, and CSV export functionality, secured by an admin PIN.
-- **Security:** Admin routes are protected by PIN authentication, and session management uses a `SESSION_SECRET`.
+- **Security:** Admin routes are protected by PIN authentication with CSRF protection, and session management uses a `SESSION_SECRET`.
 - **Language Selection:** Supports bilingual content (English and Bangla) with dynamic question loading.
 - **Attempt Limit:** Participants are limited to 3 quiz attempts, tracked by email address.
+- **Experience Rating:** After completing the quiz, participants can rate their experience with a 5-star rating system. Ratings are stored in the database for feedback analysis.
 
 ### Database Schema (PostgreSQL)
-A single `quiz_records` table stores all participant and quiz data:
+
+**quiz_records** - Stores all participant and quiz data:
 - `id` (SERIAL PRIMARY KEY)
 - `name` (TEXT, nullable)
 - `email` (TEXT, nullable)
@@ -35,11 +37,20 @@ A single `quiz_records` table stores all participant and quiz data:
 - `weighted_score` (REAL, nullable) - Weighted score based on difficulty (max 10.0)
 - `created_at` (TIMESTAMP, DEFAULT CURRENT_TIMESTAMP)
 
+**ratings** - Stores participant experience ratings:
+- `id` (SERIAL PRIMARY KEY)
+- `email` (TEXT, nullable)
+- `rating` (INTEGER, 1-5) - Star rating from participant
+- `created_at` (TIMESTAMP, DEFAULT CURRENT_TIMESTAMP)
+
 ### Application Routes
 - `GET /`: Landing page for participant sign-in.
 - `POST /start`: Initiates a quiz session, creates participant record, and selects questions.
 - `POST /submit`: Grades responses and saves the attempt.
 - `GET /result`: Displays quiz results and winner status.
+- `GET /rate`: Rate your experience page with 5-star rating.
+- `POST /rate/submit`: Saves rating to database.
+- `GET /rate/thankyou`: Thank you page after rating.
 - `GET /admin`: Admin dashboard.
 - `GET /admin/export`: Downloads all quiz records in CSV format.
 - `GET /manifest.json`: PWA manifest file.

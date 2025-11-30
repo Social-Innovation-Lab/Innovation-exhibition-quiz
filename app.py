@@ -82,6 +82,16 @@ def init_db():
         );
     ''')
     
+    # Create ratings table for experience feedback
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS ratings (
+            id SERIAL PRIMARY KEY,
+            email TEXT,
+            rating INTEGER NOT NULL CHECK (rating >= 1 AND rating <= 5),
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );
+    ''')
+    
     conn.commit()
     cursor.close()
     conn.close()
@@ -123,6 +133,9 @@ def load_questions_from_csv(language='en'):
         for row in reader:
             # Keep the actual question text with programme names
             question_text = row['question']
+            
+            # Remove number prefixes like "15. Q:" or "5. Q:" from question text
+            question_text = re.sub(r'^\d+\.\s*Q:\s*', '', question_text)
             
             # Clean up extra spaces and punctuation
             question_text = re.sub(r'\s+', ' ', question_text).strip()
@@ -307,34 +320,77 @@ def submit():
     # Calculate percentage based on weighted score
     # Total possible weighted marks: 2 Easy (0.5×2=1.0) + 4 Medium (0.75×4=3.0) + 4 Hard (1.5×4=6.0) = 10.0
     total_weighted_marks = 10.0
-    weighted_percent = (weighted_score / total_weighted_marks) * 100
     
-    # Save single record to database
+    # Round the weighted score to 1 decimal for display
+    rounded_weighted_score = round(weighted_score, 1)
+    
+    # Calculate percentage from the ROUNDED score so display is consistent
+    # e.g., 3.8 score should show 38%, not 37.5% from unrounded 3.75
+    weighted_percent = rounded_weighted_score * 10  # score * 10 = exact percentage
+    
+    # Save single record to database (use rounded values)
     conn = get_db()
     cursor = conn.cursor()
     cursor.execute(
         'INSERT INTO quiz_records (name, email, percent, weighted_score) VALUES (%s, %s, %s, %s)',
-        (name, email, weighted_percent, weighted_score)
+        (name, email, weighted_percent, rounded_weighted_score)
     )
     conn.commit()
     cursor.close()
     conn.close()
     
-    print(f"Quiz saved: name={name}, email={email}, weighted_score={weighted_score:.1f}/10.0, weighted_percent={weighted_percent:.2f}%")
+    print(f"Quiz saved: name={name}, email={email}, weighted_score={rounded_weighted_score:.1f}/10.0, weighted_percent={weighted_percent:.1f}%")
     
     # Render result page directly
     display_name = name if name else "Participant"
     
     data = {
         'name': display_name,
-        'weighted_score': round(weighted_score, 1),
+        'weighted_score': rounded_weighted_score,
         'total_weighted': total_weighted_marks,
-        'percent': round(weighted_percent, 2),
-        'weighted_percent': round(weighted_percent, 2),
-        'is_winner': 1 if weighted_score >= 7.0 else 0  # For result page display only
+        'percent': weighted_percent,
+        'weighted_percent': weighted_percent,
+        'is_winner': 1 if rounded_weighted_score >= 7.0 else 0  # For result page display only
     }
     
     return render_template('result.html', data=data)
+
+
+@app.route('/rate')
+def rate_experience():
+    """Show the rate your experience page with 5-star rating"""
+    return render_template('rating.html')
+
+
+@app.route('/rate/submit', methods=['POST'])
+def submit_rating():
+    """Save rating to database"""
+    csrf_token = request.form.get('csrf_token')
+    if not verify_csrf_token(csrf_token):
+        abort(403)
+    
+    rating = request.form.get('rating', type=int)
+    email = request.form.get('email', '').strip().lower() or None
+    
+    if rating and 1 <= rating <= 5:
+        conn = get_db()
+        cursor = conn.cursor()
+        cursor.execute(
+            'INSERT INTO ratings (email, rating) VALUES (%s, %s)',
+            (email, rating)
+        )
+        conn.commit()
+        cursor.close()
+        conn.close()
+        print(f"Rating saved: email={email}, rating={rating} stars")
+    
+    return redirect('/rate/thankyou')
+
+
+@app.route('/rate/thankyou')
+def rating_thankyou():
+    """Show thank you page after rating"""
+    return render_template('rating_thankyou.html')
 
 
 @app.route('/admin/login', methods=['GET', 'POST'])
