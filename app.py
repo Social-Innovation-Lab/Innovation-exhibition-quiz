@@ -423,15 +423,16 @@ def leaderboard():
     
     # Get top 10 scores (best score per player, identified by email)
     # For players with multiple attempts, show their best score
+    # Calculate percentage directly from score: score/10 * 100 = score * 10
     cursor.execute('''
         SELECT 
             COALESCE(name, 'Participant') as display_name,
             email,
             MAX(COALESCE(weighted_score, 0)) as best_score,
-            MAX(COALESCE(percent, 0)) as best_percent
+            MAX(COALESCE(weighted_score, 0)) * 10 as best_percent
         FROM quiz_records 
         GROUP BY COALESCE(name, 'Participant'), email
-        ORDER BY best_score DESC NULLS LAST, best_percent DESC NULLS LAST
+        ORDER BY best_score DESC NULLS LAST
         LIMIT 10
     ''')
     
