@@ -49,16 +49,16 @@
       <div class="question-card {% if loop.index == 1 %}active{% endif %}" data-question="{{loop.index}}">
         <div class="card-header-wrapper">
           <button type="button" class="header-nav-btn nav-prev" id="navPrev{{loop.index0}}" onclick="navigatePrev()">
-            <svg width="24" height="24" viewBox="0 0 24 24">
-              <path d="M15 6 L9 12 L15 18" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+            <svg width="28" height="28" viewBox="0 0 40 40">
+              <path d="M25 10 L15 20 L25 30" stroke="white" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
           </button>
           <div class="card-header">
             <span class="q-number" data-en="Question {{loop.index}}" data-bn="প্রশ্ন" data-num="{{loop.index}}">Question {{loop.index}}</span>
           </div>
           <button type="button" class="header-nav-btn nav-next" id="navNext{{loop.index0}}" onclick="navigateNext()">
-            <svg width="24" height="24" viewBox="0 0 24 24">
-              <path d="M9 6 L15 12 L9 18" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+            <svg width="28" height="28" viewBox="0 0 40 40">
+              <path d="M15 10 L25 20 L15 30" stroke="white" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
           </button>
         </div>
@@ -396,8 +396,9 @@ body {
 }
 
 .header-nav-btn svg {
-  width: 24px;
-  height: 24px;
+  width: 28px;
+  height: 28px;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
 }
 
 .card-header {
