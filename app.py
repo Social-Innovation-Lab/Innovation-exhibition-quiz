@@ -194,11 +194,13 @@ def select_weighted_random_questions(num_questions=10, language='en'):
     for idx, q in enumerate(selected_questions):
         q['idx'] = idx
     
-    # Debug: Print distribution summary
-    easy_count = len([q for q in selected_questions if q['difficulty'] == 'Easy'])
-    medium_count = len([q for q in selected_questions if q['difficulty'] == 'Medium'])
-    hard_count = len([q for q in selected_questions if q['difficulty'] == 'Hard'])
+    # Debug: Print distribution summary (use lowercase comparison)
+    easy_count = len([q for q in selected_questions if q['difficulty'].lower() == 'easy'])
+    medium_count = len([q for q in selected_questions if q['difficulty'].lower() == 'medium'])
+    hard_count = len([q for q in selected_questions if q['difficulty'].lower() == 'hard'])
+    programmes = set(q['programme_code'] for q in selected_questions)
     print(f"Question distribution: Easy={easy_count}, Medium={medium_count}, Hard={hard_count}")
+    print(f"Questions from {len(programmes)} programmes: {programmes}")
     
     return selected_questions
 
