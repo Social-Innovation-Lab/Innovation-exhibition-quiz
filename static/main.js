@@ -71,21 +71,8 @@
     
     if (currentQuestion === totalQuestions - 1) {
       submitBtn.style.display = 'flex';
-      // Enable submit if all 10 questions answered
-      const shouldDisable = answeredCount < totalQuestions;
-      submitBtn.disabled = shouldDisable;
-      
-      // Force enable on mobile/tablet after 2 seconds on last question
-      if (shouldDisable) {
-        setTimeout(() => {
-          const currentAnswered = document.querySelectorAll('input[type="radio"]:checked').length;
-          if (currentAnswered >= totalQuestions) {
-            submitBtn.disabled = false;
-          }
-        }, 2000);
-      }
-      
-      console.log('Submit button state:', { answeredCount, totalQuestions, disabled: submitBtn.disabled });
+      // Always enable submit button - players can submit without answering all questions
+      submitBtn.disabled = false;
     } else {
       submitBtn.style.display = 'none';
     }
