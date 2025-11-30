@@ -321,36 +321,32 @@ def submit():
     # Total possible weighted marks: 2 Easy (0.5×2=1.0) + 4 Medium (0.75×4=3.0) + 4 Hard (1.5×4=6.0) = 10.0
     total_weighted_marks = 10.0
     
-    # Round the weighted score to 1 decimal for display
-    rounded_weighted_score = round(weighted_score, 1)
+    # Calculate exact percentage (e.g., 3.75 score = 37.5%)
+    weighted_percent = (weighted_score / total_weighted_marks) * 100
     
-    # Calculate percentage from the ROUNDED score so display is consistent
-    # e.g., 3.8 score should show 38%, not 37.5% from unrounded 3.75
-    weighted_percent = rounded_weighted_score * 10  # score * 10 = exact percentage
-    
-    # Save single record to database (use rounded values)
+    # Save to database with exact values
     conn = get_db()
     cursor = conn.cursor()
     cursor.execute(
         'INSERT INTO quiz_records (name, email, percent, weighted_score) VALUES (%s, %s, %s, %s)',
-        (name, email, weighted_percent, rounded_weighted_score)
+        (name, email, weighted_percent, weighted_score)
     )
     conn.commit()
     cursor.close()
     conn.close()
     
-    print(f"Quiz saved: name={name}, email={email}, weighted_score={rounded_weighted_score:.1f}/10.0, weighted_percent={weighted_percent:.1f}%")
+    print(f"Quiz saved: name={name}, email={email}, weighted_score={weighted_score}/10.0, weighted_percent={weighted_percent}%")
     
     # Render result page directly
     display_name = name if name else "Participant"
     
     data = {
         'name': display_name,
-        'weighted_score': rounded_weighted_score,
+        'weighted_score': weighted_score,
         'total_weighted': total_weighted_marks,
         'percent': weighted_percent,
         'weighted_percent': weighted_percent,
-        'is_winner': 1 if rounded_weighted_score >= 7.0 else 0  # For result page display only
+        'is_winner': 1 if weighted_score >= 7.0 else 0  # For result page display only
     }
     
     return render_template('result.html', data=data)
