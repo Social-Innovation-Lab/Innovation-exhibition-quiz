@@ -153,4 +153,6 @@ A single `quiz_records` table stores all participant and quiz data:
 - **PostgreSQL:** Used as the primary database for storing all quiz records. Accessible via the `DATABASE_URL` environment variable provided by Replit.
 - **psycopg2:** Python adapter for PostgreSQL.
 - **Flask:** Web framework for the application backend.
-- **CSV files:** Used for storing the question bank (`Quiz App ques set2 - QuestionBank_1763360490832.csv`).
+- **CSV files:** Used for storing the question bank:
+  - `questions_english.csv` - English questions (324 questions: 101 Easy, 101 Medium, 122 Hard)
+  - `questions_bangla.csv` - Bangla questions (324 questions: 101 easy, 101 medium, 122 hard)

@@ -106,17 +106,18 @@ def load_questions_from_csv(language='en'):
         # Fallback to English if Bangla CSV doesn't exist
         if not os.path.exists(csv_path):
             print(f"Bangla CSV not found, falling back to English")
-            csv_path = 'Quiz App ques set2 - QuestionBank_1763360490832.csv'
+            csv_path = 'questions_english.csv'
     else:
-        csv_path = 'Quiz App ques set2 - QuestionBank_1763360490832.csv'
+        csv_path = 'questions_english.csv'
     
     questions = []
     
     # Weight mapping: Easy=0.5, Medium=0.75, Hard=1.5 (total 10 marks for 2+4+4 distribution)
+    # Handle both uppercase and lowercase difficulty values
     weight_mapping = {
-        'Easy': 0.5,
-        'Medium': 0.75,
-        'Hard': 1.5
+        'Easy': 0.5, 'easy': 0.5,
+        'Medium': 0.75, 'medium': 0.75,
+        'Hard': 1.5, 'hard': 1.5
     }
     
     with open(csv_path, 'r', encoding='utf-8') as f:
@@ -177,10 +178,10 @@ def select_weighted_random_questions(num_questions=10, language='en'):
     target_medium = 4
     target_hard = 4
     
-    # Separate questions by difficulty
-    easy_questions = [q for q in all_questions if q['difficulty'] == 'Easy']
-    medium_questions = [q for q in all_questions if q['difficulty'] == 'Medium']
-    hard_questions = [q for q in all_questions if q['difficulty'] == 'Hard']
+    # Separate questions by difficulty (handle both uppercase and lowercase)
+    easy_questions = [q for q in all_questions if q['difficulty'].lower() == 'easy']
+    medium_questions = [q for q in all_questions if q['difficulty'].lower() == 'medium']
+    hard_questions = [q for q in all_questions if q['difficulty'].lower() == 'hard']
     
     # Select random questions from each difficulty
     selected_questions = []
