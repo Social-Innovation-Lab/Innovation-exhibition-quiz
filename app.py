@@ -164,8 +164,8 @@ def load_questions_from_csv(language='en'):
                 'option_B': option_b,
                 'option_C': option_c,
                 'option_D': option_d,
-                'answer': row['answer_letter'],
-                'answer_text': row['answer_text']
+                'answer': row['answer_letter'].strip().upper(),
+                'answer_text': row['answer_text'].strip() if row['answer_text'] else ''
             })
     
     return questions
@@ -297,8 +297,11 @@ def submit():
     name = request.form.get('participant_name', '').strip() or None
     email = request.form.get('participant_email', '').strip().lower() or None
     
-    # Load all questions to match against submissions
-    all_questions = load_questions_from_csv()
+    # Get quiz language from form
+    quiz_language = request.form.get('quiz_language', 'en').strip()
+    
+    # Load all questions to match against submissions (use correct language)
+    all_questions = load_questions_from_csv(quiz_language)
     
     # Grade responses with weighted scoring
     weighted_score = 0.0
@@ -307,7 +310,7 @@ def submit():
     # Check each submitted answer against the CSV questions
     for i in range(total_questions):
         question_text = request.form.get(f'question_{i}', '').strip()
-        selected = request.form.get(f'answer_{i}', '').strip()
+        selected = request.form.get(f'answer_{i}', '').strip().upper()
         
         # Find matching question in CSV
         for q in all_questions:
@@ -315,6 +318,9 @@ def submit():
                 is_correct = (selected == q['answer'])
                 if is_correct:
                     weighted_score += q['weight']
+                    print(f"Q{i}: CORRECT - selected={selected}, answer={q['answer']}, weight={q['weight']}")
+                else:
+                    print(f"Q{i}: WRONG - selected={selected}, answer={q['answer']}")
                 break
     
     # Calculate percentage based on weighted score
