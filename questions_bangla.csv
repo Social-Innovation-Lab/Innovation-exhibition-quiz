@@ -1,4 +1,4 @@
-programme_code,programme_name,difficulty,weight,প্রশ্ন,option_A,option_B,option_C,option_D,answer_letter,answer_text
+programme_code,programme_name,difficulty,weight,question,option_A,option_B,option_C,option_D,answer_letter,answer_text
 UDP,Urban Development Programme,easy,1,Nudge বলতে কী বোঝায়?,এমন কড়া নিয়ম যা সবাইকে মানতেই হবে,পছন্দ দেখানোর ধরনে ছোট্ট ঠেলা বা হালকা প্রভাব,ভালো আচরণের জন্য পুরস্কার,খারাপ কাজের জন্য জোরে দোষারোপ,B,পছন্দ দেখানোর ধরনে ছোট্ট ঠেলা বা হালকা প্রভাব
 UDP,Urban Development Programme,easy,1,একটি চায়ের দোকান দুইটি সাইন ঝুলিয়েছে:সাইন ১: “ময়লা ফেললে জরিমানা ২০০ টাকা”সাইন ২: “আমাদের বেশিরভাগ ক্রেতা এখন ডাস্টবিন ব্যবহার করেন। ধন্যবাদ!”এর মধ্যে কোন সাইনটিকে বেশি “nudge” বলা যায়?,শুধু প্রথম সাইন,শুধু দ্বিতীয় সাইন,"দুটোই, একইভাবে",কোনোটাই না,B,শুধু দ্বিতীয় সাইন
 UDP,Urban Development Programme,easy,1,কোন অভ্যাসটি নদী ও সাগরকে পরিষ্কার রাখতে সাহায্য করে?,ড্রেনে আবর্জনা ফেলে দেওয়া,খোলা আকাশের নিচে প্লাস্টিক পোড়ানো,সব ধরনের ময়লা এক ডাস্টবিনে ফেলা,প্লাস্টিক আলাদা করে ঠিক ডাস্টবিনে ফেলা,D,প্লাস্টিক আলাদা করে ঠিক ডাস্টবিনে ফেলা
