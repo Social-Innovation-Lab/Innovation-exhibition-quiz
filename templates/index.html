@@ -58,6 +58,10 @@
     <input type="hidden" name="form_type" value="register">
     <input type="hidden" name="language" id="formLanguage" value="en">
     
+    <button type="button" class="back-btn" onclick="goBackToLanguage()">
+      <span id="backBtnText">← Back</span>
+    </button>
+    
     <h3 class="form-title" id="formTitle">Register to Play</h3>
     
     <div class="form-group">
@@ -622,10 +626,22 @@ function selectLanguage(lang) {
   document.getElementById('emailLabel').textContent = t.emailLabel;
   document.getElementById('emailInput').placeholder = t.emailPlaceholder;
   document.getElementById('submitBtnText').textContent = t.startQuiz;
+  document.getElementById('backBtnText').textContent = lang === 'bn' ? '← পেছনে' : '← Back';
   
   // Hide language selection and show registration form
   document.getElementById('languageSelection').style.display = 'none';
   document.getElementById('registrationForm').style.display = 'block';
+}
+
+function goBackToLanguage() {
+  // Show language selection and hide registration form
+  document.getElementById('languageSelection').style.display = 'block';
+  document.getElementById('registrationForm').style.display = 'none';
+  
+  // Clear form inputs
+  document.getElementById('nameInput').value = '';
+  document.getElementById('emailInput').value = '';
+  document.getElementById('submitBtn').disabled = true;
 }
 
 // Real-time validation for Name and Email inputs
