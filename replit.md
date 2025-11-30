@@ -55,5 +55,5 @@ The core application is built with Flask, served by `app.py`. It utilizes a Post
 - **psycopg2:** Python adapter for PostgreSQL.
 - **Flask:** Web framework for the application backend.
 - **CSV files:** Used for storing the question bank:
-  - `questions_english.csv` (324 questions)
-  - `questions_bangla.csv` (324 questions)
+  - `questions_english.csv` (375 questions)
+  - `questions_bangla.csv` (323 questions)
