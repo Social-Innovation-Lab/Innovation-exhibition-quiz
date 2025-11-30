@@ -324,22 +324,24 @@ def submit():
     # Calculate exact percentage (e.g., 3.75 score = 37.5%)
     weighted_percent = (weighted_score / total_weighted_marks) * 100
     
-    # Save to database with exact values
+    # Save to database with exact values and get the record ID
     conn = get_db()
     cursor = conn.cursor()
     cursor.execute(
-        'INSERT INTO quiz_records (name, email, percent, weighted_score) VALUES (%s, %s, %s, %s)',
+        'INSERT INTO quiz_records (name, email, percent, weighted_score) VALUES (%s, %s, %s, %s) RETURNING id',
         (name, email, weighted_percent, weighted_score)
     )
+    record_id = cursor.fetchone()[0]
     conn.commit()
     cursor.close()
     conn.close()
     
-    print(f"Quiz saved: name={name}, email={email}, weighted_score={weighted_score}/10.0, weighted_percent={weighted_percent}%")
+    print(f"Quiz saved: id={record_id}, name={name}, email={email}, weighted_score={weighted_score}/10.0, weighted_percent={weighted_percent}%")
     
     # Store result data in session for display after rating
     display_name = name if name else "Participant"
     
+    session['quiz_record_id'] = record_id
     session['quiz_result'] = {
         'name': display_name,
         'weighted_score': weighted_score,
@@ -361,25 +363,25 @@ def rate_experience():
 
 @app.route('/rate/submit', methods=['POST'])
 def submit_rating():
-    """Save rating to database and redirect to score page"""
+    """Save rating to quiz_records table and redirect to score page"""
     csrf_token = request.form.get('csrf_token')
     if not verify_csrf_token(csrf_token):
         abort(403)
     
     rating = request.form.get('rating', type=int)
-    email = request.form.get('email', '').strip().lower() or None
+    record_id = session.get('quiz_record_id')
     
-    if rating and 1 <= rating <= 5:
+    if rating and 1 <= rating <= 5 and record_id:
         conn = get_db()
         cursor = conn.cursor()
         cursor.execute(
-            'INSERT INTO ratings (email, rating) VALUES (%s, %s)',
-            (email, rating)
+            'UPDATE quiz_records SET rating = %s WHERE id = %s',
+            (rating, record_id)
         )
         conn.commit()
         cursor.close()
         conn.close()
-        print(f"Rating saved: email={email}, rating={rating} stars")
+        print(f"Rating saved: record_id={record_id}, rating={rating} stars")
     
     # Redirect to result/score page after rating
     return redirect('/result')

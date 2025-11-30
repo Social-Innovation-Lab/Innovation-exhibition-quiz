@@ -35,12 +35,7 @@ The core application is built with Flask, served by `app.py`. It utilizes a Post
 - `email` (TEXT, nullable)
 - `percent` (REAL, NOT NULL) - Percentage score (0-100) based on weighted score
 - `weighted_score` (REAL, nullable) - Weighted score based on difficulty (max 10.0)
-- `created_at` (TIMESTAMP, DEFAULT CURRENT_TIMESTAMP)
-
-**ratings** - Stores participant experience ratings:
-- `id` (SERIAL PRIMARY KEY)
-- `email` (TEXT, nullable)
-- `rating` (INTEGER, 1-5) - Star rating from participant
+- `rating` (INTEGER, nullable) - Experience rating (1-5 stars) given after quiz
 - `created_at` (TIMESTAMP, DEFAULT CURRENT_TIMESTAMP)
 
 ### Application Routes
