@@ -337,19 +337,20 @@ def submit():
     
     print(f"Quiz saved: name={name}, email={email}, weighted_score={weighted_score}/10.0, weighted_percent={weighted_percent}%")
     
-    # Render result page directly
+    # Store result data in session for display after rating
     display_name = name if name else "Participant"
     
-    data = {
+    session['quiz_result'] = {
         'name': display_name,
         'weighted_score': weighted_score,
         'total_weighted': total_weighted_marks,
         'percent': weighted_percent,
         'weighted_percent': weighted_percent,
-        'is_winner': 1 if weighted_score >= 7.0 else 0  # For result page display only
+        'is_winner': 1 if weighted_score >= 7.0 else 0
     }
     
-    return render_template('result.html', data=data)
+    # Redirect to rating page first (before showing score)
+    return redirect('/rate')
 
 
 @app.route('/rate')
@@ -360,7 +361,7 @@ def rate_experience():
 
 @app.route('/rate/submit', methods=['POST'])
 def submit_rating():
-    """Save rating to database"""
+    """Save rating to database and redirect to score page"""
     csrf_token = request.form.get('csrf_token')
     if not verify_csrf_token(csrf_token):
         abort(403)
@@ -380,13 +381,23 @@ def submit_rating():
         conn.close()
         print(f"Rating saved: email={email}, rating={rating} stars")
     
-    return redirect('/rate/thankyou')
+    # Redirect to result/score page after rating
+    return redirect('/result')
 
 
 @app.route('/rate/thankyou')
 def rating_thankyou():
     """Show thank you page after rating"""
     return render_template('rating_thankyou.html')
+
+
+@app.route('/result')
+def show_result():
+    """Show quiz result page with score from session"""
+    data = session.get('quiz_result')
+    if not data:
+        return redirect('/')
+    return render_template('result.html', data=data)
 
 
 @app.route('/admin/login', methods=['GET', 'POST'])

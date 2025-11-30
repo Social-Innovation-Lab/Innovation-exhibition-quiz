@@ -44,22 +44,23 @@
     <input type="hidden" name="participant_email" value="{{participant_email}}">
     
     <div class="carousel-wrapper">
-      <!-- Swipe Indicators -->
-      <div class="swipe-indicator swipe-left" id="swipeLeft">
-        <svg width="40" height="40" viewBox="0 0 40 40">
-          <path d="M25 10 L15 20 L25 30" stroke="white" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-      </div>
-      <div class="swipe-indicator swipe-right" id="swipeRight">
-        <svg width="40" height="40" viewBox="0 0 40 40">
-          <path d="M15 10 L25 20 L15 30" stroke="white" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-      </div>
       
       {% for q in items %}
       <div class="question-card {% if loop.index == 1 %}active{% endif %}" data-question="{{loop.index}}">
-        <div class="card-header">
-          <span class="q-number" data-en="Question {{loop.index}}" data-bn="প্রশ্ন" data-num="{{loop.index}}">Question {{loop.index}}</span>
+        <div class="card-header-wrapper">
+          <button type="button" class="header-nav-btn nav-prev" id="navPrev{{loop.index0}}" onclick="navigatePrev()">
+            <svg width="24" height="24" viewBox="0 0 24 24">
+              <path d="M15 6 L9 12 L15 18" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+          <div class="card-header">
+            <span class="q-number" data-en="Question {{loop.index}}" data-bn="প্রশ্ন" data-num="{{loop.index}}">Question {{loop.index}}</span>
+          </div>
+          <button type="button" class="header-nav-btn nav-next" id="navNext{{loop.index0}}" onclick="navigateNext()">
+            <svg width="24" height="24" viewBox="0 0 24 24">
+              <path d="M9 6 L15 12 L9 18" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
         </div>
         
         <div class="question-text">
@@ -332,57 +333,6 @@ body {
   overflow: visible;
 }
 
-.swipe-indicator {
-  position: fixed;
-  top: 50%;
-  transform: translateY(-50%);
-  width: clamp(50px, 10vw, 70px);
-  height: clamp(50px, 10vw, 70px);
-  background: rgba(227, 24, 55, 0.8);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 100;
-  transition: all 0.3s ease;
-  cursor: pointer;
-  box-shadow: 0 4px 15px rgba(227, 24, 55, 0.4);
-  animation: pulse 2s infinite;
-  opacity: 0;
-  pointer-events: none;
-}
-
-.swipe-indicator.visible {
-  opacity: 1;
-  pointer-events: all;
-}
-
-.swipe-indicator:active {
-  transform: translateY(-50%) scale(0.9);
-}
-
-.swipe-left {
-  left: clamp(10px, 2vw, 20px);
-}
-
-.swipe-right {
-  right: clamp(10px, 2vw, 20px);
-}
-
-.swipe-indicator svg {
-  width: clamp(30px, 6vw, 40px);
-  height: clamp(30px, 6vw, 40px);
-  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
-}
-
-@keyframes pulse {
-  0%, 100% {
-    box-shadow: 0 4px 15px rgba(227, 24, 55, 0.4);
-  }
-  50% {
-    box-shadow: 0 4px 25px rgba(227, 24, 55, 0.7);
-  }
-}
 
 .question-card {
   position: absolute;
@@ -405,8 +355,54 @@ body {
   opacity: 0;
 }
 
-.card-header {
+.card-header-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
   margin-bottom: 20px;
+}
+
+.header-nav-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: none;
+  background: linear-gradient(135deg, #e31837 0%, #c41230 100%);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(227, 24, 55, 0.3);
+  flex-shrink: 0;
+}
+
+.header-nav-btn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 16px rgba(227, 24, 55, 0.4);
+}
+
+.header-nav-btn:active {
+  transform: scale(0.95);
+}
+
+.header-nav-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.header-nav-btn svg {
+  width: 24px;
+  height: 24px;
+}
+
+.card-header {
+  flex: 1;
+  max-width: 200px;
   padding: 15px 20px;
   background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
   border-radius: 12px;
@@ -924,6 +920,19 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 });
+
+// Navigation functions for header buttons
+function navigatePrev() {
+  if (typeof window.quizNavigatePrev === 'function') {
+    window.quizNavigatePrev();
+  }
+}
+
+function navigateNext() {
+  if (typeof window.quizNavigateNext === 'function') {
+    window.quizNavigateNext();
+  }
+}
 
 if('serviceWorker' in navigator){
   navigator.serviceWorker.register('/static/sw.js').catch(()=>{});

@@ -77,29 +77,36 @@
       submitBtn.style.display = 'none';
     }
     
-    updateSwipeIndicators();
+    updateHeaderNavButtons();
   }
   
-  function updateSwipeIndicators() {
-    const swipeLeft = document.getElementById('swipeLeft');
-    const swipeRight = document.getElementById('swipeRight');
-    
-    if (!swipeLeft || !swipeRight) return;
-    
-    // Show left indicator if not on first question
-    if (currentQuestion > 0) {
-      swipeLeft.classList.add('visible');
-    } else {
-      swipeLeft.classList.remove('visible');
-    }
-    
-    // Show right indicator if not on last question
-    if (currentQuestion < totalQuestions - 1) {
-      swipeRight.classList.add('visible');
-    } else {
-      swipeRight.classList.remove('visible');
+  function updateHeaderNavButtons() {
+    // Update prev/next buttons for all question cards
+    for (let i = 0; i < totalQuestions; i++) {
+      const prevBtn = document.getElementById('navPrev' + i);
+      const nextBtn = document.getElementById('navNext' + i);
+      
+      if (prevBtn) {
+        prevBtn.disabled = (currentQuestion === 0);
+      }
+      if (nextBtn) {
+        nextBtn.disabled = (currentQuestion === totalQuestions - 1);
+      }
     }
   }
+  
+  // Expose navigation functions globally for onclick handlers
+  window.quizNavigatePrev = function() {
+    if (currentQuestion > 0) {
+      showQuestion(currentQuestion - 1);
+    }
+  };
+  
+  window.quizNavigateNext = function() {
+    if (currentQuestion < totalQuestions - 1) {
+      showQuestion(currentQuestion + 1);
+    }
+  };
   
   function showCountdown() {
     const overlay = document.getElementById('countdownOverlay');
@@ -251,26 +258,6 @@
     }
     
     isSwiping = false;
-  }
-
-  // Click handlers for swipe indicators
-  const swipeLeft = document.getElementById('swipeLeft');
-  const swipeRight = document.getElementById('swipeRight');
-  
-  if (swipeLeft) {
-    swipeLeft.addEventListener('click', () => {
-      if (currentQuestion > 0) {
-        showQuestion(currentQuestion - 1);
-      }
-    });
-  }
-  
-  if (swipeRight) {
-    swipeRight.addEventListener('click', () => {
-      if (currentQuestion < totalQuestions - 1) {
-        showQuestion(currentQuestion + 1);
-      }
-    });
   }
 
   // Initialize

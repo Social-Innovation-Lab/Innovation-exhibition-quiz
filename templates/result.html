@@ -65,9 +65,6 @@
     <div class="cta-section">
       <p class="thank-you">{{ "অংশগ্রহণের জন্য ধন্যবাদ" if lang == 'bn' else "Thank you for participating" }}</p>
       <div class="button-row">
-        <a class="rate-btn" href="/rate">
-          <span>⭐ {{ "আপনার অভিজ্ঞতা রেট করুন" if lang == 'bn' else "Rate Your Experience" }}</span>
-        </a>
         <a class="play-again-btn" href="/">
           <span>{{ "পরবর্তী খেলোয়াড়" if lang == 'bn' else "Next Player" }}</span>
         </a>
@@ -285,27 +282,6 @@
   color: #666;
   margin: 0 0 clamp(14px, 2vh, 18px);
   font-weight: 600;
-}
-
-.rate-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: clamp(6px, 1vw, 8px);
-  padding: clamp(12px, 2vh, 14px) clamp(24px, 4vw, 32px);
-  background: linear-gradient(135deg, #00BFA5 0%, #00897B 100%);
-  color: white;
-  text-decoration: none;
-  border-radius: 50px;
-  font-size: clamp(15px, 3vw, 17px);
-  font-weight: 700;
-  box-shadow: 0 6px 20px rgba(0, 191, 165, 0.4);
-  transition: all 0.3s ease;
-  min-height: clamp(44px, 7vh, 50px);
-}
-
-.rate-btn:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 12px 30px rgba(0, 191, 165, 0.5);
 }
 
 .play-again-btn {

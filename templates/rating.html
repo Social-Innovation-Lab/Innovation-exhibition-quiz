@@ -5,9 +5,7 @@
 <div class="rating-container">
   <div class="rating-card">
     <div class="rating-header">
-      <div class="rating-icon">⭐</div>
-      <h1 class="rating-title">{{ "আপনার অভিজ্ঞতা রেট করুন" if lang == 'bn' else "Rate Your Experience" }}</h1>
-      <p class="rating-subtitle">{{ "কুইজ সম্পর্কে আপনার মতামত জানান" if lang == 'bn' else "Let us know how was the quiz" }}</p>
+      <h1 class="rating-title">{{ "স্কোরবোর্ডে যাওয়ার আগে, আপনার অভিজ্ঞতা রেট করুন" if lang == 'bn' else "Before we move to the Scoreboard, please rate your experience" }}</h1>
     </div>
     
     <form action="/rate/submit" method="POST" id="ratingForm">
@@ -39,7 +37,7 @@
       </button>
     </form>
     
-    <a href="/" class="skip-link">{{ "এড়িয়ে যান" if lang == 'bn' else "Skip" }}</a>
+    <a href="/result" class="skip-link">{{ "এড়িয়ে যান" if lang == 'bn' else "Skip" }}</a>
   </div>
 </div>
 
@@ -68,24 +66,12 @@
   margin-bottom: clamp(24px, 4vh, 36px);
 }
 
-.rating-icon {
-  font-size: clamp(48px, 10vw, 64px);
-  margin-bottom: clamp(12px, 2vh, 16px);
-  animation: bounce 2s ease-in-out infinite;
-}
-
 .rating-title {
-  font-size: clamp(22px, 5vw, 28px);
+  font-size: clamp(18px, 4.5vw, 24px);
   font-weight: 700;
   color: #6B2D7B;
-  margin: 0 0 clamp(8px, 1.5vh, 12px);
-}
-
-.rating-subtitle {
-  font-size: clamp(14px, 3vw, 16px);
-  color: #666;
   margin: 0;
-  font-weight: 500;
+  line-height: 1.4;
 }
 
 .stars-container {
