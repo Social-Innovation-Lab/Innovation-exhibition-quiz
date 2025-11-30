@@ -49,7 +49,7 @@
       <div class="question-card {% if loop.index == 1 %}active{% endif %}" data-question="{{loop.index}}">
         <div class="card-header-wrapper">
           <button type="button" class="header-nav-btn nav-prev" id="navPrev{{loop.index0}}" onclick="navigatePrev()">
-            <svg width="28" height="28" viewBox="0 0 40 40">
+            <svg width="40" height="40" viewBox="0 0 40 40">
               <path d="M25 10 L15 20 L25 30" stroke="white" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
           </button>
@@ -57,7 +57,7 @@
             <span class="q-number" data-en="Question {{loop.index}}" data-bn="প্রশ্ন" data-num="{{loop.index}}">Question {{loop.index}}</span>
           </div>
           <button type="button" class="header-nav-btn nav-next" id="navNext{{loop.index0}}" onclick="navigateNext()">
-            <svg width="28" height="28" viewBox="0 0 40 40">
+            <svg width="40" height="40" viewBox="0 0 40 40">
               <path d="M15 10 L25 20 L15 30" stroke="white" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
           </button>
@@ -364,28 +364,38 @@ body {
 }
 
 .header-nav-btn {
-  width: 44px;
-  height: 44px;
+  width: clamp(50px, 10vw, 70px);
+  height: clamp(50px, 10vw, 70px);
   border-radius: 50%;
   border: none;
-  background: linear-gradient(135deg, #e31837 0%, #c41230 100%);
+  background: rgba(227, 24, 55, 0.85);
   color: white;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 12px rgba(227, 24, 55, 0.3);
+  box-shadow: 0 4px 15px rgba(227, 24, 55, 0.4);
   flex-shrink: 0;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    box-shadow: 0 4px 15px rgba(227, 24, 55, 0.4);
+  }
+  50% {
+    box-shadow: 0 4px 25px rgba(227, 24, 55, 0.7);
+  }
 }
 
 .header-nav-btn:hover {
   transform: scale(1.1);
-  box-shadow: 0 6px 16px rgba(227, 24, 55, 0.4);
+  box-shadow: 0 6px 20px rgba(227, 24, 55, 0.5);
 }
 
 .header-nav-btn:active {
-  transform: scale(0.95);
+  transform: scale(0.9);
 }
 
 .header-nav-btn:disabled {
@@ -393,11 +403,12 @@ body {
   cursor: not-allowed;
   transform: none;
   box-shadow: none;
+  animation: none;
 }
 
 .header-nav-btn svg {
-  width: 28px;
-  height: 28px;
+  width: clamp(30px, 6vw, 40px);
+  height: clamp(30px, 6vw, 40px);
   filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
 }
 
