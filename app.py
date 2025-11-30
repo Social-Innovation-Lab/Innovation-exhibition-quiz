@@ -331,7 +331,9 @@ def submit():
         'INSERT INTO quiz_records (name, email, percent, weighted_score) VALUES (%s, %s, %s, %s) RETURNING id',
         (name, email, weighted_percent, weighted_score)
     )
-    record_id = cursor.fetchone()[0]
+    result = cursor.fetchone()
+    # Handle both tuple and dict-like results from psycopg2
+    record_id = result['id'] if isinstance(result, dict) else result[0]
     conn.commit()
     cursor.close()
     conn.close()
