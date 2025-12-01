@@ -131,8 +131,9 @@ def load_questions_from_csv(language='en'):
     with open(csv_path, 'r', encoding='utf-8') as f:
         reader = csv.DictReader(f)
         for row in reader:
-            # Keep the actual question text with programme names
-            question_text = row['question']
+            # Handle different column names for question (English: 'question', Bangla: 'প্রশ্ন')
+            question_key = 'প্রশ্ন' if 'প্রশ্ন' in row else 'question'
+            question_text = row[question_key]
             
             # Remove number prefixes like "15. Q:" or "5. Q:" from question text
             question_text = re.sub(r'^\d+\.\s*Q:\s*', '', question_text)
@@ -312,16 +313,29 @@ def submit():
         question_text = request.form.get(f'question_{i}', '').strip()
         selected = request.form.get(f'answer_{i}', '').strip().upper()
         
+        # Normalize question text for matching (handle multiline questions from CSV)
+        # Replace all whitespace sequences (including newlines) with single space
+        import re
+        normalized_submitted = re.sub(r'\s+', ' ', question_text).strip()
+        
         # Find matching question in CSV
+        found_match = False
         for q in all_questions:
-            if q['question'] == question_text:
+            # Normalize CSV question text the same way
+            normalized_csv = re.sub(r'\s+', ' ', q['question']).strip()
+            
+            if normalized_csv == normalized_submitted:
+                found_match = True
                 is_correct = (selected == q['answer'])
                 if is_correct:
                     weighted_score += q['weight']
                     print(f"Q{i}: CORRECT - selected={selected}, answer={q['answer']}, weight={q['weight']}")
                 else:
-                    print(f"Q{i}: WRONG - selected={selected}, answer={q['answer']}")
+                    print(f"Q{i}: WRONG - selected={selected}, expected={q['answer']}")
                 break
+        
+        if not found_match:
+            print(f"Q{i}: NO MATCH FOUND - submitted: [{normalized_submitted[:60]}...]")
     
     # Calculate percentage based on weighted score
     # Total possible weighted marks: 2 Easy (0.5×2=1.0) + 4 Medium (0.75×4=3.0) + 4 Hard (1.5×4=6.0) = 10.0
