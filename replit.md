@@ -18,7 +18,7 @@ The core application is built with Flask, served by `app.py`. It utilizes a Post
 
 **Key Features:**
 - **PWA Enabled:** Includes a service worker for caching static assets and offline support, and a `manifest.json` for home screen installation.
-- **Weighted Random Question Selection:** Each quiz dynamically generates 10 questions with a distribution of 2 Easy (0.5 marks), 4 Medium (0.75 marks), and 4 Hard (1.5 marks), shuffled for mixed difficulty. Total weighted marks: 10.0. Questions are automatically cleaned to remove number prefixes like "15. Q:".
+- **Weighted Random Question Selection:** Each quiz dynamically generates 10 questions with a distribution of 6 Easy (0.75 marks each = 4.5), 2 Medium (1.25 marks each = 2.5), and 2 Hard (1.5 marks each = 3.0), shuffled for mixed difficulty. Total weighted marks: 10.0. Questions are automatically cleaned to remove number prefixes like "15. Q:".
 - **Winner Detection:** Participants scoring 70% or higher (7.0 weighted marks) are marked as winners.
 - **Single Registration:** Participants register with their name and email address.
 - **Admin Dashboard:** Provides real-time statistics, a list of all quiz attempts, and CSV export functionality, secured by an admin PIN.

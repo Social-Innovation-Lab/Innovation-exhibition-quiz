@@ -120,11 +120,12 @@ def load_questions_from_csv(language='en'):
     
     questions = []
     
-    # Weight mapping: Easy=0.5, Medium=0.75, Hard=1.5 (total 10 marks for 2+4+4 distribution)
+    # Weight mapping: Easy=0.75, Medium=1.25, Hard=1.5 (total 10 marks for 6+2+2 distribution)
+    # (6*0.75) + (2*1.25) + (2*1.5) = 4.5 + 2.5 + 3.0 = 10.0 marks
     # Handle both uppercase and lowercase difficulty values
     weight_mapping = {
-        'Easy': 0.5, 'easy': 0.5,
-        'Medium': 0.75, 'medium': 0.75,
+        'Easy': 0.75, 'easy': 0.75,
+        'Medium': 1.25, 'medium': 1.25,
         'Hard': 1.5, 'hard': 1.5
     }
     
@@ -175,9 +176,9 @@ def select_weighted_random_questions(num_questions=10, language='en'):
     """Select random questions with difficulty-based weighting
     
     Target distribution for 10 questions:
-    - Easy (weight 0.5): 2 questions (20%) = 1.0 marks
-    - Medium (weight 0.75): 4 questions (40%) = 3.0 marks
-    - Hard (weight 1.5): 4 questions (40%) = 6.0 marks
+    - Easy (weight 0.75): 6 questions (60%) = 4.5 marks
+    - Medium (weight 1.25): 2 questions (20%) = 2.5 marks
+    - Hard (weight 1.5): 2 questions (20%) = 3.0 marks
     Total: 10.0 marks
     """
     import random
@@ -185,10 +186,10 @@ def select_weighted_random_questions(num_questions=10, language='en'):
     # Load all questions from CSV based on language
     all_questions = load_questions_from_csv(language)
     
-    # Target distribution
-    target_easy = 2
-    target_medium = 4
-    target_hard = 4
+    # Target distribution: 6 Easy + 2 Medium + 2 Hard = 10 questions
+    target_easy = 6
+    target_medium = 2
+    target_hard = 2
     
     # Separate questions by difficulty (handle both uppercase and lowercase)
     easy_questions = [q for q in all_questions if q['difficulty'].lower() == 'easy']
@@ -338,7 +339,7 @@ def submit():
             print(f"Q{i}: NO MATCH FOUND - submitted: [{normalized_submitted[:60]}...]")
     
     # Calculate percentage based on weighted score
-    # Total possible weighted marks: 2 Easy (0.5×2=1.0) + 4 Medium (0.75×4=3.0) + 4 Hard (1.5×4=6.0) = 10.0
+    # Total possible weighted marks: 6 Easy (0.75×6=4.5) + 2 Medium (1.25×2=2.5) + 2 Hard (1.5×2=3.0) = 10.0
     total_weighted_marks = 10.0
     
     # Calculate exact percentage (e.g., 3.75 score = 37.5%)
