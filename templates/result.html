@@ -10,7 +10,7 @@
       <p class="participant-name">{{data.name}}</p>
     </div>
     
-    <!-- Animated Score Circle (Weighted Score) -->
+    <!-- Animated Score Circle (Percentage) -->
     <div class="score-circle">
       <svg class="circle-svg" viewBox="0 0 200 200" preserveAspectRatio="xMidYMid meet">
         <circle class="circle-bg" cx="100" cy="100" r="90" />
@@ -19,14 +19,15 @@
       </svg>
       <div class="score-content">
         <div class="score-display">
-          <span class="score-number" id="animatedScore">0</span><span class="score-separator">/</span><span class="score-total-number">{{data.total_weighted|int}}</span>
+          <span class="score-number" id="animatedScore">0</span><span class="score-percent">%</span>
         </div>
-        <div class="score-label">{{ "ওজনযুক্ত স্কোর" if lang == 'bn' else "Weighted Score" }}</div>
       </div>
     </div>
     
-    <!-- Percentage Display (Weighted) -->
-    <div class="percentage-display">{{data.weighted_percent}}%</div>
+    <!-- Correct Count Display -->
+    <div class="correct-count-display">
+      {{ "আপনি ১০টির মধ্যে " ~ data.correct_count ~ "টি প্রশ্নের সঠিক উত্তর দিয়েছেন" if lang == 'bn' else "You got " ~ data.correct_count ~ " out of " ~ data.total_questions ~ " questions correct" }}
+    </div>
     
     <!-- Status Message -->
     {% if data.weighted_percent == 100 %}
@@ -169,32 +170,19 @@
   color: #6B2D7B;
 }
 
-.score-separator {
-  font-size: clamp(30px, 5vw, 38px);
-  font-weight: 700;
-  color: #6B2D7B;
-  margin: 0 0.3vw;
-}
-
-.score-total-number {
-  font-size: clamp(30px, 5vw, 38px);
+.score-percent {
+  font-size: clamp(24px, 4vw, 30px);
   font-weight: 700;
   color: #6B2D7B;
 }
 
-.score-label {
-  font-size: clamp(13px, 2.5vw, 16px);
-  color: #666;
-  margin-top: 1vh;
-  font-weight: 600;
-}
-
-.percentage-display {
+.correct-count-display {
   text-align: center;
-  font-size: clamp(18px, 4vw, 22px);
-  font-weight: 700;
-  color: #FF8A50;
-  margin: clamp(12px, 2vh, 15px) 0 clamp(8px, 1.5vh, 10px);
+  font-size: clamp(16px, 3.5vw, 20px);
+  font-weight: 600;
+  color: #666;
+  margin: clamp(8px, 1.5vh, 12px) 0 clamp(15px, 2.5vh, 20px);
+  padding: 0 10px;
 }
 
 .weighted-score-display {
@@ -413,9 +401,9 @@
 {% block scripts %}
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 <script>
-// Animated score counter and circle
+// Animated percentage counter and circle
 window.addEventListener('load', function() {
-  const finalScore = {{data.weighted_score}};
+  const finalPercent = {{data.weighted_percent}};
   const scoreElement = document.getElementById('animatedScore');
   const progressCircle = document.getElementById('progressCircle');
   const finalOffset = progressCircle.getAttribute('data-final-offset');
@@ -427,19 +415,19 @@ window.addEventListener('load', function() {
     progressCircle.style.strokeDashoffset = finalOffset;
   }, 100);
   
-  // Animate the score number (with decimal for weighted score)
+  // Animate the percentage number (whole number)
   function animateScore() {
     const elapsed = Date.now() - startTime;
     const progress = Math.min(elapsed / duration, 1);
     const easeOutQuart = 1 - Math.pow(1 - progress, 4);
-    const currentScore = (easeOutQuart * finalScore).toFixed(1);
+    const currentPercent = Math.round(easeOutQuart * finalPercent);
     
-    scoreElement.textContent = currentScore;
+    scoreElement.textContent = currentPercent;
     
     if (progress < 1) {
       requestAnimationFrame(animateScore);
     } else {
-      scoreElement.textContent = finalScore.toFixed(1);
+      scoreElement.textContent = finalPercent;
     }
   }
   

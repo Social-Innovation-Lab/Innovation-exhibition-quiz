@@ -307,6 +307,7 @@ def submit():
     
     # Grade responses with weighted scoring
     weighted_score = 0.0
+    correct_count = 0
     total_questions = 10
     
     # Check each submitted answer against the CSV questions
@@ -330,6 +331,7 @@ def submit():
                 is_correct = (selected == q['answer'])
                 if is_correct:
                     weighted_score += q['weight']
+                    correct_count += 1
                     print(f"Q{i}: CORRECT - selected={selected}, answer={q['answer']}, weight={q['weight']}")
                 else:
                     print(f"Q{i}: WRONG - selected={selected}, expected={q['answer']}")
@@ -369,6 +371,8 @@ def submit():
         'name': display_name,
         'weighted_score': weighted_score,
         'total_weighted': total_weighted_marks,
+        'correct_count': correct_count,
+        'total_questions': total_questions,
         'percent': weighted_percent,
         'weighted_percent': weighted_percent,
         'is_winner': 1 if weighted_score >= 7.0 else 0
