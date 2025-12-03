@@ -14,8 +14,8 @@
       <div class="table-header">
         <div class="col-rank">{{ "র‌্যাংক" if lang == 'bn' else "Rank" }}</div>
         <div class="col-name">{{ "নাম" if lang == 'bn' else "Name" }}</div>
-        <div class="col-score">{{ "স্কোর" if lang == 'bn' else "Score" }}</div>
-        <div class="col-percent">%</div>
+        <div class="col-percent">{{ "ওজনযুক্ত স্কোর" if lang == 'bn' else "Weighted Score" }}</div>
+        <div class="col-correct">{{ "সঠিক উত্তর" if lang == 'bn' else "Correct Answers" }}</div>
       </div>
       
       {% for player in players %}
@@ -34,8 +34,8 @@
         <div class="col-name">
           <span class="player-name">{{ player.display_name }}</span>
         </div>
-        <div class="col-score">{{ "%.1f"|format(player.best_score or 0) }}/10</div>
         <div class="col-percent">{{ "%.0f"|format(player.best_percent or 0) }}%</div>
+        <div class="col-correct">{{ (player.correct_estimate or 0)|int }}/10</div>
       </div>
       {% endfor %}
     </div>
@@ -115,17 +115,22 @@
 
 .table-header {
   display: grid;
-  grid-template-columns: 60px 1fr 80px 60px;
+  grid-template-columns: 50px 1fr 100px 100px;
   background: linear-gradient(135deg, #6B2D7B 0%, #5A2468 100%);
   color: white;
   padding: 12px 15px;
   font-weight: 600;
-  font-size: 14px;
+  font-size: 13px;
+  text-align: center;
+}
+
+.table-header .col-name {
+  text-align: left;
 }
 
 .table-row {
   display: grid;
-  grid-template-columns: 60px 1fr 80px 60px;
+  grid-template-columns: 50px 1fr 100px 100px;
   padding: 12px 15px;
   border-bottom: 1px solid #f0f0f0;
   align-items: center;
@@ -174,16 +179,18 @@
   font-size: 15px;
 }
 
-.col-score {
+.col-percent {
   font-weight: 700;
   color: #FF8A50;
   font-size: 15px;
+  text-align: center;
 }
 
-.col-percent {
+.col-correct {
   font-weight: 600;
   color: #6B2D7B;
   font-size: 15px;
+  text-align: center;
 }
 
 .no-players {
@@ -254,10 +261,15 @@
     font-size: 24px;
   }
   
-  .table-header,
+  .table-header {
+    grid-template-columns: 40px 1fr 70px 70px;
+    padding: 10px 10px;
+    font-size: 11px;
+  }
+  
   .table-row {
-    grid-template-columns: 50px 1fr 65px 50px;
-    padding: 10px 12px;
+    grid-template-columns: 40px 1fr 70px 70px;
+    padding: 10px 10px;
     font-size: 13px;
   }
   
@@ -266,12 +278,12 @@
   }
   
   .player-name {
-    font-size: 14px;
+    font-size: 13px;
   }
   
-  .col-score,
-  .col-percent {
-    font-size: 14px;
+  .col-percent,
+  .col-correct {
+    font-size: 13px;
   }
 }
 </style>
