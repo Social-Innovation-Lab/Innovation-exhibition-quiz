@@ -132,12 +132,11 @@
 }
 
 .table-header .col-rank {
-  margin-left: -38px;
+  justify-content: center;
 }
 
 .table-header .col-name {
   justify-content: flex-start;
-  margin-left: -76px;
 }
 
 .table-row {
@@ -147,6 +146,12 @@
   border-bottom: 1px solid #f0f0f0;
   align-items: center;
   transition: all 0.3s ease;
+}
+
+.table-row .col-rank {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .table-row:hover {
