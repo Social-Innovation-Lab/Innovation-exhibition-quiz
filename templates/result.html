@@ -156,20 +156,24 @@
   left: 50%;
   transform: translate(-50%, -50%);
   text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 .score-label {
-  font-size: clamp(11px, 2vw, 13px);
+  font-size: clamp(10px, 1.8vw, 12px);
   font-weight: 600;
-  color: #6B2D7B;
-  margin-bottom: 4px;
+  color: #888;
+  margin-bottom: 2px;
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
 
 .score-display {
   display: flex;
-  align-items: center;
+  align-items: baseline;
   justify-content: center;
   line-height: 1;
 }
