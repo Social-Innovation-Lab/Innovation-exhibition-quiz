@@ -342,8 +342,8 @@ def submit():
     # Total possible weighted marks: 6 Easy (0.75×6=4.5) + 2 Medium (1.25×2=2.5) + 2 Hard (1.5×2=3.0) = 10.0
     total_weighted_marks = 10.0
     
-    # Calculate exact percentage (e.g., 3.75 score = 37.5%)
-    weighted_percent = (weighted_score / total_weighted_marks) * 100
+    # Calculate percentage and round to whole number (e.g., 4.25 score = 43%)
+    weighted_percent = round((weighted_score / total_weighted_marks) * 100)
     
     # Save to database with exact values and get the record ID
     conn = get_db()
