@@ -36,8 +36,6 @@
         <span>{{ "রেটিং জমা দিন" if lang == 'bn' else "Submit Rating" }}</span>
       </button>
     </form>
-    
-    <a href="/result" class="skip-link">{{ "এড়িয়ে যান" if lang == 'bn' else "Skip" }}</a>
   </div>
 </div>
 
@@ -155,19 +153,6 @@
 .submit-rating-btn:not(:disabled):hover {
   transform: translateY(-3px);
   box-shadow: 0 10px 30px rgba(107, 45, 123, 0.4);
-}
-
-.skip-link {
-  display: inline-block;
-  font-size: clamp(14px, 3vw, 16px);
-  color: #888;
-  text-decoration: none;
-  font-weight: 500;
-  transition: color 0.3s ease;
-}
-
-.skip-link:hover {
-  color: #6B2D7B;
 }
 
 @keyframes slideUp {
