@@ -18,6 +18,7 @@
                 data-final-offset="{{565 - (565 * data.weighted_percent / 100)}}" />
       </svg>
       <div class="score-content">
+        <div class="score-label">{{ "ওজনযুক্ত স্কোর" if lang == 'bn' else "Weighted Score" }}</div>
         <div class="score-display">
           <span class="score-number" id="animatedScore">0</span><span class="score-percent">%</span>
         </div>
@@ -155,6 +156,15 @@
   left: 50%;
   transform: translate(-50%, -50%);
   text-align: center;
+}
+
+.score-label {
+  font-size: clamp(11px, 2vw, 13px);
+  font-weight: 600;
+  color: #6B2D7B;
+  margin-bottom: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .score-display {
