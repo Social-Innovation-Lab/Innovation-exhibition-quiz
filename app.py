@@ -391,10 +391,6 @@ def rate_experience():
 @app.route('/rate/submit', methods=['POST'])
 def submit_rating():
     """Save rating to quiz_records table and redirect to score page"""
-    csrf_token = request.form.get('csrf_token')
-    if not verify_csrf_token(csrf_token):
-        abort(403)
-    
     rating = request.form.get('rating', type=int)
     record_id = session.get('quiz_record_id')
     
