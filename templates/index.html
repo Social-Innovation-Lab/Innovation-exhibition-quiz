@@ -465,36 +465,105 @@
   50% { opacity: 0.7; }
 }
 
-/* Tablet Responsive */
-@media (max-width: 768px) {
+/* Large Kiosk Screens */
+@media (min-width: 1024px) {
   .hero-logo {
-    max-width: clamp(280px, 80vw, 450px);
+    max-width: 750px;
   }
   
   .hero-subtitle {
-    font-size: 18px;
-    margin: -80px 0 10px;
+    font-size: 22px;
+    margin: -110px 0 15px;
   }
   
   .how-it-works-card {
-    max-width: 90%;
-    padding: 10px 16px;
+    max-width: 600px;
+    padding: 16px 30px;
   }
   
   .step-icon {
-    font-size: 28px;
+    font-size: 38px;
   }
   
   .step-text {
-    font-size: 14px;
+    font-size: 18px;
   }
   
   .step-arrow {
+    font-size: 32px;
+  }
+  
+  .selection-title {
     font-size: 24px;
   }
   
   .option-selection {
+    max-width: 550px;
+  }
+  
+  .option-btn {
+    padding: 20px;
+    min-height: 85px;
+  }
+  
+  .btn-text {
+    font-size: 28px;
+  }
+  
+  .leaderboard-link {
+    font-size: 20px;
+    padding: 16px 32px;
+  }
+}
+
+/* Tablet Responsive */
+@media (max-width: 768px) {
+  .hero-logo {
+    max-width: clamp(350px, 85vw, 500px);
+  }
+  
+  .hero-subtitle {
+    font-size: 18px;
+    margin: -90px 0 12px;
+  }
+  
+  .how-it-works-card {
+    max-width: 95%;
+    padding: 14px 20px;
+  }
+  
+  .step-icon {
+    font-size: 30px;
+  }
+  
+  .step-text {
+    font-size: 15px;
+  }
+  
+  .step-arrow {
+    font-size: 26px;
+  }
+  
+  .selection-title {
+    font-size: 20px;
+  }
+  
+  .option-selection {
     max-width: 90%;
+  }
+  
+  .option-btn {
+    padding: 16px;
+    min-height: 70px;
+  }
+  
+  .btn-text {
+    font-size: 24px;
+  }
+  
+  .leaderboard-link {
+    font-size: 16px;
+    padding: 12px 24px;
   }
   
   .quiz-form {
@@ -510,24 +579,25 @@
   }
   
   .hero-logo {
-    max-width: clamp(220px, 85vw, 320px);
+    max-width: clamp(260px, 90vw, 340px);
   }
   
   .hero-subtitle {
-    font-size: 16px;
-    margin: -60px 0 8px;
+    font-size: 15px;
+    margin: -70px 0 8px;
   }
   
   .how-it-works-card {
-    padding: 10px 12px;
+    padding: 12px 14px;
+    max-width: 98%;
   }
   
   .steps-row {
-    gap: 6px;
+    gap: 5px;
   }
   
   .step-item {
-    min-width: 60px;
+    min-width: 55px;
     padding: 4px;
   }
   
@@ -537,37 +607,38 @@
   }
   
   .step-text {
-    font-size: 12px;
+    font-size: 11px;
   }
   
   .step-arrow {
-    font-size: 20px;
+    font-size: 18px;
   }
   
   .selection-title {
-    font-size: 18px;
+    font-size: 16px;
     margin-bottom: 15px;
   }
   
   .option-btn {
-    padding: 12px;
-    min-height: 65px;
+    padding: 14px;
+    min-height: 60px;
   }
   
   .btn-text {
-    font-size: 22px;
+    font-size: 20px;
   }
   
-  .btn-desc {
-    font-size: 12px;
+  .leaderboard-link {
+    font-size: 14px;
+    padding: 10px 20px;
   }
   
   .quiz-form {
-    padding: 18px;
+    padding: 16px;
   }
   
   .form-title {
-    font-size: 20px;
+    font-size: 18px;
   }
   
   .form-input {
