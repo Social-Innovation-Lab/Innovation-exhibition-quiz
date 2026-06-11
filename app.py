@@ -24,7 +24,7 @@ def add_no_cache_headers(response):
     return response
 
 DATABASE_URL = os.environ.get('DATABASE_URL')
-ADMIN_PIN = os.environ.get('ADMIN_PIN', '2025')
+ADMIN_PIN = os.environ.get('ADMIN_PIN')
 
 def generate_csrf_token():
     """Generate CSRF token for session"""
@@ -434,6 +434,8 @@ def admin_login():
             abort(403)
         
         pin = request.form.get('admin_pin', '')
+        if not ADMIN_PIN:
+            return render_template('admin_login.html', error='Admin access is not configured')
         if pin == ADMIN_PIN:
             session['admin_authenticated'] = True
             return redirect('/admin')
